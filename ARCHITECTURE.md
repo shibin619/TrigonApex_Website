@@ -109,6 +109,8 @@ TrigonApex_Website/
 │   └── deploy/                      # Deploy scripts, PM2 process file for Nuxt SSR
 │
 ├── docs/                            # Project documentation (expands over time)
+│   ├── DATABASE_ARCHITECTURE.md     # MySQL schema foundation (Stage 5)
+│   ├── CONTENT_ARCHITECTURE.md      # Website content structure (Stage 6)
 │   ├── API.md
 │   ├── DEPLOYMENT.md
 │   └── CONTRIBUTING.md
@@ -149,6 +151,10 @@ TrigonApex_Website/
 - **API communication:** Nuxt frontend calls the Laravel REST API at
   `https://api.trigonapex.in` over HTTPS using `$fetch`/`useFetch`. No
   server-to-server secrets are exposed to the browser.
+- **Content:** website copy (solutions, industries, products, case
+  studies, etc.) is structured as typed static content, not hardcoded into
+  page markup or backed by a CMS/database — see
+  `docs/CONTENT_ARCHITECTURE.md`.
 
 ---
 

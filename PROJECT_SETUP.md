@@ -138,6 +138,8 @@ existing monorepo — no nested `.git` to clean up.
 ## Stage 7 — Design & Content (explicitly out of scope until later)
 
 - Homepage design, UI components, real content, copywriting.
+- The reusable content *structure* (not the copy itself) that this stage
+  will populate is already defined in `docs/CONTENT_ARCHITECTURE.md`.
 
 ---
 
