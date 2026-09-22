@@ -15,6 +15,9 @@ export interface Cta {
 export const ctas: Cta[] = [
   { id: 'talk-to-us', label: 'Talk to Us', to: '/contact', style: 'primary' },
   { id: 'explore-solutions', label: 'Explore Solutions', to: '/solutions', style: 'secondary' },
+  // Label/destination fixed by docs/HOMEPAGE_SPEC.md §8 ("exact label
+  // finalized in 8G").
+  { id: 'view-all-industries', label: 'View All Industries', to: '/industries', style: 'secondary' },
   { id: 'explore-product', label: 'Explore Product', to: '/products', style: 'secondary' },
   { id: 'watch-product-tour', label: 'Watch Product Tour', to: '/products', style: 'secondary' },
   // In-page anchor to the future Product Tour homepage section (Stage 8I —
