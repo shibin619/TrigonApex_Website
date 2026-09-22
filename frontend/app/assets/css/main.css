@@ -1,3 +1,23 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "./tokens.css";
+
+/*
+ * Temporary highlight applied by useScrollHighlight() when a visitor
+ * jumps to a target from elsewhere on the page (e.g. the Business
+ * Problem Selector jumping to a future Solutions item). Global, not
+ * component-scoped, because the target element belongs to whichever
+ * future component registers that id — see
+ * app/composables/useScrollHighlight.ts.
+ */
+.solution-target-highlight {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 4px;
+  transition: outline-color var(--duration-slow) var(--ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solution-target-highlight {
+    transition: none;
+  }
+}
