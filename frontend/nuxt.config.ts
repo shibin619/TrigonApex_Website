@@ -10,6 +10,32 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Keep flat component names regardless of subfolder (components/layout/,
+  // components/navigation/, etc. are organizational only) — without this,
+  // Nuxt's default nested-folder prefixing would require e.g.
+  // <NavigationAppHeader> instead of <AppHeader>.
+  components: [
+    { path: '~/components', pathPrefix: false }
+  ],
+
+  // @nuxt/ui auto-registers @nuxt/fonts. Left at its default, it tries to
+  // fetch font metadata from Google/Bunny/Fontshare/Fontsource over the
+  // network at build and dev time. We use the system font stack (see
+  // assets/css/tokens.css) and have no external font provider approved,
+  // so every remote provider is disabled — no runtime font-network
+  // dependency, no external font lock-in.
+  fonts: {
+    providers: {
+      google: false,
+      bunny: false,
+      fontshare: false,
+      fontsource: false,
+      adobe: false,
+      googleicons: false,
+      npm: false
+    }
+  },
+
   // Public runtime config: overridable per environment via NUXT_PUBLIC_*
   // env vars (e.g. NUXT_PUBLIC_API_BASE_URL) without touching this file or
   // hardcoding URLs into components.

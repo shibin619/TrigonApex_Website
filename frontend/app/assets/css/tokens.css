@@ -1,0 +1,99 @@
+/**
+ * Design tokens — Trigon Apex Technologies website.
+ *
+ * Single source of truth for the visual primitives (color, type, spacing,
+ * radius, shadow, container widths, breakpoints, motion timing). Every
+ * component should reference these tokens rather than hardcoded values, so
+ * the visual identity can be changed centrally once real brand decisions
+ * are approved — see docs/FRONTEND_ARCHITECTURE.md.
+ *
+ * Tailwind CSS v4's `@theme` block both defines CSS variables AND
+ * generates matching utility classes (e.g. --color-brand-500 also gives
+ * you `bg-brand-500`, `text-brand-500`, etc.).
+ */
+
+@theme {
+  /* ---------------------------------------------------------------------
+   * Brand & neutral colors — PLACEHOLDER.
+   * No final brand color has been approved yet, so `brand` is aliased to
+   * Tailwind's built-in neutral "slate" scale rather than an invented hue.
+   * Redefining these values (or replacing the aliases below with real hex/
+   * oklch values) is the ONLY change needed to apply a real brand palette
+   * everywhere — components should never reference `slate` directly.
+   * ------------------------------------------------------------------- */
+  --color-brand-50: var(--color-slate-50);
+  --color-brand-100: var(--color-slate-100);
+  --color-brand-200: var(--color-slate-200);
+  --color-brand-300: var(--color-slate-300);
+  --color-brand-400: var(--color-slate-400);
+  --color-brand-500: var(--color-slate-500);
+  --color-brand-600: var(--color-slate-600);
+  --color-brand-700: var(--color-slate-700);
+  --color-brand-800: var(--color-slate-800);
+  --color-brand-900: var(--color-slate-900);
+  --color-brand-950: var(--color-slate-950);
+
+  /* ---------------------------------------------------------------------
+   * Typography scale — system font stack only (no external font network
+   * dependency; see nuxt.config.ts `fonts.providers` and
+   * docs/FRONTEND_ARCHITECTURE.md §3).
+   * ------------------------------------------------------------------- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  /* Fluid-ish scale via rem; components apply as `text-{name}` utilities. */
+  --text-display: 3rem;
+  --text-display--line-height: 1.1;
+  --text-h1: 2.25rem;
+  --text-h1--line-height: 1.2;
+  --text-h2: 1.875rem;
+  --text-h2--line-height: 1.25;
+  --text-h3: 1.5rem;
+  --text-h3--line-height: 1.3;
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.4;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.5;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-button: 0.9375rem;
+  --text-button--line-height: 1.2;
+
+  /* ---------------------------------------------------------------------
+   * Radius — small, consistent scale. No large/pill-only aesthetic locked
+   * in yet.
+   * ------------------------------------------------------------------- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* ---------------------------------------------------------------------
+   * Shadows — deliberately minimal. No decorative/heavy shadow effects
+   * per the brief.
+   * ------------------------------------------------------------------- */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 2px 8px 0 rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 8px 24px 0 rgb(0 0 0 / 0.1);
+
+  /* ---------------------------------------------------------------------
+   * Container widths & breakpoints. Tailwind's default breakpoints
+   * (sm/md/lg/xl/2xl) are already mobile-first and are kept as-is; only
+   * the page container's own max-width is a project-specific token.
+   * ------------------------------------------------------------------- */
+  --container-max: 80rem; /* 1280px */
+
+  /* ---------------------------------------------------------------------
+   * Motion timing — subtle, short durations only. See useFadeIn composable
+   * and docs/FRONTEND_ARCHITECTURE.md §animation for the rules these
+   * values must respect (nothing long, nothing blocking).
+   * ------------------------------------------------------------------- */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -1,0 +1,3 @@
+Reserved for framework-agnostic helper functions (non-Vue, non-composable
+logic) as they're actually needed. Empty by design — see
+docs/FRONTEND_ARCHITECTURE.md.
