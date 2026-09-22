@@ -19,6 +19,9 @@ export const ctas: Cta[] = [
   // finalized in 8G").
   { id: 'view-all-industries', label: 'View All Industries', to: '/industries', style: 'secondary' },
   { id: 'explore-product', label: 'Explore Product', to: '/products', style: 'secondary' },
+  // Label/destination fixed by docs/HOMEPAGE_SPEC.md §9 ("one section-level
+  // View All Products link to /products").
+  { id: 'view-all-products', label: 'View All Products', to: '/products', style: 'secondary' },
   { id: 'watch-product-tour', label: 'Watch Product Tour', to: '/products', style: 'secondary' },
   // In-page anchor to the future Product Tour homepage section (Stage 8I —
   // docs/HOMEPAGE_SPEC.md §10/§20). The target id doesn't exist yet; this
