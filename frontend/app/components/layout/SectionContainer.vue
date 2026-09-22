@@ -10,9 +10,11 @@ withDefaults(defineProps<{
   spacing: 'default'
 })
 
+// Values come from the section-rhythm tokens in assets/css/tokens.css —
+// change the rhythm there, not here.
 const spacingClasses: Record<'default' | 'compact' | 'none', string> = {
-  default: 'py-16 sm:py-24',
-  compact: 'py-8 sm:py-12',
+  default: 'py-(--space-section-y-sm) sm:py-(--space-section-y)',
+  compact: 'py-(--space-section-y-compact-sm) sm:py-(--space-section-y-compact)',
   none: ''
 }
 </script>
