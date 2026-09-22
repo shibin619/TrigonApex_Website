@@ -1,8 +1,9 @@
 # Architecture — Trigon Apex Technologies Website
 
-Status: **Foundational planning document.** No application code exists yet.
-This document records the technical decisions made before any implementation
-begins, so that all future work builds on an agreed, written foundation.
+Status: **Technical stack locked.** No application code exists yet — this
+document reflects the confirmed decisions to scaffold against. Superseded
+sections from the original (Stage 0) draft are updated in place below;
+version facts were verified against current sources as of **2026-09-22**.
 
 ---
 
@@ -15,10 +16,10 @@ possibly a client portal later).
 
 ---
 
-## 2. Repository Strategy: Monorepo
+## 2. Repository Strategy: Monorepo — **LOCKED**
 
-**Decision: single monorepo** containing both the Nuxt 3 frontend and the
-Laravel backend, rather than two separate repositories.
+**Confirmed: single monorepo** containing both the Nuxt frontend and the
+Laravel backend.
 
 ### Why a monorepo
 
@@ -30,7 +31,7 @@ Laravel backend, rather than two separate repositories.
   infra config (Nginx, deploy scripts, environment docs) naturally lives in
   one place instead of being duplicated across repos.
 - Single source of truth for architecture/setup docs, issue tracking, and PR
-  history — useful for a small team or solo developer.
+  history.
 - Atomic commits: an API contract change and its corresponding frontend
   change can land in one PR instead of being coordinated across repos.
 
@@ -42,27 +43,57 @@ Laravel backend, rather than two separate repositories.
 - CI/CD must be path-aware later (only build/deploy what changed) — noted as
   a future task, not yet configured.
 
-**This is marked as a decision requiring your explicit sign-off** — see
-`PROJECT_SETUP.md` §"Decisions requiring approval." If you'd rather split
-into two repos later, the folder boundaries below make that split
-mechanical (each top-level folder can become its own repo with history
-preserved via `git subtree split`).
+---
+
+## 3. Locked Technology Stack
+
+| Layer | Choice | Notes |
+|---|---|---|
+| Frontend framework | **Nuxt 4** | Current stable line (latest: 4.5.x, released July 2026) |
+| UI runtime | Vue 3 | Bundled with Nuxt 4 |
+| Language | TypeScript | Strict mode |
+| Styling | **Tailwind CSS v4** | Required by Nuxt UI v4 (not the older v3 / `@nuxtjs/tailwindcss` module path) |
+| Component library | **Nuxt UI v4** | Requires Nuxt **≥ 4.1** (we're on 4.5.x — satisfied). Now unifies former Nuxt UI + Nuxt UI Pro into one free, open-source package |
+| Animation | GSAP | Used sparingly for subtle motion, per your direction |
+| Backend framework | **Laravel 13** | Released March 17, 2026. Minimum PHP **8.3** |
+| Backend language | PHP 8.3+ | Matches Laravel 13's minimum requirement exactly |
+| API style | REST | Laravel is a pure JSON API — no Blade views, no server-rendered HTML from Laravel |
+| Database | **MySQL 8** | See §10 for a Hostinger-specific compatibility note |
+| Package manager (frontend) | **npm** | |
+| Rendering mode | **Hybrid/SSR** | Nuxt `routeRules` mixing prerendered marketing pages with SSR/ISR for API-backed pages, chosen for SEO + performance |
+| Repository | Monorepo | `frontend/`, `backend/`, `docs/`, `infra/` |
 
 ---
 
-## 3. Proposed Folder Structure
+## 4. Proposed Folder Structure
+
+Nuxt 4 changed its default source layout (`srcDir` now defaults to `app/`,
+and the `~` alias points there) — the structure below reflects that, not the
+Nuxt 3 layout from the original draft.
 
 ```
 TrigonApex_Website/
-├── frontend/                # Nuxt 3 + Vue 3 + TypeScript app (not yet scaffolded)
-│   ├── app/                 # Nuxt 3 app/ directory (components, pages, layouts)
-│   ├── public/               # Static assets
+├── frontend/                       # Nuxt 4 application (not yet scaffolded)
+│   ├── app/                        # Nuxt 4 default srcDir
+│   │   ├── app.vue
+│   │   ├── app.config.ts           # Nuxt UI theme/config
+│   │   ├── assets/
+│   │   │   └── css/
+│   │   │       └── main.css        # @import "tailwindcss"; @import "@nuxt/ui";
+│   │   ├── components/
+│   │   ├── composables/
+│   │   ├── layouts/
+│   │   ├── middleware/
+│   │   ├── pages/
+│   │   ├── plugins/
+│   │   └── utils/
+│   ├── public/                     # Static assets served as-is
+│   ├── server/                     # Nuxt server routes/middleware (root-level in v4)
 │   ├── nuxt.config.ts
-│   ├── tailwind.config.ts
 │   ├── tsconfig.json
 │   └── package.json
 │
-├── backend/                  # Laravel REST API (not yet scaffolded)
+├── backend/                        # Laravel 13 REST API (not yet scaffolded)
 │   ├── app/
 │   ├── routes/
 │   │   └── api.php
@@ -72,78 +103,75 @@ TrigonApex_Website/
 │   ├── .env.example
 │   └── composer.json
 │
-├── infra/                    # Deployment & infrastructure config (future)
-│   ├── nginx/                 # Nginx server block templates for both domains
-│   ├── docker/                # Optional local dev containers (if adopted)
-│   └── deploy/                # Deploy scripts, systemd/PM2 unit files
+├── infra/                          # Deployment & infrastructure config
+│   ├── nginx/                       # Nginx server block templates for both domains
+│   ├── docker/                      # Optional local dev containers (still open, §11)
+│   └── deploy/                      # Deploy scripts, PM2 process file for Nuxt SSR
 │
-├── docs/                      # Project documentation (expands over time)
-│   ├── API.md                 # API contract, once endpoints are designed
-│   ├── DEPLOYMENT.md          # Step-by-step server deployment guide
-│   └── CONTRIBUTING.md        # Branching, commit, and PR conventions
+├── docs/                            # Project documentation (expands over time)
+│   ├── API.md
+│   ├── DEPLOYMENT.md
+│   └── CONTRIBUTING.md
 │
 ├── .github/
-│   └── workflows/             # CI/CD pipelines (to be added later)
+│   └── workflows/                   # CI/CD pipelines (future)
 │
-├── ARCHITECTURE.md            # This file
-├── PROJECT_SETUP.md           # Setup sequence to follow
+├── ARCHITECTURE.md
+├── PROJECT_SETUP.md
 ├── README.md
 └── .gitignore
 ```
 
-Rationale for `frontend/` and `backend/` as top-level siblings (rather than
-nesting one inside the other): keeps each toolchain's dependency
-installation (`npm`/`pnpm` vs `composer`) fully isolated, and matches how
-they'll be deployed independently (static/SSR Node process vs PHP-FPM).
-
 ---
 
-## 4. Frontend Architecture
+## 5. Frontend Architecture
 
-- **Framework:** Nuxt 3 (Vue 3, TypeScript strict mode)
-- **Styling:** Tailwind CSS
-- **Animation:** GSAP, used sparingly for subtle motion (per your direction —
-  not a heavy animation-driven site)
-- **Rendering mode:** ⚠️ **Open decision** — needs your input:
-  - **Static Site Generation (SSG)** via `nuxt generate`: fastest, cheapest to
-    host (plain static files served by Nginx/Cloudflare, no Node process on
-    the VPS), best fit if content changes infrequently (typical marketing
-    site).
-  - **Server-Side Rendering (SSR)**: needed if pages must reflect live data
-    from the Laravel API on every request (e.g., frequently changing case
-    studies/blog). Requires a persistent Node process on the VPS managed by
-    PM2.
-  - **Hybrid** (Nuxt `routeRules` — mix static, SSR, and ISR per route):
-    Nuxt 3's built-in way to get static marketing pages *and* a dynamic
-    blog/contact flow without committing fully to either extreme.
-  - **Recommendation:** start with **Hybrid**, defaulting most marketing
-    pages to static/prerendered, with any API-backed pages (blog, forms)
-    using SSR or ISR. This avoids re-deciding the whole architecture when a
-    dynamic content need shows up. Final call is yours — recorded in
-    `PROJECT_SETUP.md`.
+- **Framework:** Nuxt 4, Vue 3, TypeScript (strict)
+- **UI:** Nuxt UI v4 — provides the component library, theming, icons
+  (`@nuxt/icon`), fonts (`@nuxt/fonts`), and color mode (`@nuxtjs/color-mode`)
+  automatically; these do not need to be added as separate modules.
+- **Styling:** Tailwind CSS v4, wired in via Nuxt UI's own integration — a
+  single CSS file imports `tailwindcss` then `@nuxt/ui`. No separate
+  `@nuxtjs/tailwindcss` module is used (that was the Nuxt 3 / Tailwind v3
+  pattern from the earlier draft).
+- **Animation:** GSAP, used sparingly for subtle motion.
+- **Rendering mode — LOCKED: Hybrid/SSR.** Implemented via Nuxt's
+  `routeRules` in `nuxt.config.ts`:
+  - Static marketing pages (home, about, services) → prerendered
+    (`prerender: true`) for maximum speed and cacheability at Cloudflare's
+    edge.
+  - API-backed pages (blog/insights, dynamic case studies, contact form
+    submission handling) → SSR (`swr` or plain SSR) so they always reflect
+    current Laravel API data and remain crawlable/SEO-friendly.
+  - This requires a **persistent Node.js process on the VPS** (see §7) —
+    unlike pure static generation, hybrid/SSR cannot be served as flat files
+    alone.
 - **API communication:** Nuxt frontend calls the Laravel REST API at
   `https://api.trigonapex.in` over HTTPS using `$fetch`/`useFetch`. No
   server-to-server secrets are exposed to the browser.
 
 ---
 
-## 5. Backend Architecture
+## 6. Backend Architecture
 
-- **Framework:** Laravel (latest stable — version to be pinned in
-  `PROJECT_SETUP.md`)
-- **Architecture style:** REST API only. Laravel is **not** used to render
-  any HTML views — it is a pure JSON API service consumed by the Nuxt
-  frontend. No Blade templates, no Laravel-side sessions for the public site.
-- **Database:** MySQL
+- **Framework:** Laravel 13 (PHP 8.3+ required — this is Laravel 13's actual
+  minimum, so our PHP 8.3+ choice satisfies it with no slack for older PHP).
+- **Architecture style:** REST API only. No Blade templates, no Laravel-side
+  sessions for the public site.
+- **Database:** MySQL 8.
 - **Auth (if/when needed):** Laravel Sanctum for lightweight token-based auth
   — only introduced when a feature actually requires it (e.g., an admin
-  area). Not installed at this stage.
+  area). Not installed at scaffold time.
 - **CORS:** Laravel's built-in CORS middleware configured to allow only
   `https://trigonapex.in` (and local dev origins) to call the API.
 
 ---
 
-## 6. Infrastructure & Deployment Topology
+## 7. Infrastructure & Deployment Topology
+
+Hybrid/SSR rendering means the frontend now **requires** a running Node.js
+process on the VPS (this is a change from the original draft, where static
+generation would have made Node optional in production).
 
 ```
                         ┌─────────────────────┐
@@ -160,19 +188,18 @@ they'll be deployed independently (static/SSR Node process vs PHP-FPM).
         │                  Hostinger VPS                       │
         │                                                       │
         │   ┌─────────────┐          ┌────────────────────┐    │
-        │   │    Nginx    │─────────▶│  Nuxt 3 output       │    │
-        │   │ (reverse    │          │  (static files, or   │    │
-        │   │  proxy /    │          │  Node process via PM2 │    │
-        │   │  static     │          │  if SSR/hybrid)       │    │
-        │   │  server)    │          └────────────────────┘    │
+        │   │    Nginx    │─────────▶│  Nuxt 4 Node process │    │
+        │   │ (reverse    │          │  (managed by PM2,    │    │
+        │   │  proxy)     │          │  hybrid SSR/prerender)│    │
+        │   │             │          └────────────────────┘    │
         │   │             │                                     │
         │   │             │─────────▶┌────────────────────┐    │
-        │   │             │          │  Laravel (PHP-FPM)   │    │
+        │   │             │          │  Laravel 13 (PHP-FPM) │    │
         │   └─────────────┘          └──────────┬─────────┘    │
         │                                        │              │
         │                                        ▼              │
         │                               ┌─────────────────┐    │
-        │                               │      MySQL       │    │
+        │                               │     MySQL 8       │    │
         │                               └─────────────────┘    │
         └───────────────────────────────────────────────────────┘
 ```
@@ -181,15 +208,15 @@ they'll be deployed independently (static/SSR Node process vs PHP-FPM).
   GitHub Actions for CI/CD.
 - **Cloudflare**: DNS for `trigonapex.in` and `api.trigonapex.in`, proxied
   (orange-cloud) for CDN caching + DDoS protection, edge SSL termination.
-- **Hostinger VPS**: single VPS initially hosting both the frontend
-  artifact and the Laravel API, separated by Nginx server blocks per
-  subdomain.
+- **Hostinger VPS**: single VPS hosting both the Nuxt Node process and the
+  Laravel API, separated by Nginx server blocks per subdomain.
 - **Nginx**: terminates traffic from Cloudflare, routes by hostname —
-  `trigonapex.in` → frontend, `api.trigonapex.in` → PHP-FPM/Laravel.
+  `trigonapex.in` → Nuxt (proxied to the Node process), `api.trigonapex.in`
+  → PHP-FPM/Laravel.
 
 ---
 
-## 7. Environments & Branching (proposed)
+## 8. Environments & Branching
 
 | Branch    | Purpose                              | Deploys to                       |
 |-----------|---------------------------------------|-----------------------------------|
@@ -197,18 +224,14 @@ they'll be deployed independently (static/SSR Node process vs PHP-FPM).
 | `staging` | Pre-production QA (to be created)     | Staging subdomain (future)        |
 | `main`    | Production-ready code (to be created) | `trigonapex.in` / `api.trigonapex.in` |
 
-None of these branches except `dev` exist yet. They will be created
-deliberately when we're ready for that stage — not part of this step.
+Per your explicit instruction, this stage touches **only `dev`**. `main`,
+`staging`, `demo`, and `prod` are neither created nor modified here.
 
 ---
 
-## 8. What This Step Does *Not* Include
+## 9. What This Step Does *Not* Include
 
-Per explicit scope for this stage, the following are intentionally **not**
-done yet, and require a separate, later approval:
-
-- Scaffolding an actual Nuxt project (`npx nuxi init`) or Laravel project
-  (`composer create-project laravel/laravel`)
+- Running any scaffold command (`nuxi init`, `composer create-project`)
 - Installing any npm or Composer packages
 - Writing UI components, pages, or dummy content
 - Configuring CI/CD pipelines
@@ -216,9 +239,38 @@ done yet, and require a separate, later approval:
 - Configuring Cloudflare DNS/SSL
 - Creating `staging`/`main` branches
 
+Scaffold commands are documented below and in `PROJECT_SETUP.md`, but will
+only be **run** after your explicit go-ahead.
+
 ---
 
-## 9. Open Decisions Requiring Your Approval
+## 10. Version & Compatibility Notes (verified 2026-09-22)
 
-See `PROJECT_SETUP.md` §"Decisions requiring approval" for the consolidated
-list with recommendations.
+- **Nuxt 4** is the current active major version (latest: 4.5.x, July 2026),
+  distributed as `nuxt@latest` on npm. Not a preview/beta line.
+- **Laravel 13** was released March 17, 2026, requires **PHP 8.3 minimum**,
+  and its release notes describe **zero breaking changes** from Laravel 12 —
+  low upgrade/compatibility risk.
+- **Nuxt UI v4** requires **Nuxt ≥ 4.1**. Since we're scaffolding fresh on
+  the current 4.5.x line, this is satisfied automatically — no separate
+  version pin needed.
+- **Nuxt UI v4 depends on Tailwind CSS v4**, not v3. It ships its own
+  Tailwind integration; the classic `@nuxtjs/tailwindcss` community module
+  (built for Tailwind v3) is **not used** in this stack.
+- **MySQL 8 vs. Hostinger's default:** Hostinger VPS templates commonly
+  ship **MariaDB** by default, not vanilla MySQL. Installing MySQL 8
+  specifically (rather than accepting MariaDB) is a deliberate action at
+  Stage 5 (server provisioning) — flagged so it isn't silently swapped for
+  the distro default. No action needed now.
+- **Node.js on the VPS:** current LTS is **Node.js 24** (Node 20 is past
+  its useful support window by now). Required at Stage 5 because of the
+  Hybrid/SSR rendering decision.
+
+---
+
+## 11. Remaining Open Decisions
+
+See `PROJECT_SETUP.md` §"Decisions Requiring Your Approval" — the stack,
+rendering mode, package manager, database, and repo strategy are now locked;
+a small number of operational decisions (local dev environment, SSL
+strategy, optional modules, admin/auth area) remain open.
