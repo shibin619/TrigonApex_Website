@@ -4,19 +4,43 @@ import { getCta } from '~/content/ctas'
 
 const mobileMenuOpen = ref(false)
 const primaryCta = computed(() => getCta(siteConfig.primaryCta))
+const menuToggle = useTemplateRef<HTMLButtonElement>('menuToggle')
+
+function closeMenu() {
+  mobileMenuOpen.value = false
+}
+
+// Escape closes the mobile menu and returns focus to the toggle button —
+// standard disclosure-widget keyboard behavior (WAI-ARIA APG).
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && mobileMenuOpen.value) {
+    closeMenu()
+    menuToggle.value?.focus()
+  }
+}
+
+onMounted(() => document.addEventListener('keydown', onKeydown))
+onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <header class="border-b border-default">
+  <header class="sticky top-0 z-40 border-b border-default bg-default">
     <PageContainer as="div" class="flex items-center justify-between py-4">
-      <NuxtLink to="/" class="text-h4 font-semibold text-highlighted">
+      <NuxtLink
+        to="/"
+        class="text-h4 font-semibold uppercase tracking-wide text-highlighted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
         {{ siteConfig.brandName }}
       </NuxtLink>
 
       <nav aria-label="Primary" class="hidden md:block">
-        <ul class="flex items-center gap-6">
+        <ul class="flex items-center gap-8">
           <li v-for="item in siteConfig.navigation.primary" :key="item.to">
-            <NuxtLink :to="item.to" class="text-body text-default hover:text-highlighted">
+            <NuxtLink
+              :to="item.to"
+              class="motion-safe:transition-colors motion-safe:duration-(--duration-fast) border-b-2 border-transparent pb-1 text-body text-default hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              active-class="border-brand-500 text-brand-500 font-medium"
+            >
               {{ item.label }}
             </NuxtLink>
           </li>
@@ -30,8 +54,9 @@ const primaryCta = computed(() => getCta(siteConfig.primaryCta))
       </div>
 
       <button
+        ref="menuToggle"
         type="button"
-        class="md:hidden"
+        class="motion-safe:transition-colors md:hidden"
         :aria-expanded="mobileMenuOpen"
         aria-controls="mobile-nav"
         @click="mobileMenuOpen = !mobileMenuOpen"
@@ -47,6 +72,6 @@ const primaryCta = computed(() => getCta(siteConfig.primaryCta))
       </button>
     </PageContainer>
 
-    <MobileNav :open="mobileMenuOpen" @close="mobileMenuOpen = false" />
+    <MobileNav :open="mobileMenuOpen" @close="closeMenu" />
   </header>
 </template>

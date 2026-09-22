@@ -21,7 +21,9 @@ export interface SiteConfig {
   socialLinks: Array<{ platform: string; url: string }>
   navigation: {
     primary: Array<{ label: string; to: string }>
-    footer?: Array<{ label: string; to: string }>
+    // Grouped columns for the footer (distinct from the flat primary nav)
+    // — e.g. a "Company" column and a "Products" column.
+    footerColumns?: Array<{ title: string; links: Array<{ label: string; to: string }> }>
   }
 }
 
@@ -50,6 +52,31 @@ export const siteConfig: SiteConfig = {
       { label: 'Products', to: '/products' },
       { label: 'Case Studies', to: '/case-studies' },
       { label: 'About', to: '/about' }
+    ],
+    // Footer columns. Product names/routes are the four confirmed Natro
+    // products only — no descriptions, capabilities, or other content
+    // attached (see docs/CONTENT_ARCHITECTURE.md §4 — that stays empty
+    // until confirmed).
+    footerColumns: [
+      {
+        title: 'Company',
+        links: [
+          { label: 'Solutions', to: '/solutions' },
+          { label: 'Industries', to: '/industries' },
+          { label: 'Products', to: '/products' },
+          { label: 'Case Studies', to: '/case-studies' },
+          { label: 'About', to: '/about' }
+        ]
+      },
+      {
+        title: 'Products',
+        links: [
+          { label: 'Natro Dental', to: '/products/natro-dental' },
+          { label: 'Natro Manufacturing', to: '/products/natro-manufacturing' },
+          { label: 'Natro Finance', to: '/products/natro-finance' },
+          { label: 'Natro POS', to: '/products/natro-pos-retail' }
+        ]
+      }
     ]
   }
 }
