@@ -1,7 +1,8 @@
 <script setup lang="ts">
 // Homepage. Header and footer come from layouts/default.vue. Sections so
-// far: Hero (8D), Business Problem Selector (8E). Later stages add more
-// sections here in the order defined by docs/HOMEPAGE_SPEC.md §20.
+// far: Hero (8D), Business Problem Selector (8E), Solutions (8F). Later
+// stages add more sections here in the order defined by
+// docs/HOMEPAGE_SPEC.md §20.
 useSeo({
   title: 'Trigon Apex | Software Solutions for Business Growth',
   description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
@@ -24,4 +25,5 @@ useSeo({
 <template>
   <Hero />
   <BusinessProblemSelector />
+  <Solutions />
 </template>
