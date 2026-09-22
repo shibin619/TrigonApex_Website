@@ -20,11 +20,14 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="problem-selector-heading">
+  <SectionContainer as="section" aria-labelledby="problem-selector-heading" spacing="compact" class="bg-elevated">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
-          <h2 id="problem-selector-heading" class="text-h2 font-semibold tracking-tight text-highlighted">
+          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+            Business Diagnostic
+          </span>
+          <h2 id="problem-selector-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
             What&rsquo;s Holding Your Business Back?
           </h2>
           <p class="mt-4 text-body-lg text-muted">
@@ -44,7 +47,7 @@ useFadeIn(contentRef)
         <div
           role="group"
           aria-label="Business problem categories"
-          class="mt-10 flex flex-col divide-y divide-default overflow-hidden rounded-(--radius-md) border border-default md:flex-row md:divide-x md:divide-y-0"
+          class="mt-10 flex flex-col divide-y divide-default overflow-hidden rounded-(--radius-md) border border-default bg-default md:flex-row md:divide-x md:divide-y-0"
         >
           <button
             v-for="problem in businessProblems"
@@ -52,10 +55,10 @@ useFadeIn(contentRef)
             type="button"
             :aria-pressed="activeId === problem.id"
             :aria-label="problem.ariaLabel"
-            class="motion-safe:transition-colors motion-safe:duration-(--duration-fast) flex flex-1 items-center gap-3 p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary md:flex-col md:items-start md:gap-4 md:p-5"
+            class="relative motion-safe:transition-colors motion-safe:duration-(--duration-fast) flex flex-1 items-center gap-3 p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary md:flex-col md:items-start md:gap-4 md:p-5 md:before:absolute md:before:inset-x-0 md:before:top-0 md:before:h-0.5 md:before:content-['']"
             :class="activeId === problem.id
-              ? 'bg-brand-50 text-brand-500'
-              : 'text-default hover:bg-elevated hover:text-brand-500'"
+              ? 'bg-brand-50 text-brand-500 md:before:bg-brand-500'
+              : 'text-default hover:bg-elevated hover:text-brand-500 md:before:bg-transparent'"
             @click="selectProblem(problem.id, problem.solutionId)"
           >
             <span aria-hidden="true">

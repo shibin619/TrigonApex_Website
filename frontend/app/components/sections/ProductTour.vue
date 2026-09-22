@@ -43,14 +43,17 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer id="product-tour" as="section" aria-labelledby="product-tour-heading" class="scroll-mt-20">
+  <SectionContainer id="product-tour" as="section" aria-labelledby="product-tour-heading" class="scroll-mt-20 bg-navy-950">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
-          <h2 id="product-tour-heading" class="text-h2 font-semibold tracking-tight text-highlighted">
+          <span class="text-caption font-semibold tracking-widest text-brand-200 uppercase">
+            Product Tour
+          </span>
+          <h2 id="product-tour-heading" class="mt-3 text-h2 font-semibold tracking-tight text-white">
             Don&rsquo;t Just Read About It. Try It.
           </h2>
-          <p class="mt-4 text-body-lg text-muted">
+          <p class="mt-4 text-body-lg text-slate-200">
             See what your business could run on.
           </p>
         </div>
@@ -59,7 +62,7 @@ useFadeIn(contentRef)
           <template #content>
             <div class="space-y-8">
               <div>
-                <h3 class="text-caption font-semibold tracking-widest text-muted uppercase">
+                <h3 class="text-caption font-semibold tracking-widest text-slate-400 uppercase">
                   Choose a Product
                 </h3>
                 <div role="group" aria-label="Natro products" class="mt-3 flex flex-wrap gap-2">
@@ -68,10 +71,10 @@ useFadeIn(contentRef)
                     :key="product.id"
                     type="button"
                     :aria-pressed="selectedProductId === product.id"
-                    class="rounded-(--radius-md) border border-default px-3 py-2 text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                    class="rounded-(--radius-md) border px-3 py-2 text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white"
                     :class="selectedProductId === product.id
-                      ? 'border-brand-300 bg-brand-50 text-brand-500'
-                      : 'text-default hover:border-brand-300 hover:text-brand-500'"
+                      ? 'border-brand-500 bg-brand-500 text-white'
+                      : 'border-white/15 text-slate-200 hover:border-brand-300 hover:text-white'"
                     @click="selectProduct(product.id)"
                   >
                     {{ product.name }}
@@ -80,7 +83,7 @@ useFadeIn(contentRef)
               </div>
 
               <div>
-                <h3 class="text-caption font-semibold tracking-widest text-muted uppercase">
+                <h3 class="text-caption font-semibold tracking-widest text-slate-400 uppercase">
                   Tour Steps
                 </h3>
                 <div
@@ -93,10 +96,10 @@ useFadeIn(contentRef)
                     :key="step.id"
                     type="button"
                     :aria-pressed="selectedStepId === step.id"
-                    class="shrink-0 rounded-(--radius-md) px-3 py-2 text-left text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary md:shrink"
+                    class="shrink-0 rounded-(--radius-md) px-3 py-2 text-left text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white md:shrink"
                     :class="selectedStepId === step.id
-                      ? 'bg-brand-50 font-semibold text-brand-500'
-                      : 'text-default hover:text-brand-500'"
+                      ? 'bg-white/10 font-semibold text-white'
+                      : 'text-slate-300 hover:text-white'"
                     @click="selectStep(step.id)"
                   >
                     {{ step.label }}
@@ -107,7 +110,7 @@ useFadeIn(contentRef)
           </template>
 
           <template #visual>
-            <div class="overflow-hidden rounded-(--radius-lg) border border-default bg-default shadow-sm">
+            <div class="overflow-hidden rounded-(--radius-lg) border border-default bg-default shadow-lg">
               <div class="flex items-center justify-between border-b border-default bg-elevated px-4 py-3">
                 <div>
                   <p class="text-caption font-semibold tracking-widest text-brand-500 uppercase">

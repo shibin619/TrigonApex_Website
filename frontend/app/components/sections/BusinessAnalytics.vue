@@ -68,9 +68,11 @@ useFadeIn(contentRef)
           </span>
         </div>
 
-        <!-- Interactive exploration: pick a business activity, see which
-             insight it conceptually feeds. -->
-        <div class="mt-12 md:mt-16">
+        <!-- Interactive exploration lives in one cohesive panel — a
+             single bordered surface groups the selector, the connection
+             sentence, the insights, and the chart as one system, rather
+             than four loose floating pieces. -->
+        <div class="mt-10 rounded-(--radius-lg) border border-default bg-elevated p-6 md:mt-12 md:p-8">
           <h3 class="text-caption font-semibold tracking-widest text-muted uppercase">
             Business Activity
           </h3>
@@ -80,7 +82,7 @@ useFadeIn(contentRef)
               :key="activity.id"
               type="button"
               :aria-pressed="selectedActivityId === activity.id"
-              class="rounded-(--radius-md) border border-default px-3 py-2 text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+              class="rounded-(--radius-md) border border-default bg-default px-3 py-2 text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
               :class="selectedActivityId === activity.id
                 ? 'border-brand-300 bg-brand-50 text-brand-500'
                 : 'text-default hover:border-brand-300 hover:text-brand-500'"
@@ -96,37 +98,51 @@ useFadeIn(contentRef)
             insights.
           </p>
 
-          <h3 class="mt-8 text-caption font-semibold tracking-widest text-muted uppercase">
-            Insights
-          </h3>
-          <ResponsiveGrid :cols="4" gap="sm" class="mt-3">
-            <BaseCard
-              v-for="highlight in analyticsHighlights"
-              :key="highlight.id"
-              variant="bordered"
-              class="motion-safe:transition-colors motion-safe:duration-(--duration-fast)"
-              :class="highlight.id === activeHighlight.id ? 'border-brand-300 bg-brand-50' : ''"
-            >
-              <p class="text-body font-semibold text-highlighted">{{ highlight.title }}</p>
-              <p class="mt-1 text-body-sm text-muted">{{ highlight.description }}</p>
-            </BaseCard>
-          </ResponsiveGrid>
-        </div>
-
-        <!-- Conceptual chart. Abstract/unlabeled per docs/HOMEPAGE_SPEC.md
-             §11 — the "Illustrative example" caption is non-negotiable. -->
-        <div class="mt-10 max-w-md md:mt-12">
-          <div class="flex h-20 items-end gap-2" aria-hidden="true">
-            <div
-              v-for="(height, i) in chartBarHeights"
-              :key="i"
-              class="w-full rounded-t bg-brand-200"
-              :style="{ height }"
-            />
+          <div class="mt-6 border-t border-default pt-6">
+            <h3 class="text-caption font-semibold tracking-widest text-muted uppercase">
+              Insights
+            </h3>
+            <!-- Only the active insight gets a card treatment — the other
+                 three stay as plain text so this doesn't read as four
+                 identical boxes. -->
+            <div class="mt-3 grid grid-cols-1 gap-1 sm:grid-cols-2 lg:grid-cols-4">
+              <div
+                v-for="highlight in analyticsHighlights"
+                :key="highlight.id"
+                class="rounded-(--radius-md) border p-4 motion-safe:transition-colors motion-safe:duration-(--duration-fast)"
+                :class="highlight.id === activeHighlight.id
+                  ? 'border-brand-300 bg-default shadow-sm'
+                  : 'border-transparent'"
+              >
+                <p
+                  class="text-body font-semibold"
+                  :class="highlight.id === activeHighlight.id ? 'text-brand-500' : 'text-highlighted'"
+                >
+                  {{ highlight.title }}
+                </p>
+                <p class="mt-1 text-body-sm text-muted">{{ highlight.description }}</p>
+              </div>
+            </div>
           </div>
-          <p class="mt-2 text-caption text-muted">
-            Illustrative example &mdash; not real business data.
-          </p>
+
+          <!-- Conceptual chart. Abstract/unlabeled per
+               docs/HOMEPAGE_SPEC.md §11 — the "Illustrative example"
+               caption is non-negotiable. -->
+          <div class="mt-6 border-t border-default pt-6">
+            <div class="flex h-20 max-w-md items-end gap-2" aria-hidden="true">
+              <div
+                v-for="(height, i) in chartBarHeights"
+                :key="i"
+                class="relative w-full rounded-t bg-brand-100"
+                :style="{ height }"
+              >
+                <span class="absolute -top-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-brand-500" />
+              </div>
+            </div>
+            <p class="mt-3 text-caption text-muted">
+              Illustrative example &mdash; not real business data.
+            </p>
+          </div>
         </div>
       </div>
     </PageContainer>

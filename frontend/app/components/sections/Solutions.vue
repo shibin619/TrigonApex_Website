@@ -20,7 +20,10 @@ useFadeIn(contentRef)
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
-          <h2 id="solutions-heading" class="text-h2 font-semibold tracking-tight text-highlighted">
+          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+            Solutions
+          </span>
+          <h2 id="solutions-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
             How We Solve It
           </h2>
           <p class="mt-4 text-body-lg text-muted">
@@ -30,12 +33,12 @@ useFadeIn(contentRef)
           </p>
         </div>
 
-        <div class="mt-12 divide-y divide-default border-y border-default md:mt-16">
+        <div class="mt-10 divide-y divide-default border-y border-default md:mt-12">
           <article
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"
             :key="solution.id"
-            class="scroll-mt-24 py-10 md:py-14"
+            class="scroll-mt-24 py-8 md:py-12"
           >
             <div
               class="flex flex-col gap-6 md:flex-row md:items-center md:gap-16"
@@ -65,8 +68,10 @@ useFadeIn(contentRef)
                 </div>
               </div>
 
-              <div class="hidden shrink-0 items-center justify-center text-brand-500 md:flex md:h-28 md:w-28">
-                <SolutionIcon :id="solution.id" />
+              <div class="hidden shrink-0 md:block md:w-48">
+                <div class="flex aspect-square items-center justify-center rounded-(--radius-lg) border border-default bg-elevated p-6 text-brand-500">
+                  <SolutionIcon :id="solution.id" />
+                </div>
               </div>
             </div>
           </article>

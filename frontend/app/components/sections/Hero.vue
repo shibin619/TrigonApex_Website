@@ -82,8 +82,10 @@ onMounted(() => {
 
         <template #visual>
           <!-- aspect-ratio reserves space before the SVG paints, so the
-               Hero causes no layout shift. -->
-          <div class="mx-auto aspect-[6/5] w-full max-w-md">
+               Hero causes no layout shift. Sized larger than the text
+               column's natural width so the diagram reads as the page's
+               visual anchor, not a small decorative afterthought. -->
+          <div class="mx-auto aspect-[6/5] w-full max-w-lg">
             <svg
               ref="visualRef"
               viewBox="0 0 480 400"
@@ -118,12 +120,24 @@ onMounted(() => {
 
               <!-- Hub: the software platform -->
               <circle class="fill-brand-500" cx="240" cy="200" r="30" />
+              <text x="240" y="205" text-anchor="middle" class="fill-white text-[13px] font-semibold">Natro</text>
 
-              <!-- Business-function nodes: customers, operations, data, growth -->
+              <!-- Business-function nodes: customers, operations, data,
+                   growth — labeled so the diagram states the same
+                   Business → Operations → Data → Growth relationship the
+                   supporting paragraph already describes, not just an
+                   abstract shape. -->
               <circle class="hero-visual-node fill-navy-800" cx="110" cy="110" r="16" />
+              <text x="110" y="140" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Customers</text>
+
               <circle class="hero-visual-node fill-white stroke-brand-300" stroke-width="2" cx="370" cy="95" r="18" />
+              <text x="370" y="127" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Operations</text>
+
               <circle class="hero-visual-node fill-accent-ice-400" cx="100" cy="300" r="15" />
+              <text x="100" y="330" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Data</text>
+
               <circle class="hero-visual-node fill-accent-green-500" cx="375" cy="305" r="18" />
+              <text x="375" y="338" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Growth</text>
             </svg>
           </div>
         </template>

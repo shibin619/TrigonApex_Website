@@ -13,11 +13,14 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="industries-heading">
+  <SectionContainer as="section" aria-labelledby="industries-heading" class="bg-brand-50">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
-          <h2 id="industries-heading" class="text-h2 font-semibold tracking-tight text-highlighted">
+          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+            Industries
+          </span>
+          <h2 id="industries-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
             Built for Businesses Like Yours
           </h2>
           <p class="mt-4 text-body-lg text-muted">
@@ -31,9 +34,9 @@ useFadeIn(contentRef)
             v-for="industry in industries"
             :key="industry.id"
             :to="`/industries/${industry.slug}`"
-            class="flex min-h-[44px] items-center gap-3 rounded-(--radius-md) border border-default p-4 text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) motion-safe:ease-(--ease-standard) hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+            class="flex min-h-[44px] flex-col items-center gap-3 rounded-(--radius-lg) border border-default bg-default p-5 text-center text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) motion-safe:ease-(--ease-standard) hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
           >
-            <span class="h-6 w-6 shrink-0" aria-hidden="true">
+            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 p-3 text-brand-500" aria-hidden="true">
               <IndustryIcon :id="industry.id" />
             </span>
             <span class="text-body font-medium">{{ industry.name }}</span>

@@ -17,7 +17,7 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="products-heading">
+  <SectionContainer as="section" aria-labelledby="products-heading" class="bg-elevated">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
@@ -38,9 +38,9 @@ useFadeIn(contentRef)
           <article
             v-for="product in products"
             :key="product.id"
-            class="flex flex-col gap-4 rounded-(--radius-lg) border border-default p-6 sm:flex-row sm:items-start"
+            class="flex flex-col gap-4 rounded-(--radius-lg) border border-default bg-default p-6 sm:flex-row sm:items-start"
           >
-            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-(--radius-md) border border-brand-200 p-3 text-brand-500">
+            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-50 p-3 text-brand-500">
               <NatroProductMark :id="product.id" />
             </div>
 
