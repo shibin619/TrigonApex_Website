@@ -4,4 +4,10 @@ This repository contains the source code for the Trigon Apex Technologies websit
 
 ## Status
 
-This project is in the initial setup phase. Frontend and backend implementation is forthcoming.
+This project is in the initial technical foundation phase. See:
+
+- [`ARCHITECTURE.md`](./ARCHITECTURE.md) — system architecture and technical decisions
+- [`PROJECT_SETUP.md`](./PROJECT_SETUP.md) — setup sequence and open decisions requiring approval
+
+Frontend (`frontend/`, Nuxt 3) and backend (`backend/`, Laravel) application
+code has not been scaffolded yet.
