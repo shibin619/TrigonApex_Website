@@ -1,4 +1,0 @@
-This folder holds page-section components composed from the layout/card/
-button primitives (e.g. a "Solutions overview" section). None exist yet —
-building them means populating real content, which is explicitly out of
-scope for the architecture-only Stage 7. See docs/FRONTEND_ARCHITECTURE.md.

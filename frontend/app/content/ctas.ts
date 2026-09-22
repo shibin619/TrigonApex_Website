@@ -17,6 +17,11 @@ export const ctas: Cta[] = [
   { id: 'explore-solutions', label: 'Explore Solutions', to: '/solutions', style: 'secondary' },
   { id: 'explore-product', label: 'Explore Product', to: '/products', style: 'secondary' },
   { id: 'watch-product-tour', label: 'Watch Product Tour', to: '/products', style: 'secondary' },
+  // In-page anchor to the future Product Tour homepage section (Stage 8I —
+  // docs/HOMEPAGE_SPEC.md §10/§20). The target id doesn't exist yet; this
+  // is the stable id that section will use once built, per Stage 8D's
+  // "future-proof the anchor" instruction.
+  { id: 'see-how-it-works', label: 'See How It Works', to: '#product-tour', style: 'secondary' },
   { id: 'try-interactive-demo', label: 'Try Interactive Demo', to: '/products', style: 'secondary' },
   { id: 'request-consultation', label: 'Request Consultation', to: '/contact', style: 'primary' },
   { id: 'request-product-demo', label: 'Request Product Demo', to: '/contact', style: 'primary' }

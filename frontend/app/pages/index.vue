@@ -1,21 +1,26 @@
 <script setup lang="ts">
-// Placeholder only — confirms the Nuxt 4 + Nuxt UI + Tailwind CSS 4 toolchain
-// boots correctly. No real homepage design or content yet (Stage 7).
+// Homepage. Header and footer come from layouts/default.vue — this page
+// renders only the Hero (Stage 8D). Later stages add sections here in the
+// order defined by docs/HOMEPAGE_SPEC.md §20.
+useSeo({
+  title: 'Trigon Apex | Software Solutions for Business Growth',
+  description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+  canonical: 'https://trigonapex.in/',
+  og: {
+    title: 'Trigon Apex | Software Solutions for Business Growth',
+    description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+    image: null
+  },
+  twitter: {
+    title: 'Trigon Apex | Software Solutions for Business Growth',
+    description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+    image: null
+  },
+  robots: 'index, follow',
+  schemaType: 'Organization'
+})
 </script>
 
 <template>
-  <div class="flex min-h-screen items-center justify-center p-8">
-    <UCard class="max-w-md text-center">
-      <template #header>
-        <h1 class="text-lg font-semibold">
-          Trigon Apex Technologies
-        </h1>
-      </template>
-
-      <p class="text-sm text-muted">
-        Frontend scaffold running (Nuxt 4 · Nuxt UI · Tailwind CSS 4).
-        Homepage design and content are not built yet.
-      </p>
-    </UCard>
-  </div>
+  <Hero />
 </template>
