@@ -1,8 +1,9 @@
 <script setup lang="ts">
 // Homepage. Header and footer come from layouts/default.vue. Sections so
 // far: Hero (8D), Business Problem Selector (8E), Solutions (8F),
-// Industries (8G), Natro Products (8H). Later stages add more sections
-// here in the order defined by docs/HOMEPAGE_SPEC.md §20.
+// Industries (8G), Natro Products (8H), Product Tour (8I). Later stages
+// add more sections here in the order defined by
+// docs/HOMEPAGE_SPEC.md §20.
 useSeo({
   title: 'Trigon Apex | Software Solutions for Business Growth',
   description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
@@ -28,4 +29,5 @@ useSeo({
   <Solutions />
   <Industries />
   <Products />
+  <ProductTour />
 </template>

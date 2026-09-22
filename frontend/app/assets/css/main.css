@@ -21,3 +21,30 @@
     transition: none;
   }
 }
+
+/*
+ * Crossfade for the Product Tour's preview panel (components/sections/
+ * ProductTour.vue) when the selected product or step changes. Vue
+ * <Transition name="tour-preview"> hooks these classes.
+ */
+.tour-preview-enter-active,
+.tour-preview-leave-active {
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.tour-preview-enter-from,
+.tour-preview-leave-to {
+  opacity: 0;
+}
+
+.tour-preview-leave-active {
+  position: absolute;
+  inset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-preview-enter-active,
+  .tour-preview-leave-active {
+    transition: none;
+  }
+}
