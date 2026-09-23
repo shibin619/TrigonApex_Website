@@ -1,21 +1,25 @@
 <script setup lang="ts">
-// Homepage. Header and footer come from layouts/default.vue. Sections so
-// far: Hero (8D), Business Problem Selector (8E), Solutions (8F),
-// Industries (8G), Natro Products (8H), Product Tour (8I), Business
-// Analytics (8J). Later stages add more sections here in the order
-// defined by docs/HOMEPAGE_SPEC.md §20.
+// Homepage. Header and footer come from layouts/default.vue.
+//
+// Section order follows the full information-architecture pass:
+// Hero → Trust → What We Do (Solutions) → Business Challenges (Problem
+// Selector) → Industries → Natro Products → Product Experience (Product
+// Tour, with Business Analytics kept immediately adjacent rather than as
+// a separate standalone chart section) → Our Work (Case Studies) → Why
+// Trigon Apex → How We Work → Testimonials (renders nothing until an
+// approved testimonial exists) → FAQ → Final CTA.
 useSeo({
-  title: 'Trigon Apex | Software Solutions for Business Growth',
-  description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+  title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
+  description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
   canonical: 'https://trigonapex.in/',
   og: {
-    title: 'Trigon Apex | Software Solutions for Business Growth',
-    description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+    title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
+    description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
     image: null
   },
   twitter: {
-    title: 'Trigon Apex | Software Solutions for Business Growth',
-    description: 'Trigon Apex builds software systems that help businesses acquire customers, improve operations, understand data, and scale.',
+    title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
+    description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
     image: null
   },
   robots: 'index, follow',
@@ -25,10 +29,17 @@ useSeo({
 
 <template>
   <Hero />
-  <BusinessProblemSelector />
+  <TrustStrip />
   <Solutions />
+  <BusinessProblemSelector />
   <Industries />
   <Products />
   <ProductTour />
   <BusinessAnalytics />
+  <CaseStudies />
+  <WhyTrigonApex />
+  <HowWeWork />
+  <Testimonials />
+  <Faq />
+  <FinalCta />
 </template>
