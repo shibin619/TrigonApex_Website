@@ -1,15 +1,15 @@
 /**
- * Testimonials content — implements the `Testimonial` shape from
- * docs/CONTENT_ARCHITECTURE.md §7.
+ * Testimonial shape — implements docs/CONTENT_ARCHITECTURE.md §7.
  *
- * Governance rule (§7/§15): a testimonial must never render on the site
- * unless `permissionStatus === 'approved'`. No testimonials are confirmed
- * or permission-cleared yet, so this ships as an empty, typed array —
- * never a fabricated quote or a placeholder that could be mistaken for a
- * real one. components/sections/Testimonials.vue reads this array and
- * renders nothing at all while it stays empty (per
- * docs/HOMEPAGE_SPEC.md §13: "an absent section reads as intentional; a
- * visibly empty one reads as unfinished").
+ * Testimonials are no longer static content: they're uploaded through the
+ * admin portal (/admin/testimonials) and published immediately, backed by
+ * the `testimonials` table in the Laravel API. This file now only holds
+ * the shared TypeScript shape — components/sections/Testimonials.vue
+ * fetches real data from GET /api/v1/testimonials, which itself only ever
+ * returns permission-approved rows (enforced server-side, not by the
+ * frontend). See docs/HOMEPAGE_SPEC.md §13: an absent section reads as
+ * intentional, so the section still renders nothing while no testimonial
+ * has been published yet.
  */
 
 export interface Testimonial {
@@ -17,15 +17,9 @@ export interface Testimonial {
   clientName: string
   photo: { src: string; alt: string } | null
   company: string
-  designation: string
-  industry: string
+  designation: string | null
+  industry: string | null
   testimonial: string
   relatedCaseStudy: string | null
   permissionStatus: 'pending' | 'approved' | 'expired'
-}
-
-export const testimonials: Testimonial[] = []
-
-export function getApprovedTestimonials(): Testimonial[] {
-  return testimonials.filter((testimonial) => testimonial.permissionStatus === 'approved')
 }

@@ -48,8 +48,13 @@ export default defineNuxtConfig({
   // Example of the hybrid rendering approach locked in ARCHITECTURE.md §5:
   // static/prerendered marketing pages vs. SSR for API-backed pages.
   // Expand per-route as real pages are added.
+  //
+  // /admin/** is rendered client-only: the admin session token lives only
+  // in localStorage (no cookie/SSR-shared auth state), and these pages are
+  // an internal tool, not marketing content that needs SSR/SEO.
   routeRules: {
-    '/': { prerender: true }
+    '/': { prerender: true },
+    '/admin/**': { ssr: false }
   },
 
   compatibilityDate: '2026-06-30'
