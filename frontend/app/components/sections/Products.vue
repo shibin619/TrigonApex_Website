@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
+import { getProductTourPreview } from '~/content/product-tour'
 
-// Natro's homepage introduction. A plain, equal 2x2 grid (not four
-// identical icon/title/paragraph/button cards) — a shared "Natro" eyebrow
-// at the section level and again as a small per-item badge is what carries
-// the "one product family" identity, not a screenshot or fabricated
-// dashboard (none exist yet, per docs/HOMEPAGE_SPEC.md §9's "no invented
-// capabilities" rule). No product is visually dominant; the grid, badge,
-// and mark frame are identical across all four.
+// Four large product rows, not four icon/text/button cards. Each gets a
+// real interface mockup (see ProductInterfacePreview.vue) reusing the
+// same nav-item content already defined for the Product Tour, so the
+// product's "identity" here and its interactive preview later say the
+// same thing rather than inventing separate copy.
 const exploreProduct = getCta('explore-product')
 const viewAllProducts = getCta('view-all-products')
 
@@ -17,7 +16,7 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="products-heading" class="bg-elevated">
+  <SectionContainer as="section" aria-labelledby="products-heading">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
@@ -34,30 +33,38 @@ useFadeIn(contentRef)
           </p>
         </div>
 
-        <ResponsiveGrid :cols="2" gap="lg" class="mt-10 md:mt-12">
+        <div class="mt-12 md:mt-16">
           <article
-            v-for="product in products"
+            v-for="(product, index) in products"
             :key="product.id"
-            class="flex flex-col gap-4 rounded-(--radius-lg) border border-default bg-default p-6 sm:flex-row sm:items-start"
+            class="border-t border-default py-12 last:border-b md:py-16"
           >
-            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-50 p-3 text-brand-500">
-              <NatroProductMark :id="product.id" />
-            </div>
+            <div
+              class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center lg:gap-12"
+              :class="index % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''"
+            >
+              <div class="lg:col-span-5">
+                <span class="text-caption font-medium tracking-wide text-muted uppercase">Natro</span>
+                <h3 class="mt-1 text-h3 font-semibold tracking-tight text-highlighted">
+                  {{ product.name }}
+                </h3>
+                <p class="mt-3 max-w-sm text-body text-default">
+                  {{ product.shortDescription }}
+                </p>
+                <AppButton v-if="exploreProduct" variant="text" :to="`/products/${product.slug}`" class="mt-4 px-0">
+                  {{ exploreProduct.label }}
+                </AppButton>
+              </div>
 
-            <div>
-              <span class="text-caption font-medium tracking-wide text-muted uppercase">Natro</span>
-              <h3 class="mt-1 text-h4 font-semibold tracking-tight text-highlighted">
-                {{ product.name }}
-              </h3>
-              <p class="mt-2 text-body text-default">
-                {{ product.shortDescription }}
-              </p>
-              <AppButton v-if="exploreProduct" variant="text" :to="`/products/${product.slug}`" class="mt-3 px-0">
-                {{ exploreProduct.label }}
-              </AppButton>
+              <div class="lg:col-span-7">
+                <ProductInterfacePreview
+                  :name="product.name"
+                  :nav-items="getProductTourPreview(product.id)?.navItems ?? []"
+                />
+              </div>
             </div>
           </article>
-        </ResponsiveGrid>
+        </div>
 
         <div class="mt-10 flex justify-center md:mt-12">
           <AppButton v-if="viewAllProducts" variant="outline" :to="viewAllProducts.to">

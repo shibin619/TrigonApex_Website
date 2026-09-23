@@ -28,6 +28,9 @@ export interface Solution {
   relatedIndustries: string[]
   relatedProducts: string[]
   cta: string
+  // Three-stage conceptual flow used by the homepage Solutions visual —
+  // generic process stages, not a claim about specific product features.
+  flow: [string, string, string]
 }
 
 export const solutions: Solution[] = [
@@ -45,7 +48,8 @@ export const solutions: Solution[] = [
     ],
     relatedIndustries: [],
     relatedProducts: [],
-    cta: 'talk-to-us'
+    cta: 'talk-to-us',
+    flow: ['Customer', 'Follow-up', 'Opportunity']
   },
   {
     id: 'business-management',
@@ -61,7 +65,8 @@ export const solutions: Solution[] = [
     ],
     relatedIndustries: [],
     relatedProducts: [],
-    cta: 'talk-to-us'
+    cta: 'talk-to-us',
+    flow: ['Process', 'Workflow', 'Operations']
   },
   {
     id: 'automation',
@@ -77,7 +82,8 @@ export const solutions: Solution[] = [
     ],
     relatedIndustries: [],
     relatedProducts: [],
-    cta: 'talk-to-us'
+    cta: 'talk-to-us',
+    flow: ['Manual', 'Automation', 'Completion']
   },
   {
     id: 'business-analytics',
@@ -93,7 +99,8 @@ export const solutions: Solution[] = [
     ],
     relatedIndustries: [],
     relatedProducts: [],
-    cta: 'talk-to-us'
+    cta: 'talk-to-us',
+    flow: ['Data', 'Insight', 'Decision']
   },
   {
     id: 'custom-software',
@@ -109,7 +116,8 @@ export const solutions: Solution[] = [
     ],
     relatedIndustries: [],
     relatedProducts: [],
-    cta: 'talk-to-us'
+    cta: 'talk-to-us',
+    flow: ['Business Need', 'System', 'Scale']
   }
 ]
 

@@ -2,10 +2,10 @@
 import { industries } from '~/content/industries'
 import { getCta } from '~/content/ctas'
 
-// A flat, equal chip grid per docs/HOMEPAGE_SPEC.md §8 — deliberately not
-// giant cards, tabs, or a carousel, and no "featured" industry. Every chip
-// uses the exact same markup/size/color treatment; differentiation comes
-// only from the icon and name, never from layout weight or color.
+// An industry directory, not a grid of eight rounded boxes — a
+// typographic list where every row carries equal weight (same size,
+// same treatment, same divider), and the only feedback on hover/focus is
+// a colour shift plus a revealed arrow, never a box growing or lifting.
 const viewAllIndustries = getCta('view-all-industries')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
@@ -13,7 +13,7 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="industries-heading" class="bg-brand-50">
+  <SectionContainer as="section" aria-labelledby="industries-heading">
     <PageContainer as="div">
       <div ref="contentRef">
         <div class="max-w-2xl">
@@ -29,19 +29,25 @@ useFadeIn(contentRef)
           </p>
         </div>
 
-        <ResponsiveGrid :cols="4" gap="sm" class="mt-10 md:mt-12">
+        <div class="mt-10 grid grid-cols-1 border-t border-default md:mt-12 md:grid-cols-2">
           <NuxtLink
             v-for="industry in industries"
             :key="industry.id"
             :to="`/industries/${industry.slug}`"
-            class="flex min-h-[44px] flex-col items-center gap-3 rounded-(--radius-lg) border border-default bg-default p-5 text-center text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) motion-safe:ease-(--ease-standard) hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+            class="group flex items-center gap-4 border-b border-default py-5 text-highlighted motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary md:py-6 md:odd:pr-8 md:even:pl-8"
           >
-            <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand-50 p-3 text-brand-500" aria-hidden="true">
+            <span class="h-6 w-6 shrink-0 text-muted motion-safe:transition-colors motion-safe:duration-(--duration-fast) group-hover:text-brand-500" aria-hidden="true">
               <IndustryIcon :id="industry.id" />
             </span>
-            <span class="text-body font-medium">{{ industry.name }}</span>
+            <span class="text-h4 font-semibold tracking-tight">{{ industry.name }}</span>
+            <span
+              class="ml-auto text-body opacity-0 motion-safe:transition-opacity motion-safe:duration-(--duration-fast) group-hover:opacity-100 group-focus-visible:opacity-100"
+              aria-hidden="true"
+            >
+              &rarr;
+            </span>
           </NuxtLink>
-        </ResponsiveGrid>
+        </div>
 
         <div class="mt-10 flex justify-center md:mt-12">
           <AppButton v-if="viewAllIndustries" variant="outline" :to="viewAllIndustries.to">

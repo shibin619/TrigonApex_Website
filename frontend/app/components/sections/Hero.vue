@@ -16,9 +16,10 @@ const visualRef = useTemplateRef<SVGSVGElement>('visualRef')
 useFadeIn(contentRef)
 
 // Restrained entrance for the system visual: connecting lines "draw" in
-// and nodes pop in briefly after. Purely decorative motion layered on top
-// of a fully-formed, already-visible SSR-rendered SVG — if this never
-// runs (JS disabled, animation skipped), the visual is still complete.
+// and the interface panels settle into place after. Purely decorative
+// motion layered on top of a fully-formed, already-visible SSR-rendered
+// SVG — if this never runs (JS disabled, animation skipped), the visual
+// is still complete.
 onMounted(() => {
   if (!visualRef.value) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -35,21 +36,15 @@ onMounted(() => {
     })
   })
 
-  const nodes = visualRef.value.querySelectorAll<SVGCircleElement>('.hero-visual-node')
-  gsap.from(nodes, {
+  const panels = visualRef.value.querySelectorAll<SVGGElement>('.hero-visual-panel')
+  gsap.from(panels, {
     opacity: 0,
-    scale: 0.5,
-    transformOrigin: '50% 50%',
-    duration: 0.4,
-    delay: 0.6,
-    stagger: 0.08,
-    ease: 'back.out(1.7)'
+    y: 12,
+    duration: 0.45,
+    delay: 0.3,
+    stagger: 0.15,
+    ease: 'power2.out'
   })
-
-  const fragment = visualRef.value.querySelector<SVGGElement>('.hero-visual-fragment')
-  if (fragment) {
-    gsap.from(fragment, { opacity: 0, y: 8, duration: 0.4, delay: 1, ease: 'power2.out' })
-  }
 })
 </script>
 
@@ -81,10 +76,11 @@ onMounted(() => {
         </template>
 
         <template #visual>
-          <!-- aspect-ratio reserves space before the SVG paints, so the
-               Hero causes no layout shift. Sized larger than the text
-               column's natural width so the diagram reads as the page's
-               visual anchor, not a small decorative afterthought. -->
+          <!-- A small conceptual software ecosystem — three connected
+               interface fragments (Customers → Operations → Data) rather
+               than abstract nodes, resolving into a Decisions → Growth
+               line. aspect-ratio reserves space before the SVG paints, so
+               the Hero causes no layout shift. -->
           <div class="mx-auto aspect-[6/5] w-full max-w-lg">
             <svg
               ref="visualRef"
@@ -93,51 +89,56 @@ onMounted(() => {
               aria-hidden="true"
               focusable="false"
             >
-              <!-- Connections: hub -> four business-function nodes -->
-              <line class="hero-visual-line stroke-brand-200" x1="240" y1="200" x2="110" y2="110" stroke-width="2" />
-              <line class="hero-visual-line stroke-brand-200" x1="240" y1="200" x2="370" y2="95" stroke-width="2" />
-              <line class="hero-visual-line stroke-brand-200" x1="240" y1="200" x2="100" y2="300" stroke-width="2" />
-              <line class="hero-visual-line stroke-brand-200" x1="240" y1="200" x2="375" y2="305" stroke-width="2" />
+              <!-- Platform tag -->
+              <rect x="404" y="12" width="64" height="22" rx="11" class="fill-brand-500" />
+              <text x="436" y="27" text-anchor="middle" class="fill-white text-[11px] font-semibold tracking-wide">NATRO</text>
 
-              <!-- Growth trend: an unlabeled directional mark only — no
-                   axis, no values, not a chart. -->
-              <path
-                class="hero-visual-line stroke-accent-green-500"
-                d="M375,305 Q410,270 428,255"
-                fill="none"
-                stroke-width="2.5"
-              />
-              <polygon class="fill-accent-green-500" points="428,255 417,257 423,266" />
+              <!-- Connections between fragments -->
+              <path class="hero-visual-line stroke-brand-200" d="M101,112 Q180,120 295,130" fill="none" stroke-width="2" />
+              <path class="hero-visual-line stroke-brand-200" d="M295,218 Q220,230 135,240" fill="none" stroke-width="2" />
 
-              <!-- Interface fragment: an abstract wireframe card, no real
-                   text or numbers, near the "operations" node. -->
-              <g class="hero-visual-fragment">
-                <rect x="390" y="40" width="80" height="54" rx="8" class="fill-white stroke-slate-200" stroke-width="1.5" />
-                <rect x="402" y="54" width="40" height="6" rx="3" class="fill-slate-200" />
-                <rect x="402" y="66" width="56" height="6" rx="3" class="fill-slate-200" />
-                <rect x="402" y="78" width="28" height="6" rx="3" class="fill-brand-300" />
+              <!-- Decisions → Growth -->
+              <path class="hero-visual-line stroke-accent-green-500" d="M135,328 Q280,378 383,354" fill="none" stroke-width="2.5" />
+              <polygon class="fill-accent-green-500" points="383,354 371,352 375,363" />
+              <text x="200" y="368" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Decisions</text>
+              <text x="392" y="338" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Growth</text>
+
+              <!-- Fragment: Customers -->
+              <g class="hero-visual-panel">
+                <rect x="16" y="24" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
+                <line x1="16" y1="48" x2="186" y2="48" class="stroke-slate-200" stroke-width="1.5" />
+                <circle cx="28" cy="36" r="3" class="fill-slate-300" />
+                <circle cx="38" cy="36" r="3" class="fill-slate-300" />
+                <circle cx="48" cy="36" r="3" class="fill-slate-300" />
+                <text x="60" y="40" class="fill-slate-500 text-[11px] font-semibold">Customers</text>
+                <rect x="28" y="64" width="120" height="8" rx="4" class="fill-slate-100" />
+                <rect x="28" y="80" width="80" height="8" rx="4" class="fill-brand-200" />
               </g>
 
-              <!-- Hub: the software platform -->
-              <circle class="fill-brand-500" cx="240" cy="200" r="30" />
-              <text x="240" y="205" text-anchor="middle" class="fill-white text-[13px] font-semibold">Natro</text>
+              <!-- Fragment: Operations -->
+              <g class="hero-visual-panel">
+                <rect x="210" y="130" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
+                <line x1="210" y1="154" x2="380" y2="154" class="stroke-slate-200" stroke-width="1.5" />
+                <circle cx="222" cy="142" r="3" class="fill-slate-300" />
+                <circle cx="232" cy="142" r="3" class="fill-slate-300" />
+                <circle cx="242" cy="142" r="3" class="fill-slate-300" />
+                <text x="254" y="146" class="fill-slate-500 text-[11px] font-semibold">Operations</text>
+                <rect x="222" y="170" width="120" height="8" rx="4" class="fill-slate-100" />
+                <rect x="222" y="186" width="90" height="8" rx="4" class="fill-accent-ice-400" />
+              </g>
 
-              <!-- Business-function nodes: customers, operations, data,
-                   growth — labeled so the diagram states the same
-                   Business → Operations → Data → Growth relationship the
-                   supporting paragraph already describes, not just an
-                   abstract shape. -->
-              <circle class="hero-visual-node fill-navy-800" cx="110" cy="110" r="16" />
-              <text x="110" y="140" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Customers</text>
-
-              <circle class="hero-visual-node fill-white stroke-brand-300" stroke-width="2" cx="370" cy="95" r="18" />
-              <text x="370" y="127" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Operations</text>
-
-              <circle class="hero-visual-node fill-accent-ice-400" cx="100" cy="300" r="15" />
-              <text x="100" y="330" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Data</text>
-
-              <circle class="hero-visual-node fill-accent-green-500" cx="375" cy="305" r="18" />
-              <text x="375" y="338" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Growth</text>
+              <!-- Fragment: Data -->
+              <g class="hero-visual-panel">
+                <rect x="50" y="240" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
+                <line x1="50" y1="264" x2="220" y2="264" class="stroke-slate-200" stroke-width="1.5" />
+                <circle cx="62" cy="252" r="3" class="fill-slate-300" />
+                <circle cx="72" cy="252" r="3" class="fill-slate-300" />
+                <circle cx="82" cy="252" r="3" class="fill-slate-300" />
+                <text x="94" y="256" class="fill-slate-500 text-[11px] font-semibold">Data</text>
+                <rect x="62" y="292" width="10" height="20" rx="2" class="fill-brand-200" />
+                <rect x="78" y="282" width="10" height="30" rx="2" class="fill-brand-300" />
+                <rect x="94" y="298" width="10" height="14" rx="2" class="fill-brand-200" />
+              </g>
             </svg>
           </div>
         </template>

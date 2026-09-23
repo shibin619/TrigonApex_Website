@@ -24,6 +24,9 @@ export interface AnalyticsHighlight {
   category: 'business-data' | 'kpi' | 'report' | 'trend' | 'operational-insight' | 'decision-support'
   title: string
   description: string
+  // The kind of decision this insight supports — completes the Activity
+  // → Data → Insight → Decision chain the homepage visual states.
+  decision: string
   relatedProduct: string | null
   relatedIndustry: string | null
 }
@@ -41,6 +44,7 @@ export const analyticsHighlights: AnalyticsHighlight[] = [
     category: 'operational-insight',
     title: 'Activity',
     description: 'What’s happening across the business right now.',
+    decision: 'Where to focus attention today.',
     relatedProduct: null,
     relatedIndustry: null
   },
@@ -49,6 +53,7 @@ export const analyticsHighlights: AnalyticsHighlight[] = [
     category: 'trend',
     title: 'Trends',
     description: 'Patterns that emerge over time.',
+    decision: 'Whether current patterns are moving the right way.',
     relatedProduct: null,
     relatedIndustry: null
   },
@@ -57,6 +62,7 @@ export const analyticsHighlights: AnalyticsHighlight[] = [
     category: 'kpi',
     title: 'Performance',
     description: 'How operations are actually running.',
+    decision: 'Whether operations are running as intended.',
     relatedProduct: null,
     relatedIndustry: null
   },
@@ -65,6 +71,7 @@ export const analyticsHighlights: AnalyticsHighlight[] = [
     category: 'decision-support',
     title: 'Opportunities',
     description: 'Where the business could improve.',
+    decision: 'Where to prioritize improvement next.',
     relatedProduct: null,
     relatedIndustry: null
   }
