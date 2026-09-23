@@ -12,6 +12,15 @@ function industryName(industryId: string) {
   return industries.find((industry) => industry.id === industryId)?.name ?? industryId
 }
 
+// Rotating panel treatment so the three studies read as distinct rather
+// than three copies of the same gray box — still just one accent color
+// per panel, never a rainbow.
+const panelStyles = [
+  { bg: 'bg-brand-50', icon: 'text-brand-500', dot: 'bg-brand-300' },
+  { bg: 'bg-accent-ice-400/10', icon: 'text-accent-ice-600', dot: 'bg-accent-ice-400' },
+  { bg: 'bg-accent-green-500/10', icon: 'text-accent-green-700', dot: 'bg-accent-green-500' }
+]
+
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
 </script>
@@ -72,8 +81,21 @@ useFadeIn(contentRef)
               </div>
 
               <div class="lg:col-span-5">
-                <div class="flex aspect-[4/3] items-center justify-center rounded-(--radius-lg) border border-default bg-elevated">
-                  <span class="h-16 w-16 text-brand-500" aria-hidden="true">
+                <div
+                  class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-(--radius-lg)"
+                  :class="panelStyles[index % panelStyles.length]!.bg"
+                >
+                  <!-- Decorative texture only — a loose scatter of dots
+                       and rings suggesting "data points", not a chart
+                       claiming to represent anything real. -->
+                  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+                    <span class="absolute top-8 left-8 h-2 w-2 rounded-full opacity-40" :class="panelStyles[index % panelStyles.length]!.dot" />
+                    <span class="absolute top-16 right-12 h-3 w-3 rounded-full opacity-30" :class="panelStyles[index % panelStyles.length]!.dot" />
+                    <span class="absolute bottom-12 left-16 h-2.5 w-2.5 rounded-full opacity-30" :class="panelStyles[index % panelStyles.length]!.dot" />
+                    <span class="absolute right-10 bottom-10 h-16 w-16 rounded-full border opacity-20" :class="panelStyles[index % panelStyles.length]!.dot.replace('bg-', 'border-')" />
+                    <span class="absolute top-1/2 left-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border opacity-10" :class="panelStyles[index % panelStyles.length]!.dot.replace('bg-', 'border-')" />
+                  </div>
+                  <span class="relative h-16 w-16" :class="panelStyles[index % panelStyles.length]!.icon" aria-hidden="true">
                     <IndustryIcon :id="caseStudy.industry" />
                   </span>
                 </div>

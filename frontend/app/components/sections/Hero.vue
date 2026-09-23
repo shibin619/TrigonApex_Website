@@ -80,8 +80,13 @@ onMounted(() => {
                interface fragments (Customers → Operations → Data) rather
                than abstract nodes, resolving into a Decisions → Growth
                line. aspect-ratio reserves space before the SVG paints, so
-               the Hero causes no layout shift. -->
-          <div class="mx-auto aspect-[6/5] w-full max-w-lg">
+               the Hero causes no layout shift. A soft gradient glow behind
+               it gives the panels depth instead of sitting flat on white. -->
+          <div class="relative mx-auto aspect-[6/5] w-full max-w-lg">
+            <div
+              class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,var(--color-brand-100),transparent_65%)]"
+              aria-hidden="true"
+            />
             <svg
               ref="visualRef"
               viewBox="0 0 480 400"
@@ -89,6 +94,12 @@ onMounted(() => {
               aria-hidden="true"
               focusable="false"
             >
+              <defs>
+                <filter id="hero-panel-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#101532" flood-opacity="0.12" />
+                </filter>
+              </defs>
+
               <!-- Platform tag -->
               <rect x="404" y="12" width="64" height="22" rx="11" class="fill-brand-500" />
               <text x="436" y="27" text-anchor="middle" class="fill-white text-[11px] font-semibold tracking-wide">NATRO</text>
@@ -104,31 +115,34 @@ onMounted(() => {
               <text x="392" y="338" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Growth</text>
 
               <!-- Fragment: Customers -->
-              <g class="hero-visual-panel">
+              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
                 <rect x="16" y="24" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
                 <line x1="16" y1="48" x2="186" y2="48" class="stroke-slate-200" stroke-width="1.5" />
                 <circle cx="28" cy="36" r="3" class="fill-slate-300" />
                 <circle cx="38" cy="36" r="3" class="fill-slate-300" />
                 <circle cx="48" cy="36" r="3" class="fill-slate-300" />
                 <text x="60" y="40" class="fill-slate-500 text-[11px] font-semibold">Customers</text>
+                <circle cx="163" cy="36" r="4" class="fill-accent-green-500" />
                 <rect x="28" y="64" width="120" height="8" rx="4" class="fill-slate-100" />
                 <rect x="28" y="80" width="80" height="8" rx="4" class="fill-brand-200" />
               </g>
 
               <!-- Fragment: Operations -->
-              <g class="hero-visual-panel">
+              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
                 <rect x="210" y="130" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
                 <line x1="210" y1="154" x2="380" y2="154" class="stroke-slate-200" stroke-width="1.5" />
                 <circle cx="222" cy="142" r="3" class="fill-slate-300" />
                 <circle cx="232" cy="142" r="3" class="fill-slate-300" />
                 <circle cx="242" cy="142" r="3" class="fill-slate-300" />
                 <text x="254" y="146" class="fill-slate-500 text-[11px] font-semibold">Operations</text>
+                <rect x="336" y="138" width="34" height="14" rx="7" class="fill-accent-ice-400/20" />
+                <text x="353" y="148" text-anchor="middle" class="fill-accent-ice-600 text-[9px] font-semibold">Live</text>
                 <rect x="222" y="170" width="120" height="8" rx="4" class="fill-slate-100" />
                 <rect x="222" y="186" width="90" height="8" rx="4" class="fill-accent-ice-400" />
               </g>
 
               <!-- Fragment: Data -->
-              <g class="hero-visual-panel">
+              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
                 <rect x="50" y="240" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
                 <line x1="50" y1="264" x2="220" y2="264" class="stroke-slate-200" stroke-width="1.5" />
                 <circle cx="62" cy="252" r="3" class="fill-slate-300" />
@@ -136,8 +150,8 @@ onMounted(() => {
                 <circle cx="82" cy="252" r="3" class="fill-slate-300" />
                 <text x="94" y="256" class="fill-slate-500 text-[11px] font-semibold">Data</text>
                 <rect x="62" y="292" width="10" height="20" rx="2" class="fill-brand-200" />
-                <rect x="78" y="282" width="10" height="30" rx="2" class="fill-brand-300" />
-                <rect x="94" y="298" width="10" height="14" rx="2" class="fill-brand-200" />
+                <rect x="78" y="278" width="10" height="34" rx="2" class="fill-accent-ice-400" />
+                <rect x="94" y="286" width="10" height="26" rx="2" class="fill-accent-green-500" />
               </g>
             </svg>
           </div>

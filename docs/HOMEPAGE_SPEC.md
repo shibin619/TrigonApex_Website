@@ -36,37 +36,52 @@ that "must not feel like" list.
 
 ## 2. Visual Direction
 
-### 2.1 Color hierarchy (restrained, not decorative)
+### 2.1 Color hierarchy (revised — richer, post-launch feedback)
 
-The brief's palette (`#4959B3` blue, deep navy/dark shades, white, subtle
-green/ice-blue accents) is a **direction, not a mandate to use everywhere.**
-Proposed hierarchy by usage frequency:
+**Revision note:** the original restrained hierarchy below (<5% combined
+supporting-accent usage, one accent color per component) shipped as
+specified and was reviewed live against the real, content-complete
+homepage — the verdict was that it read as flat and under-designed, not
+premium. The direction was explicitly revised toward more visual richness:
+real color in icon treatment, charts, and case-study imagery; a colored
+connecting spine in Business Analytics; rotating accent-colored panels in
+Case Studies; colored icon chips in "Why Trigon Apex". The percentages
+below are no longer a hard ceiling — green/ice-blue now appear routinely
+as icon-chip backgrounds, chart series, and decorative panel tints, not
+just "small icon accents in two sections."
 
-| Role | Color | Approx. usage share | Where |
-|---|---|---|---|
-| Base surface | White / near-white | ~65–70% | Page backgrounds, card surfaces, default sections |
-| Contrast surface | Deep navy (dark, desaturated — exact value chosen in 8B against WCAG contrast) | ~15–20% | Footer, Final CTA band, occasional full-width contrast sections — never more than 1–2 per page |
-| Brand accent | `#4959B3` | ~5–8% | Primary CTA buttons, active nav state, link hover, key icon accents, focus rings |
-| Supporting accent | Subtle green (growth/positive) and ice-blue (data/analytics) | <5% combined | Small icon accents in the Analytics section and "Why Trigon Apex" only — never as a background fill, never both in the same component |
-| Text/borders | Neutral gray scale | as needed | Body text, borders, muted text — reuses Stage 7's existing neutral token scale |
+What stays fixed from the original direction: still one accent color per
+individual component (never a rainbow card), still no fake data/imagery,
+still majority white/neutral base surface, still navy reserved for 1–2
+contrast bands. What changed: the accent colors are used more liberally
+as fills (chip backgrounds, panel tints, chart bars), not just as text/
+icon strokes.
 
-This mirrors Stage 7's token architecture directly: `#4959B3` becomes the
-real value behind `--color-brand-500` (replacing the Stage 7 `slate`
-placeholder) once 8B implements it; navy/green/ice-blue become new,
-sparingly-used semantic tokens, not replacements for the neutral scale.
-**No exact hex values are chosen for navy/green/ice-blue in this document**
-— the brief describes them qualitatively, and picking precise values
-without a contrast/accessibility pass belongs in 8B, not a UX spec.
+| Role | Color | Where |
+|---|---|---|
+| Base surface | White / near-white | Still the majority of page background — this did not change |
+| Contrast surface | Deep navy | Footer, Final CTA band, Product Tour — never more than 1–2 full-width bands per page |
+| Brand accent | `#4959B3` | Primary CTA buttons, active nav state, link hover, primary icon chips, focus rings |
+| Supporting accent | Green (growth/positive) and ice-blue (data/analytics) | Icon chip fills, chart series, decorative panel tints in Business Analytics, Why Trigon Apex, Case Studies, and product mockups — now a routine part of the palette, not a two-section exception |
+| Text/borders | Neutral gray scale | Body text, borders, muted text |
 
-### 2.2 Explicitly avoided
+`#4959B3` remains `--color-brand-500`; navy/green/ice-blue remain the same
+tokens defined in `tokens.css` — this revision changes how often they're
+used, not what they are.
 
-Gradients (beyond perhaps one subtle two-stop background wash, if any),
-glassmorphism, 3D renders/robots, generic AI illustrations, stock photos of
-developers/laptops, glow effects, multi-colored cards (each card uses at
-most one accent color, usually none), large decorative background shapes,
-and heavy/uniform rounded-corner styling (Stage 7's `--radius-md`/`lg`
-tokens stay modest — no pill-shaped cards, no excessive `rounded-3xl`
-everywhere).
+### 2.2 Explicitly avoided (revised)
+
+Still avoided: glassmorphism, 3D renders/robots, generic AI-illustration
+style, stock photography of any kind (developers/laptops/generic people),
+fabricated data or screenshots, heavy/uniform rounded-corner styling
+(pill-shaped cards, excessive `rounded-3xl`).
+
+**No longer avoided, per the revised direction above:** subtle background
+gradients (e.g. a soft radial glow behind the Hero visual), decorative
+background texture (e.g. dot/ring patterns in Case Studies panels), and
+color fills in icon chips and chart elements. These are used for genuine
+depth/richness, not decoration for its own sake — each one still has to
+pass the test below.
 
 **Test for every section below:** if a visual element doesn't help explain
 the business value, it doesn't ship.

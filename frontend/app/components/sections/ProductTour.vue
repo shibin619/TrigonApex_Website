@@ -37,6 +37,10 @@ const statusClasses: Record<string, string> = {
   Complete: 'bg-brand-100 text-brand-500'
 }
 const chartBarHeights = ['35%', '60%', '48%', '80%', '55%', '70%']
+const overviewCardAccents = ['border-t-brand-500', 'border-t-accent-ice-400', 'border-t-accent-green-500']
+const overviewChartColors = ['bg-brand-200', 'bg-accent-ice-400', 'bg-brand-300', 'bg-accent-green-500', 'bg-brand-200']
+const workflowColumnDots = ['bg-slate-400', 'bg-accent-ice-400', 'bg-accent-green-500']
+const workflowColumnBorders = ['border-l-slate-300', 'border-l-accent-ice-400', 'border-l-accent-green-500']
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -133,9 +137,10 @@ useFadeIn(contentRef)
                     <div v-if="selectedStepId === 'overview'">
                       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div
-                          v-for="card in activePreview.navItems.slice(0, 3)"
+                          v-for="(card, cardIndex) in activePreview.navItems.slice(0, 3)"
                           :key="card"
-                          class="rounded-(--radius-md) border border-default p-4"
+                          class="rounded-(--radius-md) border-t-2 border-default bg-elevated p-4"
+                          :class="overviewCardAccents[cardIndex % overviewCardAccents.length]"
                         >
                           <p class="text-caption text-muted">{{ card }}</p>
                           <div class="mt-2 h-2 w-3/4 rounded-full bg-brand-100" aria-hidden="true" />
@@ -145,7 +150,8 @@ useFadeIn(contentRef)
                         <div
                           v-for="(height, i) in chartBarHeights.slice(0, 5)"
                           :key="i"
-                          class="w-full rounded-t bg-brand-200"
+                          class="w-full rounded-t"
+                          :class="overviewChartColors[i % overviewChartColors.length]"
                           :style="{ height }"
                         />
                       </div>
@@ -153,13 +159,16 @@ useFadeIn(contentRef)
 
                     <div v-else-if="selectedStepId === 'workflow'">
                       <div class="grid grid-cols-3 gap-4">
-                        <div v-for="column in workflowColumns" :key="column">
-                          <p class="text-caption font-medium text-muted">{{ column }}</p>
+                        <div v-for="(column, columnIndex) in workflowColumns" :key="column">
+                          <p class="flex items-center gap-1.5 text-caption font-medium text-muted">
+                            <span class="h-1.5 w-1.5 rounded-full" :class="workflowColumnDots[columnIndex]" aria-hidden="true" />
+                            {{ column }}
+                          </p>
                           <div class="mt-2 space-y-2">
-                            <div class="flex h-10 items-center rounded-(--radius-sm) border border-default bg-elevated px-3 text-caption text-muted">
+                            <div class="flex h-10 items-center rounded-(--radius-sm) border-l-2 bg-elevated px-3 text-caption text-muted" :class="workflowColumnBorders[columnIndex]">
                               Item
                             </div>
-                            <div class="flex h-10 items-center rounded-(--radius-sm) border border-default bg-elevated px-3 text-caption text-muted">
+                            <div class="flex h-10 items-center rounded-(--radius-sm) border-l-2 bg-elevated px-3 text-caption text-muted" :class="workflowColumnBorders[columnIndex]">
                               Item
                             </div>
                           </div>
@@ -198,7 +207,8 @@ useFadeIn(contentRef)
                         <div
                           v-for="(height, i) in chartBarHeights"
                           :key="i"
-                          class="w-full rounded-t bg-brand-200"
+                          class="w-full rounded-t"
+                          :class="overviewChartColors[i % overviewChartColors.length]"
                           :style="{ height }"
                         />
                       </div>
