@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import { getCta } from '~/content/ctas'
-
-gsap.registerPlugin(MotionPathPlugin)
 
 // Copy is verbatim from the Stage 8D brief — the H1 communicates the
 // positioning via line-break/color treatment only (no wording change);
@@ -14,84 +11,33 @@ const exploreSolutions = getCta('explore-solutions')
 const seeHowItWorks = getCta('see-how-it-works')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-const visualRef = useTemplateRef<SVGSVGElement>('visualRef')
+const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
 
 useFadeIn(contentRef)
 
-// Restrained entrance for the system visual: connecting lines "draw" in
-// and the interface panels settle into place after. Purely decorative
-// motion layered on top of a fully-formed, already-visible SSR-rendered
-// SVG — if this never runs (JS disabled, animation skipped), the visual
-// is still complete.
+// A single, confident product-dashboard composition (main card + a
+// smaller peeking card behind it for depth + one floating status badge)
+// rather than a diagram of separate fragments connected by lines — this
+// reads as "premium software product" at a glance instead of asking the
+// visitor to trace small labeled boxes and arrows. Entrance settles the
+// three pieces into place; the only ongoing motion afterward is the
+// background glow breathing very slowly, so it doesn't compete for
+// attention with the copy.
 onMounted(() => {
   if (!visualRef.value) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  const lines = visualRef.value.querySelectorAll<SVGGeometryElement>('.hero-visual-line')
-  lines.forEach((line, i) => {
-    const length = line.getTotalLength()
-    gsap.set(line, { strokeDasharray: length, strokeDashoffset: length })
-    gsap.to(line, {
-      strokeDashoffset: 0,
-      duration: 0.7,
-      delay: 0.2 + i * 0.12,
-      ease: 'power2.out'
-    })
-  })
+  const tl = gsap.timeline({ delay: 0.15 })
+  tl.from('.hero-card-back', { opacity: 0, y: 16, rotate: 12, duration: 0.5, ease: 'power2.out' })
+    .from('.hero-card-front', { opacity: 0, y: 24, duration: 0.55, ease: 'power2.out' }, '-=0.3')
+    .from('.hero-badge', { opacity: 0, scale: 0.6, duration: 0.4, ease: 'back.out(2.2)' }, '-=0.15')
+    .from('.hero-bar', { scaleX: 0, transformOrigin: 'left', duration: 0.5, stagger: 0.06, ease: 'power2.out' }, '-=0.25')
 
-  const panels = visualRef.value.querySelectorAll<SVGGElement>('.hero-visual-panel')
-  gsap.from(panels, {
-    opacity: 0,
-    y: 12,
-    duration: 0.45,
-    delay: 0.3,
-    stagger: 0.15,
-    ease: 'power2.out'
-  })
-
-  // Ambient, looping motion once the entrance settles — a small "data is
-  // moving through this system" cue rather than a static diagram. Kept to
-  // three small dots and a slow badge/glow pulse, all infinite but subtle
-  // (low opacity, gentle easing), never re-triggered by scroll.
-  gsap.delayedCall(1, () => {
-    if (!visualRef.value) return
-
-    visualRef.value.querySelectorAll<SVGPathElement>('.hero-visual-line').forEach((path, i) => {
-      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-      dot.setAttribute('r', '3.5')
-      dot.setAttribute('class', i === 2 ? 'fill-accent-green-500' : 'fill-brand-400')
-      dot.setAttribute('opacity', '0')
-      path.parentElement?.insertBefore(dot, path.nextSibling)
-
-      gsap.to(dot, {
-        opacity: 1,
-        duration: 0.3,
-        delay: i * 0.5,
-        onComplete: () => {
-          gsap.to(dot, {
-            motionPath: { path, align: path, alignOrigin: [0.5, 0.5] },
-            duration: 2.4,
-            repeat: -1,
-            delay: i * 0.5,
-            ease: 'sine.inOut',
-            repeatDelay: 0.6
-          })
-        }
-      })
-    })
-
-    gsap.to('.hero-live-badge', {
-      opacity: 0.5,
-      duration: 1.1,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut'
-    })
-
+  gsap.delayedCall(1.2, () => {
     gsap.to('.hero-visual-glow', {
-      scale: 1.08,
-      opacity: 0.7,
-      duration: 3.5,
+      scale: 1.06,
+      opacity: 0.75,
+      duration: 4,
       repeat: -1,
       yoyo: true,
       ease: 'sine.inOut',
@@ -129,84 +75,77 @@ onMounted(() => {
         </template>
 
         <template #visual>
-          <!-- A small conceptual software ecosystem — three connected
-               interface fragments (Customers → Operations → Data) rather
-               than abstract nodes, resolving into a Decisions → Growth
-               line. aspect-ratio reserves space before the SVG paints, so
-               the Hero causes no layout shift. A soft gradient glow behind
-               it gives the panels depth instead of sitting flat on white. -->
-          <div class="relative mx-auto aspect-[6/5] w-full max-w-lg">
+          <div ref="visualRef" class="relative mx-auto aspect-[5/4] w-full max-w-lg">
             <div
               class="hero-visual-glow absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,var(--color-brand-100),transparent_65%)]"
               aria-hidden="true"
             />
-            <svg
-              ref="visualRef"
-              viewBox="0 0 480 400"
-              class="h-full w-full"
+
+            <!-- Peeking secondary card — depth, not a second thing to read. -->
+            <div
+              class="hero-card-back absolute top-2 right-2 hidden w-44 rotate-6 rounded-(--radius-lg) border border-default bg-default p-4 shadow-lg sm:block sm:w-52"
               aria-hidden="true"
-              focusable="false"
             >
-              <defs>
-                <filter id="hero-panel-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#101532" flood-opacity="0.12" />
-                </filter>
-              </defs>
+              <p class="text-caption font-semibold text-muted">Customer Growth</p>
+              <div class="mt-3 flex h-14 items-end gap-1.5">
+                <div
+                  v-for="(h, i) in [32, 48, 40, 62, 54, 78]"
+                  :key="i"
+                  class="w-full rounded-t bg-accent-green-500/60"
+                  :style="{ height: `${h}%` }"
+                />
+              </div>
+            </div>
 
-              <!-- Platform tag -->
-              <rect x="404" y="12" width="64" height="22" rx="11" class="fill-brand-500" />
-              <text x="436" y="27" text-anchor="middle" class="fill-white text-[11px] font-semibold tracking-wide">NATRO</text>
+            <!-- Primary card — the actual visual anchor. -->
+            <div class="hero-card-front absolute inset-x-0 bottom-0 overflow-hidden rounded-(--radius-xl) border border-default bg-default shadow-xl">
+              <div class="flex items-center gap-1.5 border-b border-default bg-elevated px-4 py-3" aria-hidden="true">
+                <span class="h-2 w-2 rounded-full bg-[#f0625b]" />
+                <span class="h-2 w-2 rounded-full bg-[#f2b029]" />
+                <span class="h-2 w-2 rounded-full bg-accent-green-500" />
+                <span class="ml-2 text-caption font-medium text-muted">Business Overview</span>
+                <span class="ml-auto rounded-full bg-brand-500 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-white">NATRO</span>
+              </div>
 
-              <!-- Connections between fragments -->
-              <path class="hero-visual-line stroke-brand-200" d="M101,112 Q180,120 295,130" fill="none" stroke-width="2" />
-              <path class="hero-visual-line stroke-brand-200" d="M295,218 Q220,230 135,240" fill="none" stroke-width="2" />
+              <div class="flex">
+                <div class="hidden w-28 shrink-0 border-r border-default p-3 sm:block" aria-hidden="true">
+                  <div class="rounded-(--radius-sm) bg-brand-50 px-2 py-1.5 text-caption font-medium text-brand-600">Overview</div>
+                  <div class="px-2 py-1.5 text-caption text-muted">Customers</div>
+                  <div class="px-2 py-1.5 text-caption text-muted">Operations</div>
+                  <div class="px-2 py-1.5 text-caption text-muted">Analytics</div>
+                </div>
 
-              <!-- Decisions → Growth -->
-              <path class="hero-visual-line stroke-accent-green-500" d="M135,328 Q280,378 383,354" fill="none" stroke-width="2.5" />
-              <polygon class="fill-accent-green-500" points="383,354 371,352 375,363" />
-              <text x="200" y="368" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Decisions</text>
-              <text x="392" y="338" text-anchor="middle" class="fill-slate-500 text-[12px] font-medium">Growth</text>
+                <div class="flex-1 space-y-4 p-4" aria-hidden="true">
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="rounded-(--radius-md) border border-default p-3">
+                      <p class="text-caption text-muted">Active Customers</p>
+                      <div class="mt-2 h-1.5 w-3/4 rounded-full bg-brand-200 hero-bar" />
+                    </div>
+                    <div class="rounded-(--radius-md) border border-default p-3">
+                      <p class="text-caption text-muted">Operations</p>
+                      <div class="mt-2 h-1.5 w-1/2 rounded-full bg-accent-ice-400 hero-bar" />
+                    </div>
+                  </div>
+                  <div class="flex h-16 items-end gap-1.5">
+                    <div
+                      v-for="(h, i) in [40, 65, 50, 80, 60, 45, 70]"
+                      :key="i"
+                      class="w-full rounded-t"
+                      :class="[i % 3 === 0 ? 'bg-brand-300' : i % 3 === 1 ? 'bg-accent-ice-400' : 'bg-accent-green-500']"
+                      :style="{ height: `${h}%` }"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
 
-              <!-- Fragment: Customers -->
-              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
-                <rect x="16" y="24" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
-                <line x1="16" y1="48" x2="186" y2="48" class="stroke-slate-200" stroke-width="1.5" />
-                <circle cx="28" cy="36" r="3" class="fill-slate-300" />
-                <circle cx="38" cy="36" r="3" class="fill-slate-300" />
-                <circle cx="48" cy="36" r="3" class="fill-slate-300" />
-                <text x="60" y="40" class="fill-slate-500 text-[11px] font-semibold">Customers</text>
-                <circle cx="163" cy="36" r="4" class="fill-accent-green-500" />
-                <rect x="28" y="64" width="120" height="8" rx="4" class="fill-slate-100" />
-                <rect x="28" y="80" width="80" height="8" rx="4" class="fill-brand-200" />
-              </g>
-
-              <!-- Fragment: Operations -->
-              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
-                <rect x="210" y="130" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
-                <line x1="210" y1="154" x2="380" y2="154" class="stroke-slate-200" stroke-width="1.5" />
-                <circle cx="222" cy="142" r="3" class="fill-slate-300" />
-                <circle cx="232" cy="142" r="3" class="fill-slate-300" />
-                <circle cx="242" cy="142" r="3" class="fill-slate-300" />
-                <text x="254" y="146" class="fill-slate-500 text-[11px] font-semibold">Operations</text>
-                <rect x="336" y="138" width="34" height="14" rx="7" class="hero-live-badge fill-accent-ice-400/20" />
-                <text x="353" y="148" text-anchor="middle" class="hero-live-badge fill-accent-ice-600 text-[9px] font-semibold">Live</text>
-                <rect x="222" y="170" width="120" height="8" rx="4" class="fill-slate-100" />
-                <rect x="222" y="186" width="90" height="8" rx="4" class="fill-accent-ice-400" />
-              </g>
-
-              <!-- Fragment: Data -->
-              <g class="hero-visual-panel" filter="url(#hero-panel-shadow)">
-                <rect x="50" y="240" width="170" height="88" rx="10" class="fill-white stroke-slate-200" stroke-width="1.5" />
-                <line x1="50" y1="264" x2="220" y2="264" class="stroke-slate-200" stroke-width="1.5" />
-                <circle cx="62" cy="252" r="3" class="fill-slate-300" />
-                <circle cx="72" cy="252" r="3" class="fill-slate-300" />
-                <circle cx="82" cy="252" r="3" class="fill-slate-300" />
-                <text x="94" y="256" class="fill-slate-500 text-[11px] font-semibold">Data</text>
-                <rect x="62" y="292" width="10" height="20" rx="2" class="fill-brand-200" />
-                <rect x="78" y="278" width="10" height="34" rx="2" class="fill-accent-ice-400" />
-                <rect x="94" y="286" width="10" height="26" rx="2" class="fill-accent-green-500" />
-              </g>
-            </svg>
+            <!-- Floating status badge, hanging off the card's bottom-left
+                 corner (outside its content, never overlapping it) —
+                 depth + a small "this is live software" cue. -->
+            <div class="hero-badge absolute -bottom-4 left-6 flex items-center gap-1.5 rounded-full border border-default bg-default px-3 py-1.5 shadow-md">
+              <span class="h-2 w-2 rounded-full bg-accent-green-500" aria-hidden="true" />
+              <span class="text-caption font-medium text-highlighted">Live Operations</span>
+            </div>
           </div>
         </template>
       </SplitLayout>
