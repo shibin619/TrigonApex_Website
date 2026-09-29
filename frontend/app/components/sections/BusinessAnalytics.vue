@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { gsap } from 'gsap'
 import { analyticsActivities, analyticsHighlights } from '~/content/business-analytics'
 
 // One explicit progression — Business Activity → Data → Insight →
@@ -25,6 +26,52 @@ const secondarySeries = [22, 34, 40, 48, 58, 60, 70]
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
+
+const chainRef = useTemplateRef<HTMLDivElement>('chainRef')
+
+// The spine "draws" downward and the chart bars grow from 0 as this
+// section scrolls into view — reinforcing the "activity becomes data
+// becomes a decision" narrative with motion, not just static shapes.
+// Separate IntersectionObserver from useFadeIn (which only covers the
+// heading/intro) since this chain sits lower in the section and should
+// animate on its own arrival, not the moment the heading appears.
+onMounted(() => {
+  const el = chainRef.value
+  if (!el) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  const play = () => {
+    const spine = el.querySelector<HTMLElement>('.analytics-spine')
+    const bars = el.querySelectorAll<HTMLElement>('.analytics-bar')
+    const dots = el.querySelectorAll<HTMLElement>('.analytics-trend-dot')
+    const stageIcons = el.querySelectorAll<HTMLElement>('.analytics-stage-icon')
+
+    if (spine) {
+      gsap.set(spine, { transformOrigin: 'top' })
+      gsap.from(spine, { scaleY: 0, duration: 1.1, ease: 'power2.out' })
+    }
+    gsap.from(stageIcons, { scale: 0, duration: 0.4, stagger: 0.15, ease: 'back.out(2)' })
+    gsap.from(bars, { height: 0, duration: 0.7, delay: 0.3, stagger: 0.06, ease: 'power2.out' })
+    gsap.from(dots, { height: 0, duration: 0.7, delay: 0.5, stagger: 0.06, ease: 'power2.out' })
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    play()
+    return
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        play()
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.2 }
+  )
+  observer.observe(el)
+  onBeforeUnmount(() => observer.disconnect())
+})
 </script>
 
 <template>
@@ -48,14 +95,14 @@ useFadeIn(contentRef)
         <!-- The four stages of the chain, walked in order, tied together
              by a colored spine (brand → ice → green) running down the
              left edge — the progression itself is the visual. -->
-        <div class="relative mt-12 pl-8 md:mt-16 md:pl-10">
+        <div ref="chainRef" class="relative mt-12 pl-8 md:mt-16 md:pl-10">
           <div
-            class="absolute top-2 bottom-2 left-[11px] w-px bg-gradient-to-b from-brand-400 via-accent-ice-400 to-accent-green-500 md:left-[15px]"
+            class="analytics-spine absolute top-2 bottom-2 left-[11px] w-px bg-gradient-to-b from-brand-400 via-accent-ice-400 to-accent-green-500 md:left-[15px]"
             aria-hidden="true"
           />
 
           <div class="relative border-t border-default py-8 md:py-10">
-            <span class="absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-brand-500 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
+            <span class="analytics-stage-icon absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-brand-500 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 md:h-4 md:w-4"><path d="M4 4h16v4H4z" /><path d="M4 12h10v8H4z" /><path d="M16 12h4v8h-4z" /></svg>
             </span>
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">01 &mdash; Business Activity</span>
@@ -77,7 +124,7 @@ useFadeIn(contentRef)
           </div>
 
           <div class="relative border-t border-default py-8 md:py-10">
-            <span class="absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-ice-400 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
+            <span class="analytics-stage-icon absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-ice-400 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 md:h-4 md:w-4"><path d="M3 3v18h18" /><path d="M7 15l3-4 3 2 5-6" /></svg>
             </span>
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">02 &mdash; Data</span>
@@ -94,9 +141,9 @@ useFadeIn(contentRef)
               </div>
               <div class="relative mt-4 flex h-28 items-end gap-2.5" aria-hidden="true">
                 <div v-for="(height, i) in primarySeries" :key="i" class="relative h-full flex-1">
-                  <div class="absolute bottom-0 w-full rounded-t bg-brand-200" :style="{ height: `${height}%` }" />
+                  <div class="analytics-bar absolute bottom-0 w-full rounded-t bg-brand-200" :style="{ height: `${height}%` }" />
                   <div
-                    class="absolute bottom-0 left-1/2 w-1.5 -translate-x-1/2 rounded-full bg-accent-green-500"
+                    class="analytics-trend-dot absolute bottom-0 left-1/2 w-1.5 -translate-x-1/2 rounded-full bg-accent-green-500"
                     :style="{ height: `${secondarySeries[i]}%` }"
                   />
                 </div>
@@ -105,7 +152,7 @@ useFadeIn(contentRef)
           </div>
 
           <div class="relative border-t border-default py-8 md:py-10">
-            <span class="absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-ice-600 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
+            <span class="analytics-stage-icon absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-ice-600 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 md:h-4 md:w-4"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>
             </span>
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">03 &mdash; Insight</span>
@@ -118,7 +165,7 @@ useFadeIn(contentRef)
           </div>
 
           <div class="relative border-t border-b border-default py-8 md:py-10">
-            <span class="absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-green-500 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
+            <span class="analytics-stage-icon absolute top-9 -left-8 flex h-6 w-6 items-center justify-center rounded-full bg-accent-green-500 text-white md:-left-10 md:h-8 md:w-8" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 md:h-4 md:w-4"><path d="M20 6L9 17l-5-5" /></svg>
             </span>
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">04 &mdash; Decision</span>

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 import { getCta } from '~/content/ctas'
+
+gsap.registerPlugin(MotionPathPlugin)
 
 // Copy is verbatim from the Stage 8D brief — the H1 communicates the
 // positioning via line-break/color treatment only (no wording change);
@@ -45,6 +48,56 @@ onMounted(() => {
     stagger: 0.15,
     ease: 'power2.out'
   })
+
+  // Ambient, looping motion once the entrance settles — a small "data is
+  // moving through this system" cue rather than a static diagram. Kept to
+  // three small dots and a slow badge/glow pulse, all infinite but subtle
+  // (low opacity, gentle easing), never re-triggered by scroll.
+  gsap.delayedCall(1, () => {
+    if (!visualRef.value) return
+
+    visualRef.value.querySelectorAll<SVGPathElement>('.hero-visual-line').forEach((path, i) => {
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+      dot.setAttribute('r', '3.5')
+      dot.setAttribute('class', i === 2 ? 'fill-accent-green-500' : 'fill-brand-400')
+      dot.setAttribute('opacity', '0')
+      path.parentElement?.insertBefore(dot, path.nextSibling)
+
+      gsap.to(dot, {
+        opacity: 1,
+        duration: 0.3,
+        delay: i * 0.5,
+        onComplete: () => {
+          gsap.to(dot, {
+            motionPath: { path, align: path, alignOrigin: [0.5, 0.5] },
+            duration: 2.4,
+            repeat: -1,
+            delay: i * 0.5,
+            ease: 'sine.inOut',
+            repeatDelay: 0.6
+          })
+        }
+      })
+    })
+
+    gsap.to('.hero-live-badge', {
+      opacity: 0.5,
+      duration: 1.1,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut'
+    })
+
+    gsap.to('.hero-visual-glow', {
+      scale: 1.08,
+      opacity: 0.7,
+      duration: 3.5,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      transformOrigin: 'center'
+    })
+  })
 })
 </script>
 
@@ -84,7 +137,7 @@ onMounted(() => {
                it gives the panels depth instead of sitting flat on white. -->
           <div class="relative mx-auto aspect-[6/5] w-full max-w-lg">
             <div
-              class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,var(--color-brand-100),transparent_65%)]"
+              class="hero-visual-glow absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,var(--color-brand-100),transparent_65%)]"
               aria-hidden="true"
             />
             <svg
@@ -135,8 +188,8 @@ onMounted(() => {
                 <circle cx="232" cy="142" r="3" class="fill-slate-300" />
                 <circle cx="242" cy="142" r="3" class="fill-slate-300" />
                 <text x="254" y="146" class="fill-slate-500 text-[11px] font-semibold">Operations</text>
-                <rect x="336" y="138" width="34" height="14" rx="7" class="fill-accent-ice-400/20" />
-                <text x="353" y="148" text-anchor="middle" class="fill-accent-ice-600 text-[9px] font-semibold">Live</text>
+                <rect x="336" y="138" width="34" height="14" rx="7" class="hero-live-badge fill-accent-ice-400/20" />
+                <text x="353" y="148" text-anchor="middle" class="hero-live-badge fill-accent-ice-600 text-[9px] font-semibold">Live</text>
                 <rect x="222" y="170" width="120" height="8" rx="4" class="fill-slate-100" />
                 <rect x="222" y="186" width="90" height="8" rx="4" class="fill-accent-ice-400" />
               </g>

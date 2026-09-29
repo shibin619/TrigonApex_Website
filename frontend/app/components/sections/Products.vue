@@ -11,15 +11,17 @@ import { getProductTourPreview } from '~/content/product-tour'
 const exploreProduct = getCta('explore-product')
 const viewAllProducts = getCta('view-all-products')
 
-const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-useFadeIn(contentRef)
+const headerRef = useTemplateRef<HTMLDivElement>('headerRef')
+const rowsRef = useTemplateRef<HTMLDivElement>('rowsRef')
+useFadeIn(headerRef)
+useStaggerReveal(rowsRef, 'article', { each: true })
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="products-heading">
     <PageContainer as="div">
-      <div ref="contentRef">
-        <div class="max-w-2xl">
+      <div>
+        <div ref="headerRef" class="max-w-2xl">
           <span class="inline-flex items-center gap-2 text-caption font-semibold tracking-widest text-brand-500 uppercase">
             <span class="h-2 w-2 rounded-full bg-brand-500" aria-hidden="true" />
             Natro
@@ -33,7 +35,7 @@ useFadeIn(contentRef)
           </p>
         </div>
 
-        <div class="mt-12 md:mt-16">
+        <div ref="rowsRef" class="mt-12 md:mt-16">
           <article
             v-for="(product, index) in products"
             :key="product.id"

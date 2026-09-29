@@ -21,15 +21,17 @@ const panelStyles = [
   { bg: 'bg-accent-green-500/10', icon: 'text-accent-green-700', dot: 'bg-accent-green-500' }
 ]
 
-const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-useFadeIn(contentRef)
+const headerRef = useTemplateRef<HTMLDivElement>('headerRef')
+const rowsRef = useTemplateRef<HTMLDivElement>('rowsRef')
+useFadeIn(headerRef)
+useStaggerReveal(rowsRef, 'article', { each: true })
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="case-studies-heading">
     <PageContainer as="div">
-      <div ref="contentRef">
-        <div class="max-w-2xl">
+      <div>
+        <div ref="headerRef" class="max-w-2xl">
           <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
             Our Work
           </span>
@@ -42,7 +44,7 @@ useFadeIn(contentRef)
           </p>
         </div>
 
-        <div class="mt-12 md:mt-16">
+        <div ref="rowsRef" class="mt-12 md:mt-16">
           <article
             v-for="(caseStudy, index) in caseStudies"
             :key="caseStudy.id"

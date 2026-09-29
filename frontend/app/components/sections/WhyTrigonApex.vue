@@ -20,15 +20,17 @@ const principles: Principle[] = [
 
 const chipStyles = ['bg-brand-50 text-brand-500', 'bg-accent-ice-400/10 text-accent-ice-600', 'bg-accent-green-500/10 text-accent-green-700']
 
-const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-useFadeIn(contentRef)
+const headerRef = useTemplateRef<HTMLDivElement>('headerRef')
+const gridRef = useTemplateRef<HTMLDivElement>('gridRef')
+useFadeIn(headerRef)
+useStaggerReveal(gridRef, ':scope > div')
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="why-trigon-apex-heading">
     <PageContainer as="div">
-      <div ref="contentRef">
-        <div class="max-w-2xl">
+      <div>
+        <div ref="headerRef" class="max-w-2xl">
           <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
             Why Trigon Apex
           </span>
@@ -37,7 +39,7 @@ useFadeIn(contentRef)
           </h2>
         </div>
 
-        <div class="mt-10 grid grid-cols-1 gap-x-12 gap-y-10 border-t border-default pt-10 sm:grid-cols-2 md:mt-12 md:pt-12">
+        <div ref="gridRef" class="mt-10 grid grid-cols-1 gap-x-12 gap-y-10 border-t border-default pt-10 sm:grid-cols-2 md:mt-12 md:pt-12">
           <div v-for="(principle, index) in principles" :key="principle.title">
             <span class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg)" :class="chipStyles[index % chipStyles.length]">
               <span class="h-5 w-5" aria-hidden="true">
