@@ -40,7 +40,7 @@ useFadeIn(contentRef)
         <ResponsiveGrid :cols="3" gap="md" class="mt-10 md:mt-12">
           <BaseCard v-for="testimonial in approvedTestimonials" :key="testimonial.id" variant="bordered">
             <div v-if="testimonial.photo" class="mb-4 flex items-center gap-3">
-              <img :src="testimonial.photo.src" :alt="testimonial.photo.alt" class="h-10 w-10 rounded-full object-cover">
+              <img :src="testimonial.photo.src" :alt="testimonial.photo.alt" width="40" height="40" loading="lazy" class="h-10 w-10 rounded-full object-cover">
             </div>
             <p class="text-body text-default">&ldquo;{{ testimonial.testimonial }}&rdquo;</p>
             <p class="mt-4 text-body-sm font-semibold text-highlighted">{{ testimonial.clientName }}</p>

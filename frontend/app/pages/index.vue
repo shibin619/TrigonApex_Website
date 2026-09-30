@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { siteConfig } from '~/content/site.config'
+
 // Homepage. Header and footer come from layouts/default.vue.
 //
 // Section order follows the full information-architecture pass:
@@ -15,15 +17,23 @@ useSeo({
   og: {
     title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
     description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
-    image: null
+    image: 'https://trigonapex.in/og-image.png'
   },
   twitter: {
     title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
     description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
-    image: null
+    image: 'https://trigonapex.in/og-image.png'
   },
   robots: 'index, follow',
   schemaType: 'Organization'
+}, {
+  // Only fields already established elsewhere on the site (name/url from
+  // site.config.ts) — no invented address, phone, founding date, or
+  // social profiles per the same content-honesty rule as the rest of the
+  // page (docs/CONTENT_ARCHITECTURE.md §15).
+  name: siteConfig.companyName,
+  url: 'https://trigonapex.in/',
+  description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.'
 })
 </script>
 

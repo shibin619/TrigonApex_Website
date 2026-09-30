@@ -1,0 +1,40 @@
+# Trigon Apex Technologies — https://trigonapex.in/
+# The site is small and mostly one page today; this file is kept accurate
+# to that reality rather than pre-declaring routes that don't exist yet.
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+# Recognized AI/answer-engine crawlers — explicitly allowed rather than
+# left to each bot's own default, since AI-search visibility depends on
+# not being silently blocked.
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+
+User-agent: CCBot
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://trigonapex.in/sitemap.xml

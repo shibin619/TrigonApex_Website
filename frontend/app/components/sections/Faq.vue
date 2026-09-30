@@ -6,6 +6,30 @@ import { faqs } from '~/content/faqs'
 // accordion JS/ARIA state management is needed for a section this small.
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
+
+// FAQPage structured data — mirrors the visible Q&A exactly (Google's
+// requirement for this markup), so both Google rich results and AI
+// answer engines (which parse JSON-LD directly) can surface these
+// answers without re-deriving them from prose.
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer
+          }
+        }))
+      })
+    }
+  ]
+})
 </script>
 
 <template>

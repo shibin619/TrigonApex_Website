@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lists only pages that actually exist and are meant to be indexed.
+  /solutions, /industries, /products, /case-studies, /about are
+  referenced in navigation but not yet built (see docs/HOMEPAGE_SPEC.md) —
+  they are deliberately left out of this file rather than submitted as
+  URLs that don't resolve. Add each one here when it ships.
+  /admin/** is excluded (noindex, see robots.txt and each page's own meta).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://trigonapex.in/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>

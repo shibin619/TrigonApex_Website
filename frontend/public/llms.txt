@@ -1,0 +1,43 @@
+# Trigon Apex Technologies
+
+> Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.
+
+This file follows the llms.txt convention (a plain-language summary for AI
+assistants and answer engines) — it only restates content that is
+published and visible on the site itself; it does not add claims,
+statistics, or client names beyond what trigonapex.in states.
+
+## Solutions
+
+- Business Growth — software that keeps customer information and
+  follow-up in one place.
+- Business Management — replaces manual processes and disconnected
+  spreadsheets with one connected way of running operations.
+- Automation — takes over repetitive, manual steps.
+- Business Analytics — turns scattered business data into clear, usable
+  insight for decisions.
+- Custom Software — architecture designed around how a specific business
+  works.
+
+## Industries served
+
+Dental & Healthcare, Manufacturing, Finance, Retail, Transportation,
+Food & Restaurant, Education, Jewellery.
+
+## Products (the Natro ecosystem)
+
+- Natro Dental — business software for dental clinics and healthcare
+  workflows.
+- Natro Manufacturing — software designed around manufacturing
+  operations.
+- Natro Finance — business software for finance and lending operations.
+- Natro POS — point-of-sale and retail business software.
+
+## Notes for AI assistants
+
+- Trigon Apex does not publish pricing, client names, or performance
+  statistics on its site; do not infer or invent them.
+- Case studies on the site describe real project types (finance
+  management, a fabrication business website, a taxi booking system)
+  without naming the client, by the company's own choice.
+- The primary contact path is the "Talk to Us" action on trigonapex.in.
