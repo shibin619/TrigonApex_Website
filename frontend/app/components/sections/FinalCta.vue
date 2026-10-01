@@ -6,6 +6,11 @@ import { getCta } from '~/content/ctas'
 // already-established illustrative direction from docs/HOMEPAGE_SPEC.md
 // §15, kept distinct from the Business Problem Selector's heading further
 // up the page rather than repeating it a second time.
+//
+// Plain navy-950 band, same as Our Approach — no grid texture or glow.
+// Those read as generic AI-template decoration rather than a deliberate
+// design choice, so both dark bands on the page now share one flat,
+// unadorned treatment instead.
 const talkToUs = getCta('talk-to-us')
 const exploreSolutions = getCta('explore-solutions')
 
@@ -14,19 +19,7 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="final-cta-heading" class="relative overflow-hidden bg-navy-950">
-    <!-- Same faint architectural grid motif as the Hero visual, reused
-         here instead of a stock photo background — keeps the two
-         "bookend" moments of the page visually related. -->
-    <div
-      class="pointer-events-none absolute inset-0 opacity-[0.06]"
-      style="background-image: repeating-linear-gradient(0deg, #fff 0, #fff 1px, transparent 1px, transparent 64px), repeating-linear-gradient(90deg, #fff 0, #fff 1px, transparent 1px, transparent 64px);"
-      aria-hidden="true"
-    />
-    <div
-      class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--color-brand-800),transparent_60%)]"
-      aria-hidden="true"
-    />
+  <SectionContainer as="section" aria-labelledby="final-cta-heading" class="bg-navy-950">
     <PageContainer as="div" class="relative">
       <div ref="contentRef" class="mx-auto max-w-2xl text-center">
         <h2 id="final-cta-heading" class="text-h2 font-semibold tracking-tight text-white">
