@@ -57,20 +57,19 @@ onMounted(() => {
         </div>
 
         <div ref="visualRef" class="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:min-h-0">
+          <!-- Grading (contrast curve, warm/cool split tone, vignette) is
+               baked into the file itself from a proper edit of the source
+               photo, not a CSS filter layered on top of a flat crop. The
+               crop is also tighter than the original, removing the flat
+               ceiling strip that was visible along the top of the frame. -->
           <img
             src="/images/hero-team.webp"
             alt="A team discussing business operations around a table"
-            class="h-full w-full object-cover [filter:saturate(1.08)_contrast(1.05)]"
+            class="h-full w-full object-cover"
             width="1456"
-            height="1088"
+            height="1024"
             fetchpriority="high"
           >
-          <!-- A soft, directional tint grades the photo to the brand
-               palette (the way real photography on premium sites is
-               always color-matched to the rest of the page) rather than
-               leaving it an unedited raw crop. Subtle and tied to the
-               image itself, not a decorative shape floating over it. -->
-          <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-900/15 via-transparent to-transparent mix-blend-multiply" aria-hidden="true" />
         </div>
       </div>
     </PageContainer>
