@@ -3,12 +3,13 @@ import { siteConfig } from '~/content/site.config'
 
 // Homepage. Header and footer come from layouts/default.vue.
 //
-// Section order follows the full information-architecture pass:
-// Hero → Trust → What We Do (Solutions) → Business Challenges (Problem
-// Selector) → Industries → Natro Products → Product Experience (Product
-// Tour, with Business Analytics kept immediately adjacent rather than as
-// a separate standalone chart section) → Our Work (Case Studies) → Why
-// Trigon Apex → How We Work → Testimonials (renders nothing until an
+// Section order, revised to the corporate/MNC-pattern IA (large hero
+// visual → about/quick-facts → belief statement → services grid → ...):
+// Hero → Trust → About → Our Approach (belief band) → What We Do
+// (Solutions) → Business Challenges (Problem Selector) → Industries →
+// Natro Products → Product Experience (Product Tour, with Business
+// Analytics kept immediately adjacent) → Selected Work (Case Studies) →
+// Why Trigon Apex → How We Work → Testimonials (renders nothing until an
 // approved testimonial exists) → FAQ → Final CTA.
 useSeo({
   title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
@@ -40,6 +41,8 @@ useSeo({
 <template>
   <Hero />
   <TrustStrip />
+  <AboutTrigonApex />
+  <OurApproach />
   <Solutions />
   <BusinessProblemSelector />
   <Industries />

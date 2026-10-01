@@ -14,8 +14,20 @@ useFadeIn(contentRef)
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="final-cta-heading" class="bg-navy-950">
-    <PageContainer as="div">
+  <SectionContainer as="section" aria-labelledby="final-cta-heading" class="relative overflow-hidden bg-navy-950">
+    <!-- Same faint architectural grid motif as the Hero visual, reused
+         here instead of a stock photo background — keeps the two
+         "bookend" moments of the page visually related. -->
+    <div
+      class="pointer-events-none absolute inset-0 opacity-[0.06]"
+      style="background-image: repeating-linear-gradient(0deg, #fff 0, #fff 1px, transparent 1px, transparent 64px), repeating-linear-gradient(90deg, #fff 0, #fff 1px, transparent 1px, transparent 64px);"
+      aria-hidden="true"
+    />
+    <div
+      class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,var(--color-brand-800),transparent_60%)]"
+      aria-hidden="true"
+    />
+    <PageContainer as="div" class="relative">
       <div ref="contentRef" class="mx-auto max-w-2xl text-center">
         <h2 id="final-cta-heading" class="text-h2 font-semibold tracking-tight text-white">
           We Don&rsquo;t Start With Code. We Start With Your Business.

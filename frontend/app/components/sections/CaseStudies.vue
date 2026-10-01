@@ -1,25 +1,20 @@
 <script setup lang="ts">
 import { caseStudies } from '~/content/case-studies'
 import { industries } from '~/content/industries'
+import { getCta } from '~/content/ctas'
 
 // Real project categories (Finance Management, Fabrication Business, Taxi
 // Booking & Management) — no invented client names or metrics; results
-// stay qualitative per docs/CONTENT_ARCHITECTURE.md §6. Each case study's
-// visual reuses the matching Industry's own icon (already established in
-// the Industries section above) rather than inventing a second visual
-// language — the tie-back is the point, not decoration.
+// stay qualitative per docs/CONTENT_ARCHITECTURE.md §6. A 3-column dark-
+// card grid (category tag + title + description over a dark abstract
+// "product" visual) per the corporate reference's "Selected Work"
+// pattern — the visual is a dark-themed dashboard-style illustration,
+// never a real screenshot or stock photo.
 function industryName(industryId: string) {
   return industries.find((industry) => industry.id === industryId)?.name ?? industryId
 }
 
-// Rotating panel treatment so the three studies read as distinct rather
-// than three copies of the same gray box — still just one accent color
-// per panel, never a rainbow.
-const panelStyles = [
-  { bg: 'bg-brand-50', icon: 'text-brand-500', dot: 'bg-brand-300' },
-  { bg: 'bg-accent-ice-400/10', icon: 'text-accent-ice-600', dot: 'bg-accent-ice-400' },
-  { bg: 'bg-accent-green-500/10', icon: 'text-accent-green-700', dot: 'bg-accent-green-500' }
-]
+const viewAllCaseStudies = getCta('view-all-case-studies')
 
 const headerRef = useTemplateRef<HTMLDivElement>('headerRef')
 const rowsRef = useTemplateRef<HTMLDivElement>('rowsRef')
@@ -31,79 +26,71 @@ useStaggerReveal(rowsRef, 'article', { each: true })
   <SectionContainer as="section" aria-labelledby="case-studies-heading">
     <PageContainer as="div">
       <div>
-        <div ref="headerRef" class="max-w-2xl">
-          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
-            Our Work
-          </span>
-          <h2 id="case-studies-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
-            Built Around Real Business Needs
-          </h2>
-          <p class="mt-4 text-body-lg text-muted">
-            A look at the kind of work Trigon Apex takes on &mdash; real
-            projects, described honestly.
-          </p>
+        <div ref="headerRef" class="flex flex-wrap items-end justify-between gap-6">
+          <div class="max-w-2xl">
+            <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+              Selected Work
+            </span>
+            <h2 id="case-studies-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
+              Real business problems. Real solutions.
+            </h2>
+            <p class="mt-4 text-body-lg text-muted">
+              A look at the kind of work Trigon Apex takes on &mdash; real
+              projects, described honestly.
+            </p>
+          </div>
         </div>
 
-        <div ref="rowsRef" class="mt-12 md:mt-16">
-          <article
-            v-for="(caseStudy, index) in caseStudies"
-            :key="caseStudy.id"
-            class="border-t border-default py-12 last:border-b md:py-16"
-          >
-            <div
-              class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center lg:gap-12"
-              :class="index % 2 === 1 ? 'lg:[&>*:first-child]:order-2' : ''"
-            >
-              <div class="lg:col-span-7">
-                <span class="text-caption font-medium tracking-wide text-muted uppercase">
+        <div ref="rowsRef" class="mt-12 grid grid-cols-1 gap-8 md:mt-16 lg:grid-cols-3">
+          <article v-for="caseStudy in caseStudies" :key="caseStudy.id" class="group">
+            <NuxtLink :to="`/case-studies/${caseStudy.slug}`" class="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              <div class="relative aspect-[4/3] overflow-hidden rounded-(--radius-lg) bg-navy-950">
+                <!-- Dark abstract "product" visual — a dashboard-style
+                     illustration, not a real screenshot. -->
+                <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 70% 20%, var(--color-brand-500), transparent 55%);" aria-hidden="true" />
+                <div class="absolute inset-6 overflow-hidden rounded-(--radius-md) border border-white/10 bg-white/5 backdrop-blur-sm" aria-hidden="true">
+                  <div class="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
+                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
+                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
+                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
+                  </div>
+                  <div class="space-y-2 p-4">
+                    <div class="h-2 w-2/3 rounded-full bg-white/20" />
+                    <div class="h-2 w-1/2 rounded-full bg-white/10" />
+                    <div class="mt-3 flex h-12 items-end gap-1">
+                      <div
+                        v-for="(h, i) in [40, 70, 55, 85, 60, 45]"
+                        :key="i"
+                        class="w-full rounded-t"
+                        :class="i % 2 === 0 ? 'bg-brand-400' : 'bg-accent-ice-400'"
+                        :style="{ height: `${h}%`, opacity: 0.8 }"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <span class="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-caption font-semibold uppercase tracking-wide text-navy-950">
                   {{ industryName(caseStudy.industry) }}
                 </span>
-                <h3 class="mt-2 text-h3 font-semibold tracking-tight text-highlighted">
-                  {{ caseStudy.title }}
-                </h3>
-                <p class="mt-4 max-w-lg text-body text-default">
-                  {{ caseStudy.businessChallenge }}
-                </p>
-                <p class="mt-3 max-w-lg text-body text-default">
-                  {{ caseStudy.solution }}
-                </p>
-                <ul v-if="caseStudy.results.length" class="mt-4 space-y-1.5">
-                  <li
-                    v-for="(result, i) in caseStudy.results"
-                    :key="i"
-                    class="flex gap-2 text-body-sm font-medium text-brand-500"
-                  >
-                    <span aria-hidden="true">&rarr;</span>
-                    <span>{{ result.description }}</span>
-                  </li>
-                </ul>
-                <AppButton variant="text" :to="`/case-studies/${caseStudy.slug}`" class="mt-4 px-0">
-                  See the Story
-                </AppButton>
               </div>
 
-              <div class="lg:col-span-5">
-                <div
-                  class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-(--radius-lg)"
-                  :class="panelStyles[index % panelStyles.length]!.bg"
-                >
-                  <!-- Decorative texture only — a loose scatter of dots
-                       and rings suggesting "data points", not a chart
-                       claiming to represent anything real. -->
-                  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
-                    <span class="absolute top-8 left-8 h-2 w-2 rounded-full opacity-40" :class="panelStyles[index % panelStyles.length]!.dot" />
-                    <span class="absolute top-16 right-12 h-3 w-3 rounded-full opacity-30" :class="panelStyles[index % panelStyles.length]!.dot" />
-                    <span class="absolute bottom-12 left-16 h-2.5 w-2.5 rounded-full opacity-30" :class="panelStyles[index % panelStyles.length]!.dot" />
-                    <span class="absolute right-10 bottom-10 h-16 w-16 rounded-full border opacity-20" :class="panelStyles[index % panelStyles.length]!.dot.replace('bg-', 'border-')" />
-                    <span class="absolute top-1/2 left-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border opacity-10" :class="panelStyles[index % panelStyles.length]!.dot.replace('bg-', 'border-')" />
-                  </div>
-                  <span class="relative h-16 w-16" :class="panelStyles[index % panelStyles.length]!.icon" aria-hidden="true">
-                    <IndustryIcon :id="caseStudy.industry" />
-                  </span>
-                </div>
-              </div>
-            </div>
+              <h3 class="mt-4 text-h4 font-semibold tracking-tight text-highlighted group-hover:text-brand-500">
+                {{ caseStudy.title }}
+              </h3>
+              <p class="mt-2 text-body-sm text-default">
+                {{ caseStudy.businessChallenge }}
+              </p>
+              <span class="mt-3 inline-flex items-center gap-1.5 text-body-sm font-medium text-brand-500">
+                Read Case Study
+                <span aria-hidden="true" class="motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover:translate-x-0.5">&rarr;</span>
+              </span>
+            </NuxtLink>
           </article>
+        </div>
+
+        <div class="mt-10 flex justify-center md:mt-12">
+          <AppButton v-if="viewAllCaseStudies" variant="outline" :to="viewAllCaseStudies.to">
+            {{ viewAllCaseStudies.label }}
+          </AppButton>
         </div>
       </div>
     </PageContainer>
