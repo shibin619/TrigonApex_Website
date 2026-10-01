@@ -6,6 +6,20 @@ const mobileMenuOpen = ref(false)
 const primaryCta = computed(() => getCta(siteConfig.primaryCta))
 const menuToggle = useTemplateRef<HTMLButtonElement>('menuToggle')
 
+// Sits flush with the page at the very top (matches the Hero behind it),
+// then picks up a soft shadow + blurred surface once the page actually
+// scrolls — a flat bordered bar the whole time is the default-template
+// look; a header that responds to scroll state reads as considered.
+const isScrolled = ref(false)
+function onScroll() {
+  isScrolled.value = window.scrollY > 8
+}
+onMounted(() => {
+  onScroll()
+  window.addEventListener('scroll', onScroll, { passive: true })
+})
+onUnmounted(() => window.removeEventListener('scroll', onScroll))
+
 function closeMenu() {
   mobileMenuOpen.value = false
 }
@@ -24,7 +38,10 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-default bg-default">
+  <header
+    class="sticky top-0 z-40 border-b motion-safe:transition-shadow motion-safe:duration-(--duration-base)"
+    :class="isScrolled ? 'border-default bg-default/90 shadow-sm backdrop-blur-md' : 'border-transparent bg-default'"
+  >
     <PageContainer as="div" class="flex items-center justify-between py-4">
       <NuxtLink
         to="/"

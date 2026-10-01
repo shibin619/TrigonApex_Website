@@ -3,6 +3,31 @@
 @import "./tokens.css";
 
 /*
+ * Work Sans, self-hosted (SIL Open Font License — see public/fonts/OFL.txt).
+ * Two static weights only (400/700, not a variable font) — 600 (used
+ * throughout via font-semibold) resolves to the nearest available weight
+ * per the browser's own font-matching, which in practice renders as the
+ * bold face. font-display: swap avoids blocking first paint on the font
+ * download; the preload hints in app/app.vue avoid a visible swap flash
+ * on first load.
+ */
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/fonts/WorkSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Work Sans';
+  src: url('/fonts/WorkSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
  * Temporary highlight applied by useScrollHighlight() when a visitor
  * jumps to a target from elsewhere on the page (e.g. the Business
  * Problem Selector jumping to a future Solutions item). Global, not

@@ -103,17 +103,20 @@
   --color-accent-ice-600: #297ca3;
 
   /* ---------------------------------------------------------------------
-   * Typography scale — system font stack only (no external font network
-   * dependency; see nuxt.config.ts `fonts.providers` and
-   * docs/FRONTEND_ARCHITECTURE.md §3). Unchanged in Stage 8B other than
-   * this note: for a premium, non-playful feel, apply Tailwind's existing
-   * `tracking-tight`/`tracking-tighter` utilities to `text-display`/
-   * `text-h1`/`text-h2` when those are used on real headings (a future
-   * stage's concern, once headings exist) — no new tracking tokens are
-   * needed, Tailwind v4 already ships `--tracking-tight`/`--tracking-tighter`.
+   * Typography scale — Work Sans (SIL Open Font License, self-hosted as
+   * static .woff2 files under public/fonts/ — see the @font-face block in
+   * main.css). Still zero external font NETWORK dependency (the original
+   * constraint from nuxt.config.ts `fonts.providers`/
+   * docs/FRONTEND_ARCHITECTURE.md §3 — that was about not fetching from
+   * Google/Bunny/etc at runtime, not about using only the OS default
+   * forever): the files ship with the build and are served from the same
+   * origin. Replaces the system-font stack because a distinctive
+   * typeface is one of the highest-leverage signals of a crafted, premium
+   * site rather than an unstyled default — the system stack remains only
+   * as the final fallback for the moment before the font file loads.
    * ------------------------------------------------------------------- */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Work Sans', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
   --text-display: 3rem;
   --text-display--line-height: 1.1;

@@ -29,6 +29,12 @@ const variantMap: Record<ButtonVariant, { color: 'primary' | 'neutral'; variant:
 }
 
 const resolved = computed(() => variantMap[props.variant])
+
+// A flat color swap on hover reads as a default-library button. A soft
+// shadow that deepens and a 1px lift on hover is a small, standard touch
+// that makes a solid CTA feel considered rather than unstyled — applied
+// only to the filled variants; outline/text stay flat by design.
+const liftClass = 'motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-fast) shadow-sm hover:-translate-y-px hover:shadow-md'
 </script>
 
 <template>
@@ -39,6 +45,7 @@ const resolved = computed(() => variantMap[props.variant])
     :disabled="disabled"
     :loading="loading"
     :type="type"
+    :class="(variant === 'primary' || variant === 'cta' || variant === 'secondary') && !disabled ? liftClass : undefined"
   >
     <slot />
   </UButton>
