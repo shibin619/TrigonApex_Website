@@ -10,31 +10,25 @@ const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
 
 useFadeIn(contentRef)
 
-// No decoration on the photo itself — no gradient overlay, no floating
-// badge card, no grid texture behind it. Those were the generic
-// AI-template tells (every v0/Lovable-style SaaS hero has a grid + glow +
-// glass badge); a premium B2B hero relies on the photograph and
-// typography alone, on a plain light background like the rest of the
-// page, not a dark "statement band."
+// The illustration (HeroIllustration.vue) replaces the real photo per the
+// chosen direction — a custom flat illustration in the brand palette,
+// not the stock/AI-generated route. A soft two-tone gradient wash behind
+// it (brand + green, both already-validated tokens) replaces the plain
+// white background, echoing the reference's soft gradient mood without
+// introducing new, unvalidated colors.
 onMounted(() => {
   if (!visualRef.value) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  gsap.from(visualRef.value, { opacity: 0, scale: 1.03, duration: 0.7, ease: 'power2.out', delay: 0.15 })
+  gsap.from(visualRef.value, { opacity: 0, y: 16, duration: 0.7, ease: 'power2.out', delay: 0.15 })
 })
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none">
-    <!-- No PageContainer here: the photo needs to bleed to the actual
-         browser edge, not stop at the centered 1280px content width, or
-         it reads as a separate inset "card" floating on the page
-         background instead of a panel that's actually part of the page.
-         The text column recreates PageContainer's own left gutter via the
-         same calc() so it still lines up with the header/nav above it on
-         screens wider than the container max-width. -->
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-stretch">
-        <div class="flex items-center px-4 py-16 sm:px-6 sm:py-24 lg:py-28 lg:pr-12 lg:pl-[max(1rem,calc((100vw-80rem)/2+2rem))]">
+  <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none" class="bg-gradient-to-br from-accent-green-500/10 via-white to-brand-50">
+    <PageContainer as="div">
+      <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+        <div class="py-16 sm:py-24 lg:py-28">
           <div ref="contentRef" class="max-w-xl">
             <span class="inline-flex items-center gap-2.5 text-caption font-medium tracking-widest text-brand-500 uppercase">
               <span class="h-px w-6 bg-brand-500" aria-hidden="true" />
@@ -62,21 +56,10 @@ onMounted(() => {
           </div>
         </div>
 
-        <div ref="visualRef" class="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:min-h-0">
-          <!-- Grading (contrast curve, warm/cool split tone, vignette) is
-               baked into the file itself from a proper edit of the source
-               photo, not a CSS filter layered on top of a flat crop. The
-               crop is also tighter than the original, removing the flat
-               ceiling strip that was visible along the top of the frame. -->
-          <img
-            src="/images/hero-team.webp"
-            alt="A team discussing business operations around a table"
-            class="h-full w-full object-cover"
-            width="1456"
-            height="1024"
-            fetchpriority="high"
-          >
+        <div ref="visualRef" class="mx-auto w-full max-w-md lg:max-w-none">
+          <HeroIllustration />
         </div>
-    </div>
+      </div>
+    </PageContainer>
   </SectionContainer>
 </template>
