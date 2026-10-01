@@ -28,13 +28,14 @@ onMounted(() => {
   <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none">
     <PageContainer as="div">
       <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-stretch lg:gap-12">
-        <div class="flex items-center py-14 sm:py-20 lg:py-24">
+        <div class="flex items-center py-16 sm:py-24 lg:py-28">
           <div ref="contentRef" class="max-w-xl">
-            <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+            <span class="inline-flex items-center gap-2.5 text-caption font-medium tracking-widest text-brand-500 uppercase">
+              <span class="h-px w-6 bg-brand-500" aria-hidden="true" />
               Software Solutions Partner
             </span>
 
-            <h1 id="hero-heading" class="mt-3 text-display font-semibold tracking-tight text-highlighted">
+            <h1 id="hero-heading" class="mt-4 text-display font-semibold tracking-tighter text-highlighted">
               Software Solutions for Business
               <span class="text-brand-500"> Growth</span>
             </h1>
@@ -44,26 +45,32 @@ onMounted(() => {
               customers, improve operations, understand data, and scale.
             </p>
 
-            <div class="mt-8 flex flex-wrap items-center gap-6">
-              <AppButton v-if="exploreSolutions" variant="primary" :to="exploreSolutions.to">
+            <div class="mt-10 flex flex-wrap items-center gap-6">
+              <AppButton v-if="exploreSolutions" variant="primary" size="lg" :to="exploreSolutions.to">
                 {{ exploreSolutions.label }}
               </AppButton>
-              <AppButton v-if="seeHowItWorks" variant="text" :to="seeHowItWorks.to">
+              <AppButton v-if="seeHowItWorks" variant="text" size="lg" :to="seeHowItWorks.to">
                 {{ seeHowItWorks.label }} &rarr;
               </AppButton>
             </div>
           </div>
         </div>
 
-        <div ref="visualRef" class="relative min-h-[320px] overflow-hidden sm:min-h-[400px] lg:min-h-0">
+        <div ref="visualRef" class="relative min-h-[320px] overflow-hidden sm:min-h-[420px] lg:min-h-0">
           <img
             src="/images/hero-team.webp"
             alt="A team discussing business operations around a table"
-            class="h-full w-full object-cover"
+            class="h-full w-full object-cover [filter:saturate(1.08)_contrast(1.05)]"
             width="1456"
             height="1088"
             fetchpriority="high"
           >
+          <!-- A soft, directional tint grades the photo to the brand
+               palette (the way real photography on premium sites is
+               always color-matched to the rest of the page) rather than
+               leaving it an unedited raw crop. Subtle and tied to the
+               image itself, not a decorative shape floating over it. -->
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-900/15 via-transparent to-transparent mix-blend-multiply" aria-hidden="true" />
         </div>
       </div>
     </PageContainer>

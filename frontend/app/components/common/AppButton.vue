@@ -15,6 +15,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   loading?: boolean
   type?: 'button' | 'submit' | 'reset'
+  size?: 'md' | 'lg' | 'xl'
 }>(), {
   variant: 'primary',
   type: 'button'
@@ -45,6 +46,7 @@ const liftClass = 'motion-safe:transition-[transform,box-shadow] motion-safe:dur
     :disabled="disabled"
     :loading="loading"
     :type="type"
+    :size="size"
     :class="(variant === 'primary' || variant === 'cta' || variant === 'secondary') && !disabled ? liftClass : undefined"
   >
     <slot />
