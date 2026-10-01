@@ -26,9 +26,15 @@ onMounted(() => {
 
 <template>
   <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none">
-    <PageContainer as="div">
-      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-stretch lg:gap-12">
-        <div class="flex items-center py-16 sm:py-24 lg:py-28">
+    <!-- No PageContainer here: the photo needs to bleed to the actual
+         browser edge, not stop at the centered 1280px content width, or
+         it reads as a separate inset "card" floating on the page
+         background instead of a panel that's actually part of the page.
+         The text column recreates PageContainer's own left gutter via the
+         same calc() so it still lines up with the header/nav above it on
+         screens wider than the container max-width. -->
+      <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-stretch">
+        <div class="flex items-center px-4 py-16 sm:px-6 sm:py-24 lg:py-28 lg:pr-12 lg:pl-[max(1rem,calc((100vw-80rem)/2+2rem))]">
           <div ref="contentRef" class="max-w-xl">
             <span class="inline-flex items-center gap-2.5 text-caption font-medium tracking-widest text-brand-500 uppercase">
               <span class="h-px w-6 bg-brand-500" aria-hidden="true" />
@@ -71,7 +77,6 @@ onMounted(() => {
             fetchpriority="high"
           >
         </div>
-      </div>
-    </PageContainer>
+    </div>
   </SectionContainer>
 </template>
