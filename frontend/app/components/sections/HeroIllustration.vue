@@ -29,25 +29,34 @@
     <rect x="438" y="200" width="14" height="66" rx="3" fill="var(--color-accent-ice-400)" opacity="0.9" />
     <rect x="458" y="182" width="14" height="84" rx="3" fill="var(--color-accent-ice-400)" />
 
-    <!-- Figure A: torso, then hair (drawn before head so the head circle
-         covers its lower half, leaving a clean hair "cap"), then head,
-         then the raised arm + hand on top. -->
+    <!-- Figure A: tapered torso (not a plain trapezoid) with a collar
+         seam, hair (drawn before head so the head circle covers its
+         lower half, leaving a clean hair "cap"), then a two-segment
+         bent arm — upper arm + forearm meeting at a rounded elbow,
+         instead of one rigid straight rod — ending in a hand that
+         actually terminates the limb instead of floating near it. -->
     <g>
-      <path d="M145,480 V370 Q145,325 195,325 Q245,325 245,370 V480 Z" fill="var(--color-brand-300)" />
-      <ellipse cx="195" cy="287" rx="33" ry="24" fill="var(--color-navy-950)" />
-      <circle cx="195" cy="308" r="30" fill="#e8bd94" />
-      <line x1="238" y1="368" x2="280" y2="225" stroke="var(--color-brand-300)" stroke-width="22" stroke-linecap="round" />
-      <circle cx="280" cy="225" r="13" fill="#e8bd94" />
+      <path d="M150,100 Q150,82 195,82 Q240,82 240,100 L228,175 Q226,230 230,310 L238,480 L152,480 L160,310 Q164,230 162,175 Z" fill="var(--color-brand-300)" />
+      <path d="M175,88 Q195,102 215,88" stroke="var(--color-navy-950)" stroke-opacity="0.15" stroke-width="2" fill="none" stroke-linecap="round" />
+      <ellipse cx="195" cy="68" rx="34" ry="25" fill="var(--color-navy-950)" />
+      <circle cx="195" cy="100" r="29" fill="#e8bd94" />
+      <line x1="230" y1="120" x2="258" y2="165" stroke="var(--color-brand-300)" stroke-width="19" stroke-linecap="round" />
+      <circle cx="258" cy="165" r="9.5" fill="var(--color-brand-300)" />
+      <line x1="258" y1="165" x2="282" y2="85" stroke="var(--color-brand-300)" stroke-width="19" stroke-linecap="round" />
+      <circle cx="282" cy="85" r="12" fill="#e8bd94" />
     </g>
 
     <!-- Figure B -->
     <g>
-      <path d="M315,480 V370 Q315,325 365,325 Q415,325 415,370 V480 Z" fill="var(--color-navy-950)" />
-      <rect x="357" y="330" width="16" height="100" rx="4" fill="var(--color-accent-green-500)" />
-      <ellipse cx="365" cy="287" rx="32" ry="23" fill="var(--color-navy-950)" />
-      <circle cx="365" cy="308" r="30" fill="#e8bd94" />
-      <line x1="322" y1="368" x2="335" y2="195" stroke="var(--color-navy-950)" stroke-width="22" stroke-linecap="round" />
-      <circle cx="335" cy="195" r="13" fill="#e8bd94" />
+      <path d="M320,100 Q320,82 365,82 Q410,82 410,100 L398,175 Q396,230 400,310 L408,480 L322,480 L330,310 Q334,230 332,175 Z" fill="var(--color-navy-950)" />
+      <path d="M345,88 Q365,102 385,88" stroke="white" stroke-opacity="0.12" stroke-width="2" fill="none" stroke-linecap="round" />
+      <rect x="357" y="92" width="16" height="110" rx="4" fill="var(--color-accent-green-500)" />
+      <ellipse cx="365" cy="68" rx="33" ry="24" fill="var(--color-navy-950)" />
+      <circle cx="365" cy="100" r="28" fill="#e8bd94" />
+      <line x1="398" y1="120" x2="415" y2="160" stroke="var(--color-navy-950)" stroke-width="19" stroke-linecap="round" />
+      <circle cx="415" cy="160" r="9.5" fill="var(--color-navy-950)" />
+      <line x1="415" y1="160" x2="420" y2="95" stroke="var(--color-navy-950)" stroke-width="19" stroke-linecap="round" />
+      <circle cx="420" cy="95" r="12" fill="#e8bd94" />
     </g>
 
     <!-- Floating badge: growth arrow (reuses the Business Growth icon motif) -->
