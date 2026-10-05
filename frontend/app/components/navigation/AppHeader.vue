@@ -7,9 +7,11 @@ const primaryCta = computed(() => getCta(siteConfig.primaryCta))
 const menuToggle = useTemplateRef<HTMLButtonElement>('menuToggle')
 
 // Sits flush with the page at the very top (matches the Hero behind it),
-// then picks up a soft shadow + blurred surface once the page actually
-// scrolls — a flat bordered bar the whole time is the default-template
-// look; a header that responds to scroll state reads as considered.
+// then picks up a border + soft shadow once the page actually scrolls — a
+// flat bordered bar the whole time is the default-template look. Stays
+// fully opaque at all times (not translucent/blurred): a semi-transparent
+// header let scrolled-past content show through as ghost text behind the
+// nav, which read as a rendering bug rather than a glass effect.
 const isScrolled = ref(false)
 function onScroll() {
   isScrolled.value = window.scrollY > 8
@@ -39,8 +41,8 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown))
 
 <template>
   <header
-    class="sticky top-0 z-40 border-b motion-safe:transition-shadow motion-safe:duration-(--duration-base)"
-    :class="isScrolled ? 'border-default bg-default/90 shadow-sm backdrop-blur-md' : 'border-transparent bg-default'"
+    class="sticky top-0 z-40 border-b bg-default motion-safe:transition-shadow motion-safe:duration-(--duration-base)"
+    :class="isScrolled ? 'border-default shadow-sm' : 'border-transparent'"
   >
     <PageContainer as="div" class="flex items-center justify-between py-4">
       <NuxtLink
