@@ -10,12 +10,13 @@ const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
 
 useFadeIn(contentRef)
 
-// The illustration (HeroIllustration.vue) replaces the real photo per the
-// chosen direction — a custom flat illustration in the brand palette,
-// not the stock/AI-generated route. A soft two-tone gradient wash behind
-// it (brand + green, both already-validated tokens) replaces the plain
-// white background, echoing the reference's soft gradient mood without
-// introducing new, unvalidated colors.
+// Real AI-generated flat illustration (user-sourced, matching the
+// Iconscout/Storyset reference style a hand-coded SVG couldn't reach).
+// Post-processed before landing here: its flat white background was
+// chroma-keyed to transparent, and the two off-brand colors (panel
+// indigo, outfit green) were nudged to the site's exact brand hex
+// values. A soft two-tone gradient wash behind it (brand + green, both
+// already-validated tokens) replaces the plain white background.
 onMounted(() => {
   if (!visualRef.value) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -57,7 +58,14 @@ onMounted(() => {
         </div>
 
         <div ref="visualRef" class="mx-auto w-full max-w-md lg:max-w-none">
-          <HeroIllustration />
+          <img
+            src="/images/hero-illustration.webp"
+            alt="Illustration of two people presenting a rising business data chart"
+            width="800"
+            height="519"
+            class="h-auto w-full"
+            fetchpriority="high"
+          >
         </div>
       </div>
     </PageContainer>
