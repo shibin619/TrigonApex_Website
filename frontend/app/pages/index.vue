@@ -7,8 +7,8 @@ import { siteConfig } from '~/content/site.config'
 // visual → about/quick-facts → belief statement → services grid → ...):
 // Hero → Trust → About → Our Approach (belief band) → What We Do
 // (Solutions) → Business Challenges (Problem Selector) → Industries →
-// Natro Products → Product Experience (Product Tour, with Business
-// Analytics kept immediately adjacent) → Selected Work (Case Studies) →
+// Product Experience (Product Tour, with Business Analytics kept
+// immediately adjacent) → Selected Work (Case Studies) →
 // Why Trigon Apex → How We Work → Testimonials (renders nothing until an
 // approved testimonial exists) → FAQ → Final CTA.
 useSeo({
@@ -46,7 +46,6 @@ useSeo({
   <Solutions />
   <BusinessProblemSelector />
   <Industries />
-  <Products />
   <ProductTour />
   <BusinessAnalytics />
   <CaseStudies />

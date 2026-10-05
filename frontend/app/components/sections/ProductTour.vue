@@ -21,21 +21,16 @@ function selectStep(id: typeof productTourSteps[number]['id']) {
   selectedStepId.value = id
 }
 
-// Purely decorative demo content, identical across every product — the
-// same neutral "workflow"/"operations" shell communicates the type of
-// software experience without claiming any specific verified capability.
-const workflowColumns = ['New', 'In Progress', 'Done']
-const operationsRows = [
-  { reference: 'Item 1', status: 'Active' },
-  { reference: 'Item 2', status: 'Pending' },
-  { reference: 'Item 3', status: 'Complete' },
-  { reference: 'Item 4', status: 'Active' }
-]
+// Column chrome (labels/colors) is identical across every product — only
+// the sample rows inside (activePreview.*) change per product, pulled
+// from content/product-tour.ts.
+const workflowColumnLabels = ['New', 'In Progress', 'Done']
 const statusClasses: Record<string, string> = {
   Active: 'bg-accent-green-500/10 text-accent-green-700',
   Pending: 'bg-accent-ice-400/10 text-accent-ice-600',
   Complete: 'bg-brand-100 text-brand-500'
 }
+const chartDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const chartBarHeights = ['35%', '60%', '48%', '80%', '55%', '70%']
 const overviewCardAccents = ['border-t-brand-500', 'border-t-accent-ice-400', 'border-t-accent-green-500']
 const overviewChartColors = ['bg-brand-200', 'bg-accent-ice-400', 'bg-brand-300', 'bg-accent-green-500', 'bg-brand-200']
@@ -137,13 +132,13 @@ useFadeIn(contentRef)
                     <div v-if="selectedStepId === 'overview'">
                       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div
-                          v-for="(card, cardIndex) in activePreview.navItems.slice(0, 3)"
-                          :key="card"
+                          v-for="(metric, cardIndex) in activePreview.overviewMetrics"
+                          :key="metric.label"
                           class="rounded-(--radius-md) border-t-2 border-default bg-elevated p-4"
                           :class="overviewCardAccents[cardIndex % overviewCardAccents.length]"
                         >
-                          <p class="text-caption text-muted">{{ card }}</p>
-                          <div class="mt-2 h-2 w-3/4 rounded-full bg-brand-100" aria-hidden="true" />
+                          <p class="text-caption text-muted">{{ metric.label }}</p>
+                          <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
                         </div>
                       </div>
                       <div class="mt-6 flex h-24 items-end gap-2" aria-hidden="true">
@@ -155,21 +150,26 @@ useFadeIn(contentRef)
                           :style="{ height }"
                         />
                       </div>
+                      <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
+                        <span v-for="label in chartDayLabels.slice(0, 5)" :key="label" class="w-full text-center">{{ label }}</span>
+                      </div>
                     </div>
 
                     <div v-else-if="selectedStepId === 'workflow'">
                       <div class="grid grid-cols-3 gap-4">
-                        <div v-for="(column, columnIndex) in workflowColumns" :key="column">
+                        <div v-for="(column, columnIndex) in workflowColumnLabels" :key="column">
                           <p class="flex items-center gap-1.5 text-caption font-medium text-muted">
                             <span class="h-1.5 w-1.5 rounded-full" :class="workflowColumnDots[columnIndex]" aria-hidden="true" />
                             {{ column }}
                           </p>
                           <div class="mt-2 space-y-2">
-                            <div class="flex h-10 items-center rounded-(--radius-sm) border-l-2 bg-elevated px-3 text-caption text-muted" :class="workflowColumnBorders[columnIndex]">
-                              Item
-                            </div>
-                            <div class="flex h-10 items-center rounded-(--radius-sm) border-l-2 bg-elevated px-3 text-caption text-muted" :class="workflowColumnBorders[columnIndex]">
-                              Item
+                            <div
+                              v-for="item in activePreview.workflowColumns[columnIndex]"
+                              :key="item"
+                              class="flex h-10 items-center truncate rounded-(--radius-sm) border-l-2 bg-elevated px-3 text-caption text-default"
+                              :class="workflowColumnBorders[columnIndex]"
+                            >
+                              {{ item }}
                             </div>
                           </div>
                         </div>
@@ -182,12 +182,14 @@ useFadeIn(contentRef)
                           <thead>
                             <tr class="border-b border-default text-caption text-muted">
                               <th class="py-2 pr-4 font-medium">Reference</th>
+                              <th class="py-2 pr-4 font-medium">Detail</th>
                               <th class="py-2 font-medium">Status</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr v-for="row in operationsRows" :key="row.reference" class="border-b border-default last:border-0">
-                              <td class="py-3 pr-4 text-default">{{ row.reference }}</td>
+                            <tr v-for="row in activePreview.operationsRows" :key="row.reference" class="border-b border-default last:border-0">
+                              <td class="py-3 pr-4 font-medium text-default">{{ row.reference }}</td>
+                              <td class="py-3 pr-4 text-muted">{{ row.detail }}</td>
                               <td class="py-3">
                                 <span
                                   class="inline-flex rounded-full px-2 py-0.5 text-caption font-medium"
@@ -203,7 +205,8 @@ useFadeIn(contentRef)
                     </div>
 
                     <div v-else>
-                      <div class="flex h-40 items-end gap-2" aria-hidden="true">
+                      <p class="text-caption font-semibold tracking-widest text-muted uppercase">This Week</p>
+                      <div class="mt-3 flex h-40 items-end gap-2" aria-hidden="true">
                         <div
                           v-for="(height, i) in chartBarHeights"
                           :key="i"
@@ -212,7 +215,10 @@ useFadeIn(contentRef)
                           :style="{ height }"
                         />
                       </div>
-                      <p class="mt-3 text-caption text-muted">
+                      <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
+                        <span v-for="label in chartDayLabels" :key="label" class="w-full text-center">{{ label }}</span>
+                      </div>
+                      <p class="mt-4 text-caption text-muted">
                         Conceptual preview &mdash; not connected to live data.
                       </p>
                     </div>

@@ -5,12 +5,16 @@
  * `Product.id` from products.ts, which remains the single source of
  * truth for the four Natro products.
  *
- * Every label in this file is a generic, conceptual UI label (the kind of
- * thing a business app's nav/cards would say), never a verified feature
- * claim and never a number. No `keyCapabilities`/`businessProblemsSolved`
- * exist yet for any product (see products.ts), so nothing here asserts
- * that a product actually has a given module today — the preview is
- * explicitly labeled "Interactive Preview" in the UI for that reason.
+ * Every label and sample row in this file is a generic, conceptual UI
+ * fixture (the kind of thing a business app's nav/cards/table would show),
+ * never a verified feature claim about what Trigon Apex has built. Names,
+ * reference numbers and metric values are fictional illustrative data —
+ * used so the preview reads like a real screen instead of skeleton-loader
+ * bars — not a performance/capability claim. No `keyCapabilities`/
+ * `businessProblemsSolved` exist yet for any product (see products.ts), so
+ * nothing here asserts that a product actually has a given module today —
+ * the preview is explicitly labeled "Interactive Preview" in the UI for
+ * that reason.
  */
 
 export interface ProductTourStep {
@@ -33,13 +37,97 @@ export interface ProductTourPreview {
   // Sidebar/overview-card labels shown throughout the preview for this
   // product — conceptual only, not a confirmed feature list.
   navItems: string[]
+  // Illustrative sample data only (fictional names/references), styled as
+  // an actual screen rather than skeleton-loader bars, so the preview
+  // reads like real software instead of a generic wireframe. None of this
+  // is a feature/performance claim — the panel is explicitly labeled
+  // "Interactive Preview" and the Insights tab states it isn't live data.
+  overviewMetrics: { label: string, value: string }[]
+  workflowColumns: [string[], string[], string[]]
+  operationsRows: { reference: string, detail: string, status: 'Active' | 'Pending' | 'Complete' }[]
 }
 
 export const productTourPreviews: ProductTourPreview[] = [
-  { productId: 'natro-dental', navItems: ['Patient Queue', 'Appointments', 'Billing', 'Records'] },
-  { productId: 'natro-manufacturing', navItems: ['Work Orders', 'Inventory', 'Production', 'Reports'] },
-  { productId: 'natro-finance', navItems: ['Accounts', 'Loans', 'Collections', 'Reports'] },
-  { productId: 'natro-pos-retail', navItems: ['Sales', 'Inventory', 'Billing', 'Reports'] }
+  {
+    productId: 'natro-dental',
+    navItems: ['Patient Queue', 'Appointments', 'Billing', 'Records'],
+    overviewMetrics: [
+      { label: 'Patient Queue', value: '12 waiting' },
+      { label: 'Appointments', value: '8 today' },
+      { label: 'Billing', value: '3 pending' }
+    ],
+    workflowColumns: [
+      ['Aarav Mehta — Checkup', 'Priya Singh — Cleaning'],
+      ['Rohan Das — X-Ray', 'Karthik Raja — Filling'],
+      ['Sara Iyer — Checkup', 'Divya Nair — Consultation']
+    ],
+    operationsRows: [
+      { reference: 'Aarav Mehta', detail: 'Checkup', status: 'Active' },
+      { reference: 'Priya Singh', detail: 'Cleaning', status: 'Pending' },
+      { reference: 'Rohan Das', detail: 'X-Ray', status: 'Complete' },
+      { reference: 'Karthik Raja', detail: 'Filling', status: 'Active' }
+    ]
+  },
+  {
+    productId: 'natro-manufacturing',
+    navItems: ['Work Orders', 'Inventory', 'Production', 'Reports'],
+    overviewMetrics: [
+      { label: 'Work Orders', value: '24 open' },
+      { label: 'Inventory', value: '6 low stock' },
+      { label: 'Production', value: '92% on schedule' }
+    ],
+    workflowColumns: [
+      ['WO-1042 — Assembly', 'WO-1043 — Packaging'],
+      ['WO-1039 — Welding', 'WO-1040 — QC Check'],
+      ['WO-1035 — Assembly', 'WO-1036 — Packaging']
+    ],
+    operationsRows: [
+      { reference: 'WO-1042', detail: 'Assembly Line 2', status: 'Active' },
+      { reference: 'WO-1043', detail: 'Packaging', status: 'Pending' },
+      { reference: 'WO-1039', detail: 'Welding Bay 1', status: 'Complete' },
+      { reference: 'WO-1040', detail: 'QC Check', status: 'Active' }
+    ]
+  },
+  {
+    productId: 'natro-finance',
+    navItems: ['Accounts', 'Loans', 'Collections', 'Reports'],
+    overviewMetrics: [
+      { label: 'Accounts', value: '184 active' },
+      { label: 'Loans', value: '12 disbursed' },
+      { label: 'Collections', value: '5 overdue' }
+    ],
+    workflowColumns: [
+      ['Loan #4521 — Review', 'Loan #4522 — Review'],
+      ['Loan #4518 — Verification', 'Collection #88 — Follow-up'],
+      ['Loan #4510 — Disbursed', 'Loan #4512 — Disbursed']
+    ],
+    operationsRows: [
+      { reference: 'Loan #4521', detail: 'Personal Loan', status: 'Active' },
+      { reference: 'Loan #4522', detail: 'Business Loan', status: 'Pending' },
+      { reference: 'Collection #88', detail: 'Overdue 12 days', status: 'Active' },
+      { reference: 'Loan #4510', detail: 'Personal Loan', status: 'Complete' }
+    ]
+  },
+  {
+    productId: 'natro-pos-retail',
+    navItems: ['Sales', 'Inventory', 'Billing', 'Reports'],
+    overviewMetrics: [
+      { label: 'Sales', value: '₹48,200 today' },
+      { label: 'Inventory', value: '14 low stock' },
+      { label: 'Billing', value: '6 pending' }
+    ],
+    workflowColumns: [
+      ['Order #3310 — Checkout', 'Order #3311 — Checkout'],
+      ['Order #3308 — Packing', 'Order #3309 — Packing'],
+      ['Order #3301 — Delivered', 'Order #3302 — Delivered']
+    ],
+    operationsRows: [
+      { reference: 'Order #3310', detail: '3 items', status: 'Active' },
+      { reference: 'Order #3311', detail: '1 item', status: 'Pending' },
+      { reference: 'Order #3308', detail: '5 items', status: 'Complete' },
+      { reference: 'Order #3309', detail: '2 items', status: 'Active' }
+    ]
+  }
 ]
 
 export function getProductTourPreview(productId: string): ProductTourPreview | undefined {
