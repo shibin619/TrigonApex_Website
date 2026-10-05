@@ -44,11 +44,22 @@ useStaggerReveal(gridRef, 'article')
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"
             :key="solution.id"
-            class="group scroll-mt-24 rounded-(--radius-lg) p-6 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-1 hover:shadow-lg"
-            :class="index === 0 ? 'bg-brand-500 hover:bg-brand-600' : 'border border-default bg-default hover:border-brand-300 hover:bg-brand-50/60'"
+            class="group relative scroll-mt-24 overflow-hidden rounded-(--radius-lg) p-6 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-1.5"
+            :class="index === 0
+              ? 'bg-brand-500 hover:bg-brand-600 hover:shadow-[0_24px_48px_-12px_rgba(16,19,50,0.45)]'
+              : 'border border-default bg-default hover:border-brand-300 hover:shadow-[0_24px_48px_-16px_rgba(73,89,179,0.3)]'"
           >
+            <!-- Soft radial glow in the corner, invisible until hover — a
+                 Linear/Stripe-style accent rather than a flat color swap,
+                 purely decorative so it's aria-hidden and non-interactive. -->
             <span
-              class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg) motion-safe:transition-colors motion-safe:duration-(--duration-fast)"
+              class="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full opacity-0 blur-3xl motion-safe:transition-opacity motion-safe:duration-(--duration-slow) group-hover:opacity-100"
+              :class="index === 0 ? 'bg-white/20' : 'bg-brand-300/30'"
+              aria-hidden="true"
+            />
+
+            <span
+              class="relative flex h-11 w-11 items-center justify-center rounded-(--radius-lg) motion-safe:transition-[transform,background-color,color] motion-safe:duration-(--duration-base) group-hover:scale-110 group-hover:-rotate-3"
               :class="index === 0 ? 'bg-white/15 text-white' : 'bg-brand-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white'"
               aria-hidden="true"
             >
@@ -56,10 +67,10 @@ useStaggerReveal(gridRef, 'article')
                 <SolutionIcon :id="solution.id" />
               </span>
             </span>
-            <h3 class="mt-4 text-h4 font-semibold tracking-tight" :class="index === 0 ? 'text-white' : 'text-highlighted group-hover:text-brand-500'">
+            <h3 class="relative mt-4 text-h4 font-semibold tracking-tight motion-safe:transition-colors motion-safe:duration-(--duration-fast)" :class="index === 0 ? 'text-white' : 'text-highlighted group-hover:text-brand-500'">
               {{ solution.title }}
             </h3>
-            <p class="mt-2 text-body-sm" :class="index === 0 ? 'text-white/85' : 'text-default'">
+            <p class="relative mt-2 text-body-sm" :class="index === 0 ? 'text-white/85' : 'text-default'">
               {{ solution.shortDescription }}
             </p>
             <!-- AppButton's text-link variant renders brand-colored text
@@ -69,12 +80,14 @@ useStaggerReveal(gridRef, 'article')
             <NuxtLink
               v-if="index === 0"
               :to="`/solutions/${solution.slug}`"
-              class="mt-3 inline-block text-body-sm font-medium text-white underline underline-offset-2 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:text-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              class="group/link relative mt-3 inline-flex items-center gap-1.5 text-body-sm font-medium text-white underline underline-offset-2 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:text-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Learn more about {{ solution.title }}
+              <span class="inline-block no-underline motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover/link:translate-x-1" aria-hidden="true">&rarr;</span>
             </NuxtLink>
-            <AppButton v-else variant="text" :to="`/solutions/${solution.slug}`" class="mt-3 px-0">
+            <AppButton v-else variant="text" :to="`/solutions/${solution.slug}`" class="group/link relative mt-3 px-0">
               Learn more about {{ solution.title }}
+              <span class="inline-block motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover/link:translate-x-1" aria-hidden="true">&rarr;</span>
             </AppButton>
           </article>
         </div>
