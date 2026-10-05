@@ -44,19 +44,19 @@ useStaggerReveal(gridRef, 'article')
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"
             :key="solution.id"
-            class="scroll-mt-24 rounded-(--radius-lg) p-6 motion-safe:transition-[transform,border-color,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-0.5"
-            :class="index === 0 ? 'bg-brand-500' : 'border border-default hover:border-brand-300 hover:shadow-md'"
+            class="group scroll-mt-24 rounded-(--radius-lg) p-6 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-1 hover:shadow-lg"
+            :class="index === 0 ? 'bg-brand-500 hover:bg-brand-600' : 'border border-default bg-default hover:border-brand-300 hover:bg-brand-50/60'"
           >
             <span
-              class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg)"
-              :class="index === 0 ? 'bg-white/15 text-white' : 'bg-brand-50 text-brand-500'"
+              class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg) motion-safe:transition-colors motion-safe:duration-(--duration-fast)"
+              :class="index === 0 ? 'bg-white/15 text-white' : 'bg-brand-50 text-brand-500 group-hover:bg-brand-500 group-hover:text-white'"
               aria-hidden="true"
             >
               <span class="h-5 w-5">
                 <SolutionIcon :id="solution.id" />
               </span>
             </span>
-            <h3 class="mt-4 text-h4 font-semibold tracking-tight" :class="index === 0 ? 'text-white' : 'text-highlighted'">
+            <h3 class="mt-4 text-h4 font-semibold tracking-tight" :class="index === 0 ? 'text-white' : 'text-highlighted group-hover:text-brand-500'">
               {{ solution.title }}
             </h3>
             <p class="mt-2 text-body-sm" :class="index === 0 ? 'text-white/85' : 'text-default'">
