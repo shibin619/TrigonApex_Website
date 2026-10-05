@@ -19,7 +19,17 @@ useStaggerReveal(gridRef, 'article')
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="solutions-heading">
+  <SectionContainer as="section" aria-labelledby="solutions-heading" class="relative overflow-hidden">
+    <!-- Soft mesh-gradient atmosphere behind the section — large, heavily
+         blurred color washes using the site's existing validated tones
+         (brand/green/ice), so the section reads as airy and alive rather
+         than flat white. Purely decorative, sits behind all content. -->
+    <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div class="absolute -top-28 -left-28 h-96 w-96 rounded-full bg-brand-200/35 blur-3xl" />
+      <div class="absolute top-1/4 -right-24 h-96 w-96 rounded-full bg-accent-green-500/15 blur-3xl" />
+      <div class="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-accent-ice-400/15 blur-3xl" />
+    </div>
+
     <PageContainer as="div">
       <div ref="contentRef" class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
         <div class="lg:col-span-4">
@@ -47,7 +57,7 @@ useStaggerReveal(gridRef, 'article')
             class="group relative scroll-mt-24 overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2"
             :class="index === 0
               ? 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] hover:shadow-[0_32px_56px_-14px_rgba(16,19,50,0.55)]'
-              : 'border border-default bg-default shadow-sm hover:border-brand-300 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]'"
+              : 'border border-white/70 bg-white/70 shadow-sm backdrop-blur-md hover:border-brand-300 hover:bg-white/90 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]'"
           >
             <!-- Oversized, barely-visible icon watermark for depth, same
                  craft as a Stripe/Linear feature card — purely decorative. -->
