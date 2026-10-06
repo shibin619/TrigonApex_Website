@@ -4,6 +4,12 @@
 // treatment) — the light editorial style from the last "Our Approach"
 // iteration, kept on its own now that the belief-statement quote above
 // it was removed.
+//
+// Deliberately no scroll-triggered fade-in/stagger animation here (every
+// other section uses useFadeIn/useStaggerReveal) — a user report of this
+// exact section becoming invisible after scrolling pointed at the
+// animation layer, so it's rendered fully static to rule that out as a
+// class of bug entirely rather than keep guessing at the timing issue.
 interface ProcessStep {
   title: string
   description: string
@@ -16,17 +22,12 @@ const steps: ProcessStep[] = [
   { title: 'Launch', description: 'Deploy, test and make the system operational.' },
   { title: 'Improve', description: 'Use feedback and data to continuously improve.' }
 ]
-
-const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-const stepsRef = useTemplateRef<HTMLDivElement>('stepsRef')
-useFadeIn(contentRef)
-useStaggerReveal(stepsRef, 'li', { each: true })
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="how-we-work-heading">
     <PageContainer as="div">
-      <div ref="contentRef" class="max-w-2xl">
+      <div class="max-w-2xl">
         <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
           How We Work
         </span>
@@ -35,10 +36,7 @@ useStaggerReveal(stepsRef, 'li', { each: true })
         </h2>
       </div>
 
-      <ol
-        ref="stepsRef"
-        class="mt-12 grid grid-cols-1 sm:grid-cols-2 md:mt-14 lg:grid-cols-5 lg:divide-x lg:divide-default"
-      >
+      <ol class="mt-12 grid grid-cols-1 sm:grid-cols-2 md:mt-14 lg:grid-cols-5 lg:divide-x lg:divide-default">
         <li
           v-for="(step, index) in steps"
           :key="step.title"
