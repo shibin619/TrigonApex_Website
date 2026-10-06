@@ -6,6 +6,7 @@ const exploreSolutions = getCta('explore-solutions')
 const seeHowItWorks = getCta('see-how-it-works')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
+const visualWrapRef = useTemplateRef<HTMLDivElement>('visualWrapRef')
 const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
 const stageRef = useTemplateRef<HTMLDivElement>('stageRef')
 const sectionRef = useTemplateRef<HTMLElement>('sectionRef')
@@ -29,38 +30,64 @@ onMounted(() => {
   gsap.from(visualRef.value, { opacity: 0, y: 16, scale: 0.97, duration: 0.8, ease: 'power2.out', delay: 0.15 })
 })
 
-// Scroll parallax: as the visitor scrolls past the Hero, the background
-// "stage" shape drifts at a different rate than the illustration above it
-// — the layered-depth cue that makes a hero feel directed rather than a
-// static image, without pulling in GSAP's ScrollTrigger plugin (scroll
-// position read directly, rAF-throttled, same restraint as useFadeIn's
-// plain-IntersectionObserver approach).
+// Scroll parallax (background "stage" shape vs. the illustration drifting
+// at different rates) + a pointer-driven 3D tilt on the illustration — a
+// flat image alone doesn't read as dimensional, but a perspective tilt
+// that responds to the cursor does, the same trick behind most "premium"
+// product-shot heroes. Both are driven through gsap.quickTo so they
+// composite onto the SAME element's transform correctly (GSAP tracks
+// translate/rotate as separate internal channels) instead of two systems
+// overwriting each other's raw inline `transform` string.
 onMounted(() => {
-  if (!sectionRef.value) return
+  if (!sectionRef.value || !visualRef.value) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
+  gsap.set(visualRef.value, { transformPerspective: 1000, transformOrigin: 'center' })
+  const setY = gsap.quickTo(visualRef.value, 'y', { duration: 0.3, ease: 'power2.out' })
+  const setStageY = gsap.quickTo(stageRef.value, 'y', { duration: 0.3, ease: 'power2.out' })
+  const setRotateX = gsap.quickTo(visualRef.value, 'rotationX', { duration: 0.5, ease: 'power2.out' })
+  const setRotateY = gsap.quickTo(visualRef.value, 'rotationY', { duration: 0.5, ease: 'power2.out' })
+
   let ticking = false
-  function update() {
+  function updateScroll() {
     ticking = false
     const section = sectionRef.value
     if (!section) return
     const rect = section.getBoundingClientRect()
     if (rect.bottom < 0 || rect.top > window.innerHeight) return
     const progress = -rect.top / (rect.height || 1)
-
-    if (stageRef.value) stageRef.value.style.transform = `translateY(${progress * 40}px)`
-    if (visualRef.value) visualRef.value.style.transform = `translateY(${progress * -24}px)`
+    setStageY(progress * 40)
+    setY(progress * -24)
   }
-
   function onScroll() {
     if (ticking) return
     ticking = true
-    requestAnimationFrame(update)
+    requestAnimationFrame(updateScroll)
   }
 
-  update()
+  function onPointerMove(event: PointerEvent) {
+    const wrap = visualWrapRef.value
+    if (!wrap) return
+    const rect = wrap.getBoundingClientRect()
+    const px = (event.clientX - rect.left) / rect.width - 0.5
+    const py = (event.clientY - rect.top) / rect.height - 0.5
+    setRotateY(px * 14)
+    setRotateX(py * -14)
+  }
+  function onPointerLeave() {
+    setRotateX(0)
+    setRotateY(0)
+  }
+
+  updateScroll()
   window.addEventListener('scroll', onScroll, { passive: true })
-  onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+  visualWrapRef.value?.addEventListener('pointermove', onPointerMove)
+  visualWrapRef.value?.addEventListener('pointerleave', onPointerLeave)
+  onBeforeUnmount(() => {
+    window.removeEventListener('scroll', onScroll)
+    visualWrapRef.value?.removeEventListener('pointermove', onPointerMove)
+    visualWrapRef.value?.removeEventListener('pointerleave', onPointerLeave)
+  })
 })
 </script>
 
@@ -97,7 +124,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="relative mx-auto w-full max-w-md lg:max-w-none">
+        <div ref="visualWrapRef" class="relative mx-auto w-full max-w-md lg:max-w-xl" style="perspective: 1000px;">
           <!-- One large, genuinely colorful "stage" shape behind the
                illustration (not just a pastel haze) plus a smaller accent
                blob for variety — gives the illustration something bold to
