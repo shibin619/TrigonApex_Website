@@ -27,7 +27,7 @@ useFadeIn(contentRef)
 <template>
   <SectionContainer as="section" aria-labelledby="about-heading">
     <PageContainer as="div">
-      <div ref="contentRef" class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-12">
+      <div ref="contentRef" class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-start lg:gap-12">
         <div class="relative overflow-hidden rounded-(--radius-xl) bg-gradient-to-br from-brand-500 to-brand-700 p-8 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] sm:p-10 lg:col-span-5">
           <!-- Same corner-glow treatment as the Solutions highlighted card
                and the product tour panels, purely decorative. -->
@@ -63,6 +63,19 @@ useFadeIn(contentRef)
             efficiently, automate repetitive work, and turn their own
             data into better decisions.
           </p>
+
+          <!-- Real solution names (not invented copy) as a quick-scan
+               preview of what "software expertise" above actually covers —
+               the full Solutions section below goes into each one properly. -->
+          <div class="mt-6 flex flex-wrap gap-2">
+            <span
+              v-for="solution in solutions"
+              :key="solution.id"
+              class="rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-body-sm font-medium text-brand-500"
+            >
+              {{ solution.title }}
+            </span>
+          </div>
 
           <AppButton v-if="learnAboutUs" variant="text" :to="learnAboutUs.to" class="mt-8 px-0">
             {{ learnAboutUs.label }}
