@@ -197,16 +197,18 @@ onMounted(() => {
             ref="medallionRef"
             class="absolute inset-[19%] flex items-center justify-center rounded-full bg-gradient-to-br from-navy-950 to-brand-700 shadow-[0_32px_48px_-16px_rgba(16,19,50,0.35)]"
           >
-            <!-- A literal mark, not initials: "Trigon" (three angles) with
-                 each vertex tinted in the same three accent colors as the
-                 stat badges around it — the shape ties directly to the
-                 company name and to the three real numbers it's framing,
-                 reaching its "Apex" at the top point. -->
-            <svg viewBox="0 0 100 100" class="h-[42%] w-[42%]" fill="none" aria-hidden="true">
-              <path d="M50 16 L84 80 L16 80 Z" stroke="white" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.92" />
-              <circle cx="50" cy="16" r="5.5" class="fill-brand-300" />
-              <circle cx="84" cy="80" r="5.5" class="fill-accent-ice-400" />
-              <circle cx="16" cy="80" r="5.5" class="fill-accent-green-500" />
+            <!-- A growth chart, not an abstract mark — reads instantly
+                 ("businesses that want to grow," the line right above
+                 this), and each bar is tinted in the same three accent
+                 colors as the stat badges circling it, so it still ties
+                 to the three real numbers it's framing. -->
+            <svg viewBox="0 0 100 100" class="h-[46%] w-[46%]" fill="none" aria-hidden="true">
+              <path d="M12 84h76" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.3" />
+              <rect x="20" y="56" width="16" height="28" rx="3" class="fill-brand-300" />
+              <rect x="42" y="40" width="16" height="44" rx="3" class="fill-accent-ice-400" />
+              <rect x="64" y="20" width="16" height="64" rx="3" class="fill-accent-green-500" />
+              <path d="M18 60L50 38L72 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M62 24h10v10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </div>
 
