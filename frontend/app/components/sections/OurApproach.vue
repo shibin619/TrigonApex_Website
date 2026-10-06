@@ -15,14 +15,20 @@
 interface ProcessStep {
   title: string
   description: string
+  badgeClass: string
 }
 
+// Cycling the same three brand/ice/green gradient families used for the
+// numbered badges elsewhere on the page (About's stat badges, Solutions'
+// icon chips) — a plain dot + small number read as a bare, unfinished
+// list next to the bold statement above it, so the step marker needed
+// the same visual weight as everything else here.
 const steps: ProcessStep[] = [
-  { title: 'Discover', description: 'Understand the business, users and workflows.' },
-  { title: 'Define', description: 'Identify the right solution and system structure.' },
-  { title: 'Build', description: 'Develop and integrate the required software.' },
-  { title: 'Launch', description: 'Deploy, test and make the system operational.' },
-  { title: 'Improve', description: 'Use feedback and data to continuously improve.' }
+  { title: 'Discover', description: 'Understand the business, users and workflows.', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Define', description: 'Identify the right solution and system structure.', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' },
+  { title: 'Build', description: 'Develop and integrate the required software.', badgeClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]' },
+  { title: 'Launch', description: 'Deploy, test and make the system operational.', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Improve', description: 'Use feedback and data to continuously improve.', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' }
 ]
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
@@ -62,21 +68,27 @@ useStaggerReveal(stepsRef, 'li', { each: true })
           From Business Problem to Working Software
         </h3>
 
-        <ol ref="stepsRef" class="mt-10 flex flex-col gap-8 md:mt-12 md:flex-row md:gap-6">
+        <ol ref="stepsRef" class="mt-12 flex flex-col gap-10 md:mt-16 md:flex-row md:gap-6">
           <li
             v-for="(step, index) in steps"
             :key="step.title"
-            class="relative flex-1 border-l-2 border-white/15 pl-6 md:border-l-0 md:border-t-2 md:pl-0 md:pt-6"
+            class="group relative flex-1"
           >
             <span
-              class="absolute -left-[9px] top-0 flex h-4 w-4 items-center justify-center rounded-full bg-brand-400 md:left-0 md:-top-[9px]"
+              class="flex h-14 w-14 items-center justify-center rounded-full text-h4 font-bold text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+              :class="step.badgeClass"
+            >
+              0{{ index + 1 }}
+            </span>
+            <span
+              v-if="index < steps.length - 1"
+              class="pointer-events-none absolute top-7 left-14 hidden h-0.5 w-[calc(100%-3.5rem)] bg-white/15 md:block"
               aria-hidden="true"
             />
-            <span class="text-body-sm font-semibold tabular-nums text-brand-200">0{{ index + 1 }}</span>
-            <h4 class="mt-1 text-h4 font-semibold tracking-tight text-white">
+            <h4 class="mt-5 text-h4 font-semibold tracking-tight text-white">
               {{ step.title }}
             </h4>
-            <p class="mt-2 text-body-sm text-slate-300">
+            <p class="mt-2 max-w-[14rem] text-body-sm text-slate-300">
               {{ step.description }}
             </p>
           </li>
