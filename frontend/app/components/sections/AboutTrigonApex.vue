@@ -27,7 +27,7 @@ useFadeIn(contentRef)
     <PageContainer as="div">
       <div ref="contentRef" class="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:items-center lg:gap-12">
         <div class="relative pb-6 sm:pb-10 lg:col-span-5 lg:pb-0">
-          <div class="aspect-[4/5] overflow-hidden rounded-(--radius-xl) sm:aspect-[5/4] lg:aspect-[4/5]">
+          <div class="aspect-[4/5] overflow-hidden rounded-(--radius-xl) sm:aspect-[5/4] lg:aspect-square">
             <img
               src="/images/hero-team.webp"
               alt="A team discussing business operations around a table"
