@@ -1,34 +1,30 @@
 <script setup lang="ts">
-// A dark contrast band stating the company's approach, then showing the
-// concrete process that approach produces — merged from two previously
-// separate sections ("Our Approach" belief statement and the standalone
-// "How We Work" process timeline, formerly near the bottom of the page)
-// since they were saying the same thing at two different altitudes
-// (why, then how) while sitting far apart on the page. One section now
-// carries both: the philosophy, then the five steps it leads to.
+// Editorial pull-quote (the belief statement, set large and italic like
+// an actual quotation rather than a standard eyebrow/heading/paragraph
+// block) leading into the process it produces, shown as staggered
+// "floating" icon cards with a huge ghost numeral watermarked behind
+// each one — a deliberate departure from the generic numbered-circle
+// timeline pattern, built from the same glass-card + stagger-offset
+// language already used elsewhere on the site (About's floating stat
+// badges) rather than a new, unrelated idiom.
 //
 // Reuses the exact, already-established wording from the "Why Trigon
 // Apex" principles (components/sections/WhyTrigonApex.vue) for the
 // belief statement — this is literally the "Business-first thinking"
-// principle, so it reuses that same icon/badge treatment (gradient chip
-// + the 'target' mark) rather than being bare text.
+// principle.
 interface ProcessStep {
   title: string
   description: string
+  icon: 'target' | 'flow' | 'layers' | 'link' | 'chart'
   badgeClass: string
 }
 
-// Cycling the same three brand/ice/green gradient families used for the
-// numbered badges elsewhere on the page (About's stat badges, Solutions'
-// icon chips) — a plain dot + small number read as a bare, unfinished
-// list next to the bold statement above it, so the step marker needed
-// the same visual weight as everything else here.
 const steps: ProcessStep[] = [
-  { title: 'Discover', description: 'Understand the business, users and workflows.', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
-  { title: 'Define', description: 'Identify the right solution and system structure.', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' },
-  { title: 'Build', description: 'Develop and integrate the required software.', badgeClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]' },
-  { title: 'Launch', description: 'Deploy, test and make the system operational.', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
-  { title: 'Improve', description: 'Use feedback and data to continuously improve.', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' }
+  { title: 'Discover', description: 'Understand the business, users and workflows.', icon: 'target', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Define', description: 'Identify the right solution and system structure.', icon: 'flow', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' },
+  { title: 'Build', description: 'Develop and integrate the required software.', icon: 'layers', badgeClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]' },
+  { title: 'Launch', description: 'Deploy, test and make the system operational.', icon: 'link', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Improve', description: 'Use feedback and data to continuously improve.', icon: 'chart', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' }
 ]
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
@@ -39,34 +35,28 @@ useStaggerReveal(stepsRef, 'li', { each: true })
 
 <template>
   <SectionContainer as="section" aria-labelledby="our-approach-heading" class="relative overflow-hidden bg-navy-950">
-    <!-- Two glows, not one — the single brand-only blob made this half
-         read as monochrome next to the colorful brand/ice/green badges
-         in the process strip below, so the same three-color atmosphere
-         now spans the whole section instead of starting partway down. -->
     <div class="pointer-events-none absolute top-1/3 -left-24 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-600/30 blur-3xl" aria-hidden="true" />
     <div class="pointer-events-none absolute top-0 -right-16 h-64 w-64 rounded-full bg-accent-green-600/20 blur-3xl" aria-hidden="true" />
     <div class="pointer-events-none absolute right-1/3 bottom-0 h-56 w-56 rounded-full bg-accent-ice-600/15 blur-3xl" aria-hidden="true" />
     <PageContainer as="div" class="relative">
       <div ref="contentRef" class="max-w-3xl">
-        <span class="flex h-12 w-12 items-center justify-center rounded-(--radius-lg) bg-gradient-to-br from-brand-500 via-accent-ice-400 to-accent-green-500 text-white shadow-[0_10px_24px_-6px_rgba(52,152,197,0.45)]">
-          <span class="h-6 w-6" aria-hidden="true">
-            <PrincipleIcon id="target" />
-          </span>
-        </span>
-        <span class="mt-5 block text-caption font-semibold tracking-widest text-brand-200 uppercase">
-          Our Approach
-        </span>
-        <h2 id="our-approach-heading" class="mt-3 text-h2 font-semibold tracking-tight text-white">
-          We start with how the business works, not with a
-          <span class="text-brand-200">technology stack</span>.
+        <svg viewBox="0 0 40 24" class="h-7 w-12 text-brand-300/60" fill="currentColor" aria-hidden="true">
+          <path d="M4 24c-2.2 0-4-1.8-4-4V8c0-4.4 3.6-8 8-8h2v4H8C5.8 4 4 5.8 4 8v2h4c2.2 0 4 1.8 4 4v2c0 2.2-1.8 4-4 4H4zm18 0c-2.2 0-4-1.8-4-4V8c0-4.4 3.6-8 8-8h2v4h-2c-2.2 0-4 1.8-4 4v2h4c2.2 0 4 1.8 4 4v2c0 2.2-1.8 4-4 4h-4z" />
+        </svg>
+        <h2 id="our-approach-heading" class="mt-2 text-h1 font-medium tracking-tight text-white italic md:text-display">
+          We start with how the business works,
+          <span class="not-italic font-semibold text-brand-200">not with a technology stack.</span>
         </h2>
-        <p class="mt-4 max-w-xl text-body-lg text-slate-300">
+        <p class="mt-6 max-w-xl text-body-lg text-slate-300">
           Systems built around actual operations, not forced into a
           generic template.
         </p>
+        <p class="mt-5 text-caption font-semibold tracking-widest text-brand-200/80 uppercase">
+          &mdash; Our Approach
+        </p>
       </div>
 
-      <div class="relative mt-14 border-t border-white/10 pt-14 md:mt-16 md:pt-16">
+      <div class="relative mt-16 border-t border-white/10 pt-16 md:mt-20 md:pt-20">
         <p class="text-caption font-semibold tracking-widest text-brand-200 uppercase">
           How We Work
         </p>
@@ -74,27 +64,28 @@ useStaggerReveal(stepsRef, 'li', { each: true })
           From Business Problem to Working Software
         </h3>
 
-        <ol ref="stepsRef" class="mt-12 flex flex-col gap-10 md:mt-16 md:flex-row md:gap-6">
+        <ol ref="stepsRef" class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 md:mt-14 lg:grid-cols-5">
           <li
             v-for="(step, index) in steps"
             :key="step.title"
-            class="group relative flex-1"
+            class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm motion-safe:transition-[transform,border-color] motion-safe:duration-(--duration-base) hover:-translate-y-1.5 hover:border-white/20"
+            :class="index % 2 === 1 ? 'lg:mt-9' : ''"
           >
-            <span
-              class="flex h-14 w-14 items-center justify-center rounded-full text-h4 font-bold text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
-              :class="step.badgeClass"
-            >
+            <span class="pointer-events-none absolute -top-3 -right-1 text-[4.75rem] leading-none font-black text-white/[0.06] select-none" aria-hidden="true">
               0{{ index + 1 }}
             </span>
             <span
-              v-if="index < steps.length - 1"
-              class="pointer-events-none absolute top-7 left-14 hidden h-0.5 w-[calc(100%-3.5rem)] bg-white/15 md:block"
-              aria-hidden="true"
-            />
-            <h4 class="mt-5 text-h4 font-semibold tracking-tight text-white">
+              class="relative flex h-11 w-11 items-center justify-center rounded-full text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+              :class="step.badgeClass"
+            >
+              <span class="h-5 w-5" aria-hidden="true">
+                <PrincipleIcon :id="step.icon" />
+              </span>
+            </span>
+            <h4 class="relative mt-5 text-h4 font-semibold tracking-tight text-white">
               {{ step.title }}
             </h4>
-            <p class="mt-2 max-w-[14rem] text-body-sm text-slate-300">
+            <p class="relative mt-2 text-body-sm text-slate-300">
               {{ step.description }}
             </p>
           </li>
