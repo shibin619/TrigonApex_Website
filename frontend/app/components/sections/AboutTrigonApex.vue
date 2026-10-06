@@ -6,55 +6,43 @@ import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
 // Same three real, verifiable counts as before (docs/CONTENT_ARCHITECTURE.md
-// §15: no metric without verified: true), now laid out as a bento grid
-// (mixed tile sizes, asymmetric rhythm) instead of a plain box+text split —
-// the split read as generic no matter how much hover polish it got, since
-// the problem was the layout itself, not the interactions.
-const leadFact = { value: solutions.length, label: 'Core Solutions' }
-const industriesFact = { value: industries.length, label: 'Industries Served' }
-const productsFact = { value: products.length, label: 'Natro Products' }
+// §15: no metric without verified: true). Previous passes (photo, gradient
+// panel, bento grid) kept adding more decoration — color, shadow, motion —
+// and it kept reading as "not quite it". Pivoted to the opposite direction:
+// the restraint Stripe/Linear/Vercel's own stat sections actually use —
+// thin hairline borders instead of heavy drop-shadows, large typography-
+// led numbers instead of boxed gradient cards, a subtle dot-grid texture
+// instead of blurred color blobs. One continuous editorial column instead
+// of a split layout.
+const stats = [
+  { value: solutions.length, label: 'Core Solutions' },
+  { value: industries.length, label: 'Industries Served' },
+  { value: products.length, label: 'Natro Products' }
+]
 
 const learnAboutUs = getCta('learn-about-us')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-const gridRef = useTemplateRef<HTMLDivElement>('gridRef')
-const solutionsWrapRef = useTemplateRef<HTMLDivElement>('solutionsWrapRef')
-const solutionsPanelRef = useTemplateRef<HTMLDivElement>('solutionsPanelRef')
-const solutionsNumRef = useTemplateRef<HTMLParagraphElement>('solutionsNumRef')
-const industriesNumRef = useTemplateRef<HTMLParagraphElement>('industriesNumRef')
-const productsWrapRef = useTemplateRef<HTMLDivElement>('productsWrapRef')
-const productsPanelRef = useTemplateRef<HTMLDivElement>('productsPanelRef')
-const productsNumRef = useTemplateRef<HTMLParagraphElement>('productsNumRef')
+const stripRef = useTemplateRef<HTMLDivElement>('stripRef')
+const numRefs = useTemplateRef<HTMLParagraphElement[]>('numRefs')
 useFadeIn(contentRef)
-// Tiles enter individually rather than the whole grid fading in as one
-// flat block — a compact grid where every tile is visible together, so
-// the default grouped stagger (not `each: true`) is correct per the
-// composable's own guidance.
-useStaggerReveal(gridRef, ':scope > div')
+useStaggerReveal(stripRef, ':scope > div')
 
-// Count-up on scroll-into-view — static numbers read as a placeholder
-// mockup rather than a real stat; counting up from 0 is the standard
-// "this is a live figure" cue on marketing stat tiles. Takes over the
-// DOM text directly (not a reactive ref) since these three values never
+// Count-up on scroll-into-view, same technique as a Stripe/Linear metrics
+// strip — takes over the DOM text directly since these values never
 // change after mount, so there's nothing for Vue to stay in sync with.
 onMounted(() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  if (!gridRef.value || !('IntersectionObserver' in window)) return
+  if (!stripRef.value || !('IntersectionObserver' in window)) return
 
-  const targets: [HTMLParagraphElement | null, number][] = [
-    [solutionsNumRef.value, leadFact.value],
-    [industriesNumRef.value, industriesFact.value],
-    [productsNumRef.value, productsFact.value]
-  ]
-  for (const [el] of targets) {
-    if (el) el.textContent = '0'
-  }
+  const els = numRefs.value ?? []
+  els.forEach((el) => { el.textContent = '0' })
 
   const observer = new IntersectionObserver(
     (entries) => {
       if (!entries.some((entry) => entry.isIntersecting)) return
-      for (const [el, target] of targets) {
-        if (!el) continue
+      els.forEach((el, i) => {
+        const target = stats[i]?.value ?? 0
         const counter = { n: 0 }
         gsap.to(counter, {
           n: target,
@@ -62,119 +50,74 @@ onMounted(() => {
           ease: 'power2.out',
           onUpdate: () => { el.textContent = String(Math.round(counter.n)) }
         })
-      }
+      })
       observer.disconnect()
     },
     { threshold: 0.3 }
   )
-  observer.observe(gridRef.value)
+  observer.observe(stripRef.value)
   onBeforeUnmount(() => observer.disconnect())
-})
-
-// Same pointer-tilt technique as the Hero illustration, applied to both
-// gradient tiles — a flat tile reads as static otherwise; tilting it
-// toward the cursor gives it the same dimensional feel, reusing the exact
-// mechanism rather than inventing a second one.
-function attachTilt(wrapEl: HTMLElement, panelEl: HTMLElement, maxDeg: number) {
-  gsap.set(panelEl, { transformPerspective: 1000 })
-  const setRotateX = gsap.quickTo(panelEl, 'rotationX', { duration: 0.5, ease: 'power2.out' })
-  const setRotateY = gsap.quickTo(panelEl, 'rotationY', { duration: 0.5, ease: 'power2.out' })
-
-  function onPointerMove(event: PointerEvent) {
-    const rect = wrapEl.getBoundingClientRect()
-    const px = (event.clientX - rect.left) / rect.width - 0.5
-    const py = (event.clientY - rect.top) / rect.height - 0.5
-    setRotateY(px * maxDeg)
-    setRotateX(py * -maxDeg)
-  }
-  function onPointerLeave() {
-    setRotateX(0)
-    setRotateY(0)
-  }
-
-  wrapEl.addEventListener('pointermove', onPointerMove)
-  wrapEl.addEventListener('pointerleave', onPointerLeave)
-  onBeforeUnmount(() => {
-    wrapEl.removeEventListener('pointermove', onPointerMove)
-    wrapEl.removeEventListener('pointerleave', onPointerLeave)
-  })
-}
-
-onMounted(() => {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  if (solutionsWrapRef.value && solutionsPanelRef.value) attachTilt(solutionsWrapRef.value, solutionsPanelRef.value, 10)
-  if (productsWrapRef.value && productsPanelRef.value) attachTilt(productsWrapRef.value, productsPanelRef.value, 10)
 })
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="about-heading">
     <PageContainer as="div">
-      <div>
-        <div ref="contentRef" class="max-w-2xl">
-          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
-            About Trigon Apex
-          </span>
-          <h2 id="about-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
-            A technology partner for businesses that want to grow.
-          </h2>
+      <div ref="contentRef" class="max-w-2xl">
+        <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+          About Trigon Apex
+        </span>
+        <h2 id="about-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
+          A technology partner for businesses that want to grow.
+        </h2>
+        <p class="mt-4 text-body-lg text-muted">
+          We combine business understanding with software expertise to
+          design practical systems that help companies operate more
+          efficiently, automate repetitive work, and turn their own data
+          into better decisions.
+        </p>
+        <AppButton v-if="learnAboutUs" variant="text" :to="learnAboutUs.to" class="mt-5 px-0">
+          {{ learnAboutUs.label }}
+        </AppButton>
+      </div>
+
+      <!-- Metrics strip: thin border + a fine dot-grid texture (the
+           "engineered" cue from Linear/Vercel) instead of a colored
+           gradient card. Numbers are plain typography, not boxed. -->
+      <div
+        ref="stripRef"
+        class="relative mt-12 grid grid-cols-1 overflow-hidden rounded-(--radius-xl) border border-default sm:grid-cols-3 md:mt-14"
+        style="background-image: radial-gradient(circle, var(--color-brand-200) 1px, transparent 1px); background-size: 22px 22px; background-color: var(--color-brand-50);"
+      >
+        <div
+          v-for="(stat, index) in stats"
+          :key="stat.label"
+          class="group relative border-default bg-default/55 p-8 backdrop-blur-[2px] motion-safe:transition-colors motion-safe:duration-(--duration-base) hover:bg-brand-50/60"
+          :class="index > 0 ? 'border-t sm:border-t-0 sm:border-l' : ''"
+        >
+          <p
+            ref="numRefs"
+            class="text-display font-bold tracking-tighter text-highlighted motion-safe:transition-colors motion-safe:duration-(--duration-base) group-hover:text-brand-500"
+          >
+            {{ stat.value }}
+          </p>
+          <p class="mt-1 text-body text-muted">{{ stat.label }}</p>
         </div>
+      </div>
 
-        <!-- Bento grid: mixed tile sizes instead of a uniform card row —
-             text, two colorful gradient stat tiles, a bordered stat tile,
-             and a wide pill tray, each sized differently on purpose. -->
-        <div ref="gridRef" class="mt-10 grid grid-cols-1 gap-5 md:mt-12 lg:grid-cols-12">
-          <div class="rounded-(--radius-xl) border border-default bg-default p-8 shadow-sm lg:col-span-6">
-            <p class="text-body-lg text-muted">
-              We combine business understanding with software expertise to
-              design practical systems that help companies operate more
-              efficiently, automate repetitive work, and turn their own
-              data into better decisions.
-            </p>
-            <AppButton v-if="learnAboutUs" variant="text" :to="learnAboutUs.to" class="mt-6 px-0">
-              {{ learnAboutUs.label }}
-            </AppButton>
-          </div>
-
-          <div ref="solutionsWrapRef" class="lg:col-span-3" style="perspective: 1000px;">
-            <div ref="solutionsPanelRef" class="group relative h-full overflow-hidden rounded-(--radius-xl) bg-gradient-to-br from-brand-500 to-brand-700 p-7 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] motion-safe:transition-shadow motion-safe:duration-(--duration-base) hover:shadow-[0_32px_56px_-16px_rgba(16,19,50,0.55)]">
-              <span class="pointer-events-none absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-3xl motion-safe:transition-colors motion-safe:duration-(--duration-slow) group-hover:bg-white/20" aria-hidden="true" />
-              <p ref="solutionsNumRef" class="relative text-display font-semibold tracking-tighter text-white">{{ leadFact.value }}</p>
-              <p class="relative mt-1 text-body font-medium text-white/80">{{ leadFact.label }}</p>
-            </div>
-          </div>
-
-          <div class="group rounded-(--radius-xl) border border-default bg-default p-7 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-1 hover:shadow-[0_24px_40px_-18px_rgba(52,152,197,0.4)] lg:col-span-3">
-            <span class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg) bg-accent-ice-400/10 text-accent-ice-600 motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover:scale-110 group-hover:-rotate-3" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
-            </span>
-            <p ref="industriesNumRef" class="mt-4 text-display font-semibold tracking-tighter text-highlighted">{{ industriesFact.value }}</p>
-            <p class="mt-1 text-body font-medium text-muted">{{ industriesFact.label }}</p>
-          </div>
-
-          <!-- Real solution names (not invented copy) as a quick-scan
-               preview of what "software expertise" above actually covers —
-               the full Solutions section below goes into each one properly. -->
-          <div class="rounded-(--radius-xl) border border-default bg-default p-7 shadow-sm lg:col-span-8">
-            <p class="text-caption font-semibold tracking-widest text-muted uppercase">What We Build</p>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <span
-                v-for="solution in solutions"
-                :key="solution.id"
-                class="rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-body-sm font-medium text-brand-500 motion-safe:transition-[transform,background-color,color] motion-safe:duration-(--duration-fast) hover:-translate-y-0.5 hover:bg-brand-500 hover:text-white"
-              >
-                {{ solution.title }}
-              </span>
-            </div>
-          </div>
-
-          <div ref="productsWrapRef" class="lg:col-span-4" style="perspective: 1000px;">
-            <div ref="productsPanelRef" class="group relative h-full overflow-hidden rounded-(--radius-xl) bg-gradient-to-br from-accent-green-500 to-accent-green-700 p-7 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.3)] motion-safe:transition-shadow motion-safe:duration-(--duration-base) hover:shadow-[0_32px_56px_-16px_rgba(16,19,50,0.45)]">
-              <span class="pointer-events-none absolute -bottom-12 -left-12 h-40 w-40 rounded-full bg-white/10 blur-3xl motion-safe:transition-colors motion-safe:duration-(--duration-slow) group-hover:bg-white/20" aria-hidden="true" />
-              <p ref="productsNumRef" class="relative text-display font-semibold tracking-tighter text-white">{{ productsFact.value }}</p>
-              <p class="relative mt-1 text-body font-medium text-white/80">{{ productsFact.label }}</p>
-            </div>
-          </div>
+      <!-- Real solution names (not invented copy) as a quick-scan preview
+           of what "software expertise" above actually covers — the full
+           Solutions section below goes into each one properly. -->
+      <div class="mt-10 md:mt-12">
+        <p class="text-caption font-semibold tracking-widest text-muted uppercase">What We Build</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span
+            v-for="solution in solutions"
+            :key="solution.id"
+            class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300 hover:text-brand-500"
+          >
+            {{ solution.title }}
+          </span>
         </div>
       </div>
     </PageContainer>
