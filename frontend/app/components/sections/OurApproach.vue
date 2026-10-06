@@ -1,12 +1,12 @@
 <script setup lang="ts">
 // Editorial pull-quote (the belief statement, set large and italic like
 // an actual quotation rather than a standard eyebrow/heading/paragraph
-// block) leading into the process it produces, shown as staggered
-// "floating" icon cards with a huge ghost numeral watermarked behind
-// each one — a deliberate departure from the generic numbered-circle
-// timeline pattern, built from the same glass-card + stagger-offset
-// language already used elsewhere on the site (About's floating stat
-// badges) rather than a new, unrelated idiom.
+// block) leading into the process it produces, shown as a connected
+// ribbon of numbered circles — a single gradient line running behind
+// icon circles, each ringed in the section's own background color so
+// the line reads as passing behind it, per the reference process-
+// infographic layouts (a continuous path + circles on top, label below
+// each one) rather than a plain grid of cards.
 //
 // Reuses the exact, already-established wording from the "Why Trigon
 // Apex" principles (components/sections/WhyTrigonApex.vue) for the
@@ -64,32 +64,41 @@ useStaggerReveal(stepsRef, 'li', { each: true })
           From Business Problem to Working Software
         </h3>
 
-        <ol ref="stepsRef" class="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 md:mt-14 lg:grid-cols-5">
-          <li
-            v-for="(step, index) in steps"
-            :key="step.title"
-            class="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm motion-safe:transition-[transform,border-color] motion-safe:duration-(--duration-base) hover:-translate-y-1.5 hover:border-white/20"
-            :class="index % 2 === 1 ? 'lg:mt-9' : ''"
-          >
-            <span class="pointer-events-none absolute -top-3 -right-1 text-[4.75rem] leading-none font-black text-white/[0.06] select-none" aria-hidden="true">
-              0{{ index + 1 }}
-            </span>
-            <span
-              class="relative flex h-11 w-11 items-center justify-center rounded-full text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
-              :class="step.badgeClass"
+        <div class="relative mt-14 md:mt-16">
+          <!-- The connecting ribbon: a single gradient line running
+               brand -> ice -> green behind the circles, same technique as
+               the reference infographics (a continuous path with numbered
+               circles sitting on top, ringed in the section's own
+               background color so the line reads as passing behind each
+               one rather than through it). -->
+          <div class="pointer-events-none absolute inset-x-[10%] top-8 hidden h-0.5 bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500 md:block" aria-hidden="true" />
+
+          <ol ref="stepsRef" class="relative grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-5 md:gap-4">
+            <li
+              v-for="(step, index) in steps"
+              :key="step.title"
+              class="group flex flex-col items-center text-center"
             >
-              <span class="h-5 w-5" aria-hidden="true">
-                <PrincipleIcon :id="step.icon" />
+              <span
+                class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg ring-8 ring-navy-950 motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+                :class="step.badgeClass"
+              >
+                <span class="h-7 w-7" aria-hidden="true">
+                  <PrincipleIcon :id="step.icon" />
+                </span>
               </span>
-            </span>
-            <h4 class="relative mt-5 text-h4 font-semibold tracking-tight text-white">
-              {{ step.title }}
-            </h4>
-            <p class="relative mt-2 text-body-sm text-slate-300">
-              {{ step.description }}
-            </p>
-          </li>
-        </ol>
+              <span class="mt-4 text-caption font-bold tracking-widest text-white/50">
+                STEP 0{{ index + 1 }}
+              </span>
+              <h4 class="mt-1 text-h4 font-semibold tracking-tight text-white">
+                {{ step.title }}
+              </h4>
+              <p class="mt-2 max-w-[14rem] text-body-sm text-slate-300">
+                {{ step.description }}
+              </p>
+            </li>
+          </ol>
+        </div>
       </div>
     </PageContainer>
   </SectionContainer>
