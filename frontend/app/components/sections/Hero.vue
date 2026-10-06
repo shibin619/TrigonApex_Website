@@ -76,13 +76,14 @@ onMounted(() => {
             </span>
 
             <h1 id="hero-heading" class="mt-5 text-display font-bold tracking-tighter text-highlighted">
-              Software Solutions for Business
-              <span class="text-brand-500"> Growth</span>
+              Stop Running Your Business on
+              <span class="text-brand-500"> Disconnected Systems</span>
             </h1>
 
             <p class="mt-6 max-w-lg text-body-lg text-muted">
-              We build software systems that help businesses acquire
-              customers, improve operations, understand data, and scale.
+              We build the connected software that replaces scattered
+              tools, spreadsheets, and guesswork — so your team can focus
+              on growth, not busywork.
             </p>
 
             <div class="mt-10 flex flex-wrap items-center gap-6">
