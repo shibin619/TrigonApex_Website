@@ -5,16 +5,16 @@ import { industries } from '~/content/industries'
 import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
-// Solid-color band + circular photo-style crop + floating stat badges —
-// the same composition as a reference landing-page kit (a saturated
-// color block, bold type, a framed circular visual with small UI/icon
-// cards floating around its edge). The circle uses our one approved
-// illustration (hero-illustration.webp), cropped tight on the two
-// colleagues rather than the full scene Hero already shows, so the two
-// sections don't read as the same image repeated. Each badge still
-// carries one of the three real, verifiable counts
-// (docs/CONTENT_ARCHITECTURE.md §15), so nothing here is purely
-// decorative.
+// Light background with teal as the accent color (heading, button,
+// decorative ring) — not a solid teal fill — matching the reference's
+// actual composition: a mostly-white page with teal/cyan used only on
+// specific elements. Circular photo-style crop + floating stat badges,
+// same as before. The circle uses our one approved illustration
+// (hero-illustration.webp), cropped tight on the two colleagues rather
+// than the full scene Hero already shows, so the two sections don't
+// read as the same image repeated. Each badge still carries one of the
+// three real, verifiable counts (docs/CONTENT_ARCHITECTURE.md §15), so
+// nothing here is purely decorative.
 const stats = [
   { value: solutions.length, label: 'Core Solutions', icon: 'layers' as const, badge: 'top-[2%] left-[-6%] sm:left-[-10%]', iconClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]', numClass: 'text-brand-500' },
   { value: industries.length, label: 'Industries Served', icon: 'target' as const, badge: 'bottom-[30%] right-[-8%] sm:right-[-14%]', iconClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]', numClass: 'text-accent-ice-600' },
@@ -134,39 +134,43 @@ onMounted(() => {
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="about-heading" class="bg-accent-ice-600">
+  <SectionContainer as="section" aria-labelledby="about-heading">
     <PageContainer as="div">
       <div class="grid grid-cols-1 items-center gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div ref="contentRef" class="max-w-lg">
-          <span class="text-caption font-semibold tracking-widest text-white uppercase">
+          <span class="text-caption font-semibold tracking-widest text-accent-ice-600 uppercase">
             About Trigon Apex
           </span>
-          <h2 id="about-heading" class="mt-3 text-h2 font-semibold tracking-tight text-white">
+          <h2 id="about-heading" class="mt-3 text-h2 font-bold tracking-tight text-accent-ice-600">
             A technology partner
-            <span class="block font-medium text-white/85 italic">for businesses that want to grow.</span>
+            <span class="block font-medium text-highlighted italic">for businesses that want to grow.</span>
           </h2>
-          <p class="mt-4 text-body-lg text-white/85">
+          <p class="mt-4 text-body-lg text-muted">
             We combine business understanding with software expertise to
             design practical systems that help companies operate more
             efficiently, automate repetitive work, and turn their own data
             into better decisions.
           </p>
-          <AppButton v-if="learnAboutUs" variant="primary" size="lg" :to="learnAboutUs.to" class="mt-7">
+          <NuxtLink
+            v-if="learnAboutUs"
+            :to="learnAboutUs.to"
+            class="mt-7 inline-flex items-center justify-center rounded-full bg-accent-ice-600 px-7 py-3 text-button font-semibold text-white shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-px hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ice-600"
+          >
             {{ learnAboutUs.label }}
-          </AppButton>
+          </NuxtLink>
 
           <!-- Real solution names (not invented copy) as a quick-scan
                preview of what "software expertise" above actually covers —
                the full Solutions section below goes into each one
                properly. -->
           <div class="mt-10">
-            <p class="text-caption font-semibold tracking-widest text-white/70 uppercase">What We Build</p>
+            <p class="text-caption font-semibold tracking-widest text-muted uppercase">What We Build</p>
             <div class="mt-4 flex flex-wrap gap-2">
               <span
                 v-for="solution in solutions"
                 :key="solution.id"
                 :title="solution.shortDescription"
-                class="rounded-full border border-white/35 px-3.5 py-1.5 text-body-sm font-medium text-white motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-white hover:bg-white/10"
+                class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-accent-ice-400 hover:text-accent-ice-600"
               >
                 {{ solution.title }}
               </span>
@@ -179,12 +183,12 @@ onMounted(() => {
              from the copy. -->
         <div ref="visualWrapRef" class="relative mx-auto aspect-square w-full max-w-sm sm:max-w-md" style="perspective: 800px;">
           <div class="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <div class="h-[78%] w-[78%] rounded-full bg-white/20 opacity-90 blur-md" />
+            <div class="h-[78%] w-[78%] rounded-full bg-accent-ice-400/15 blur-md" />
           </div>
           <!-- Decorative offset arc peeking out from behind the circle,
                the same detail as the reference's curved line. -->
-          <div class="pointer-events-none absolute -right-[3%] -bottom-[1%] h-[72%] w-[72%] rounded-full border-2 border-white/30" aria-hidden="true" />
-          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-white/35" aria-hidden="true" />
+          <div class="pointer-events-none absolute -right-[3%] -bottom-[1%] h-[72%] w-[72%] rounded-full border-2 border-accent-ice-400/50" aria-hidden="true" />
+          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-accent-ice-400/50" aria-hidden="true" />
 
           <!-- Two signals orbiting the ring at a fixed radius, set in
                motion from JS (see onMounted below) — a static initial
@@ -201,7 +205,7 @@ onMounted(() => {
 
           <div
             ref="medallionRef"
-            class="absolute inset-[14%] overflow-hidden rounded-full shadow-[0_32px_48px_-16px_rgba(16,19,50,0.45)] ring-4 ring-white/30"
+            class="absolute inset-[14%] overflow-hidden rounded-full shadow-[0_32px_48px_-16px_rgba(16,19,50,0.3)] ring-4 ring-white"
           >
             <img
               src="/images/about-illustration-crop.webp"
