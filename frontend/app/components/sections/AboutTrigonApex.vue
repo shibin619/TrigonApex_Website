@@ -6,18 +6,19 @@ import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
 // Same three real, verifiable counts as before (docs/CONTENT_ARCHITECTURE.md
-// §15: no metric without verified: true). Previous passes (photo, gradient
-// panel, bento grid) kept adding more decoration — color, shadow, motion —
-// and it kept reading as "not quite it". Pivoted to the opposite direction:
-// the restraint Stripe/Linear/Vercel's own stat sections actually use —
-// thin hairline borders instead of heavy drop-shadows, large typography-
-// led numbers instead of boxed gradient cards, a subtle dot-grid texture
-// instead of blurred color blobs. One continuous editorial column instead
-// of a split layout.
+// §15: no metric without verified: true). The section itself stays on the
+// default light background — the page already goes light -> dark (this
+// section's neighbor, OurApproach.vue) -> light in a deliberate rhythm, so
+// making this whole section dark too would stack two dark bands back to
+// back. Instead the drama is contained: one dark "spotlight" panel inside
+// an otherwise light section, with the three numbers blown up to editorial
+// scale, each a different accent color, staggered at different vertical
+// offsets rather than aligned in a neat row — the visually bold move the
+// contained Stripe-style strip never had room for.
 const stats = [
-  { value: solutions.length, label: 'Core Solutions' },
-  { value: industries.length, label: 'Industries Served' },
-  { value: products.length, label: 'Natro Products' }
+  { value: solutions.length, label: 'Core Solutions', color: 'text-brand-300', offset: '' },
+  { value: industries.length, label: 'Industries Served', color: 'text-accent-ice-400', offset: 'md:mt-10' },
+  { value: products.length, label: 'Natro Products', color: 'text-accent-green-500', offset: 'md:mt-4' }
 ]
 
 const learnAboutUs = getCta('learn-about-us')
@@ -81,27 +82,36 @@ onMounted(() => {
         </AppButton>
       </div>
 
-      <!-- Metrics strip: thin border + a fine dot-grid texture (the
-           "engineered" cue from Linear/Vercel) instead of a colored
-           gradient card. Numbers are plain typography, not boxed. -->
-      <div
-        ref="stripRef"
-        class="relative mt-12 grid grid-cols-1 overflow-hidden rounded-(--radius-xl) border border-default sm:grid-cols-3 md:mt-14"
-        style="background-image: radial-gradient(circle, var(--color-brand-200) 1px, transparent 1px); background-size: 22px 22px; background-color: var(--color-brand-50);"
-      >
-        <div
-          v-for="(stat, index) in stats"
-          :key="stat.label"
-          class="group relative border-default bg-default/55 p-8 backdrop-blur-[2px] motion-safe:transition-colors motion-safe:duration-(--duration-base) hover:bg-brand-50/60"
-          :class="index > 0 ? 'border-t sm:border-t-0 sm:border-l' : ''"
-        >
-          <p
-            ref="numRefs"
-            class="text-display font-bold tracking-tighter text-highlighted motion-safe:transition-colors motion-safe:duration-(--duration-base) group-hover:text-brand-500"
+      <!-- Dark spotlight panel: the one bold, high-contrast moment the
+           section was missing. Numbers at editorial scale, each a
+           different accent, staggered at different heights instead of
+           aligned. A short statement balances the stats on wide screens
+           instead of leaving the panel's right half empty. -->
+      <div class="relative mt-12 grid grid-cols-1 gap-10 overflow-hidden rounded-(--radius-xl) bg-navy-950 p-8 sm:p-12 md:mt-14 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+        <div class="pointer-events-none absolute inset-0 opacity-50" style="background-image: radial-gradient(circle at 15% 15%, var(--color-brand-700), transparent 45%), radial-gradient(circle at 85% 85%, var(--color-accent-green-700), transparent 45%);" aria-hidden="true" />
+
+        <div ref="stripRef" class="relative flex flex-wrap items-start gap-x-12 gap-y-10">
+          <div
+            v-for="(stat, index) in stats"
+            :key="stat.label"
+            class="border-white/10"
+            :class="[stat.offset, index > 0 ? 'border-l pl-12' : '']"
           >
-            {{ stat.value }}
+            <p
+              ref="numRefs"
+              class="text-[3.5rem] leading-none font-bold tracking-tighter sm:text-[4.5rem] lg:text-[5.5rem]"
+              :class="stat.color"
+            >
+              {{ stat.value }}
+            </p>
+            <p class="mt-3 text-body font-medium text-slate-300">{{ stat.label }}</p>
+          </div>
+        </div>
+
+        <div class="relative flex items-center border-white/10 lg:border-l lg:pl-16">
+          <p class="text-h4 leading-snug font-medium text-white">
+            Every number here is a solution we've shipped, an industry we understand, and a product we've built &mdash; not a projection.
           </p>
-          <p class="mt-1 text-body text-muted">{{ stat.label }}</p>
         </div>
       </div>
 
