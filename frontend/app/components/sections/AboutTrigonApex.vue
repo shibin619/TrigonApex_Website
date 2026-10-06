@@ -5,14 +5,16 @@ import { industries } from '~/content/industries'
 import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
-// Circular brand medallion + floating stat badges, the same "illustrated
-// info-graphic" composition as a reference landing-page kit (a framed
-// central visual with small UI/icon cards floating around its edge) —
-// built from our own icon set and real, verifiable counts
-// (docs/CONTENT_ARCHITECTURE.md §15) instead of stock illustration, since
-// no custom artwork exists for this section. Each badge both decorates the
-// circle AND carries one of the three proof points, so nothing here is
-// purely decorative.
+// Solid-color band + circular photo-style crop + floating stat badges —
+// the same composition as a reference landing-page kit (a saturated
+// color block, bold type, a framed circular visual with small UI/icon
+// cards floating around its edge). The circle uses our one approved
+// illustration (hero-illustration.webp), cropped tight on the two
+// colleagues rather than the full scene Hero already shows, so the two
+// sections don't read as the same image repeated. Each badge still
+// carries one of the three real, verifiable counts
+// (docs/CONTENT_ARCHITECTURE.md §15), so nothing here is purely
+// decorative.
 const stats = [
   { value: solutions.length, label: 'Core Solutions', icon: 'layers' as const, badge: 'top-[2%] left-[-6%] sm:left-[-10%]', iconClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]', numClass: 'text-brand-500' },
   { value: industries.length, label: 'Industries Served', icon: 'target' as const, badge: 'bottom-[30%] right-[-8%] sm:right-[-14%]', iconClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]', numClass: 'text-accent-ice-600' },
@@ -132,17 +134,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="about-heading">
+  <SectionContainer as="section" aria-labelledby="about-heading" class="bg-accent-ice-600">
     <PageContainer as="div">
       <div class="grid grid-cols-1 items-center gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div ref="contentRef" class="max-w-lg">
-          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
+          <span class="text-caption font-semibold tracking-widest text-white uppercase">
             About Trigon Apex
           </span>
-          <h2 id="about-heading" class="mt-3 text-h2 font-semibold tracking-tight text-highlighted">
-            A technology partner for businesses that want to grow.
+          <h2 id="about-heading" class="mt-3 text-h2 font-semibold tracking-tight text-white">
+            A technology partner
+            <span class="block font-medium text-white/85 italic">for businesses that want to grow.</span>
           </h2>
-          <p class="mt-4 text-body-lg text-muted">
+          <p class="mt-4 text-body-lg text-white/85">
             We combine business understanding with software expertise to
             design practical systems that help companies operate more
             efficiently, automate repetitive work, and turn their own data
@@ -157,13 +160,13 @@ onMounted(() => {
                the full Solutions section below goes into each one
                properly. -->
           <div class="mt-10">
-            <p class="text-caption font-semibold tracking-widest text-muted uppercase">What We Build</p>
+            <p class="text-caption font-semibold tracking-widest text-white/70 uppercase">What We Build</p>
             <div class="mt-4 flex flex-wrap gap-2">
               <span
                 v-for="solution in solutions"
                 :key="solution.id"
                 :title="solution.shortDescription"
-                class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300 hover:text-brand-500"
+                class="rounded-full border border-white/35 px-3.5 py-1.5 text-body-sm font-medium text-white motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-white hover:bg-white/10"
               >
                 {{ solution.title }}
               </span>
@@ -171,14 +174,17 @@ onMounted(() => {
           </div>
         </div>
 
-        <!-- Circular brand medallion with the real stats as floating
+        <!-- Circular photo-style crop with the real stats as floating
              badges around its edge, instead of a stat panel sitting apart
              from the copy. -->
         <div ref="visualWrapRef" class="relative mx-auto aspect-square w-full max-w-sm sm:max-w-md" style="perspective: 800px;">
           <div class="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <div class="h-[78%] w-[78%] rounded-full bg-gradient-to-br from-brand-100 to-accent-green-100 opacity-80 blur-md" />
+            <div class="h-[78%] w-[78%] rounded-full bg-white/20 opacity-90 blur-md" />
           </div>
-          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-brand-200" aria-hidden="true" />
+          <!-- Decorative offset arc peeking out from behind the circle,
+               the same detail as the reference's curved line. -->
+          <div class="pointer-events-none absolute -right-[3%] -bottom-[1%] h-[72%] w-[72%] rounded-full border-2 border-white/30" aria-hidden="true" />
+          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-white/35" aria-hidden="true" />
 
           <!-- Two signals orbiting the ring at a fixed radius, set in
                motion from JS (see onMounted below) — a static initial
@@ -195,21 +201,13 @@ onMounted(() => {
 
           <div
             ref="medallionRef"
-            class="absolute inset-[19%] flex items-center justify-center rounded-full bg-gradient-to-br from-navy-950 to-brand-700 shadow-[0_32px_48px_-16px_rgba(16,19,50,0.35)]"
+            class="absolute inset-[14%] overflow-hidden rounded-full shadow-[0_32px_48px_-16px_rgba(16,19,50,0.45)] ring-4 ring-white/30"
           >
-            <!-- A growth chart, not an abstract mark — reads instantly
-                 ("businesses that want to grow," the line right above
-                 this), and each bar is tinted in the same three accent
-                 colors as the stat badges circling it, so it still ties
-                 to the three real numbers it's framing. -->
-            <svg viewBox="0 0 100 100" class="h-[46%] w-[46%]" fill="none" aria-hidden="true">
-              <path d="M12 84h76" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.3" />
-              <rect x="20" y="56" width="16" height="28" rx="3" class="fill-brand-300" />
-              <rect x="42" y="40" width="16" height="44" rx="3" class="fill-accent-ice-400" />
-              <rect x="64" y="20" width="16" height="64" rx="3" class="fill-accent-green-500" />
-              <path d="M18 60L50 38L72 24" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M62 24h10v10" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
+            <img
+              src="/images/about-illustration-crop.webp"
+              alt="Illustration of two Trigon Apex colleagues reviewing a business growth chart"
+              class="h-full w-full object-cover"
+            >
           </div>
 
           <div ref="badgesRef">
