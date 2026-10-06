@@ -5,11 +5,13 @@ import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
 // Same three real, verifiable counts as before (docs/CONTENT_ARCHITECTURE.md
-// §15: no metric without verified: true) — restyled into a photo + floating
-// stat card + short fact list, the pattern from the Techa reference video,
-// instead of three plain tiles. The lead number (Core Solutions) becomes
-// the floating card; the other two stay as a small icon list so nothing
-// here is invented or duplicated elsewhere on the page.
+// §15: no metric without verified: true). Previously shown over a stock
+// photo of generic office people — the only photography on an otherwise
+// flat-illustration/line-icon site, which read as off-brand. Replaced with
+// a gradient stat panel using the same visual language as the rest of the
+// page (the Solutions section's highlighted card, the Product Tour's dark
+// panel): no new colors, just the existing brand gradient + icon-chip
+// pattern applied here too, so nothing here is invented or duplicated.
 const leadFact = { value: solutions.length, label: 'Core Solutions' }
 const supportingFacts = [
   { value: industries.length, label: 'Industries Served', icon: 'grid' as const },
@@ -25,21 +27,26 @@ useFadeIn(contentRef)
 <template>
   <SectionContainer as="section" aria-labelledby="about-heading">
     <PageContainer as="div">
-      <div ref="contentRef" class="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:items-center lg:gap-12">
-        <div class="relative pb-6 sm:pb-10 lg:col-span-5 lg:pb-0">
-          <div class="aspect-[4/5] overflow-hidden rounded-(--radius-xl) sm:aspect-[5/4] lg:aspect-square">
-            <img
-              src="/images/hero-team.webp"
-              alt="A team discussing business operations around a table"
-              class="h-full w-full object-cover"
-              width="1456"
-              height="1024"
-              loading="lazy"
-            >
-          </div>
-          <div class="absolute right-4 -bottom-2 rounded-(--radius-xl) border border-default bg-default p-6 shadow-lg sm:right-8 sm:bottom-0 sm:p-7">
-            <p class="text-display font-semibold tracking-tighter text-brand-500">{{ leadFact.value }}</p>
-            <p class="text-body-sm font-medium text-muted">{{ leadFact.label }}</p>
+      <div ref="contentRef" class="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-12">
+        <div class="relative overflow-hidden rounded-(--radius-xl) bg-gradient-to-br from-brand-500 to-brand-700 p-8 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] sm:p-10 lg:col-span-5">
+          <!-- Same corner-glow treatment as the Solutions highlighted card
+               and the product tour panels, purely decorative. -->
+          <span class="pointer-events-none absolute -top-14 -right-14 h-48 w-48 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+          <span class="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+
+          <p class="relative text-display font-semibold tracking-tighter text-white">{{ leadFact.value }}</p>
+          <p class="relative mt-1 text-body-lg font-medium text-white/80">{{ leadFact.label }}</p>
+
+          <div class="relative mt-10 space-y-5 border-t border-white/15 pt-8">
+            <div v-for="fact in supportingFacts" :key="fact.label" class="flex items-center gap-4">
+              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-(--radius-lg) bg-white/15 text-white" aria-hidden="true">
+                <svg v-if="fact.icon === 'grid'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M21 8l-9-5-9 5 9 5 9-5Z" /><path d="M3 8v8l9 5 9-5V8" /><path d="M12 13v8" /></svg>
+              </span>
+              <p class="text-body font-medium text-white">
+                <span class="font-semibold">{{ fact.value }}</span> {{ fact.label }}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -56,18 +63,6 @@ useFadeIn(contentRef)
             efficiently, automate repetitive work, and turn their own
             data into better decisions.
           </p>
-
-          <div class="mt-8 space-y-6 border-t border-default pt-8">
-            <div v-for="fact in supportingFacts" :key="fact.label" class="flex items-center gap-4">
-              <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-(--radius-lg) bg-brand-50 text-brand-500" aria-hidden="true">
-                <svg v-if="fact.icon === 'grid'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
-                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="M21 8l-9-5-9 5 9 5 9-5Z" /><path d="M3 8v8l9 5 9-5V8" /><path d="M12 13v8" /></svg>
-              </span>
-              <p class="text-body font-medium text-highlighted">
-                <span class="font-semibold">{{ fact.value }}</span> {{ fact.label }}
-              </p>
-            </div>
-          </div>
 
           <AppButton v-if="learnAboutUs" variant="text" :to="learnAboutUs.to" class="mt-8 px-0">
             {{ learnAboutUs.label }}
