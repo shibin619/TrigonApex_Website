@@ -19,6 +19,11 @@ const stats = [
   { value: products.length, label: 'Natro Products', icon: 'bulb' as const, badge: 'bottom-[0%] left-[8%] sm:left-[2%]', iconClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]', numClass: 'text-accent-green-700' }
 ]
 
+const orbitDots = [
+  { color: 'bg-brand-400', glow: 'shadow-[0_0_10px_2px_rgba(73,89,179,0.55)]' },
+  { color: 'bg-accent-green-500', glow: 'shadow-[0_0_10px_2px_rgba(66,148,110,0.55)]' }
+]
+
 const learnAboutUs = getCta('learn-about-us')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
@@ -26,6 +31,7 @@ const visualWrapRef = useTemplateRef<HTMLDivElement>('visualWrapRef')
 const medallionRef = useTemplateRef<HTMLDivElement>('medallionRef')
 const badgesRef = useTemplateRef<HTMLDivElement>('badgesRef')
 const numRefs = useTemplateRef<HTMLParagraphElement[]>('numRefs')
+const orbitRefs = useTemplateRef<HTMLSpanElement[]>('orbitRefs')
 useFadeIn(contentRef)
 useStaggerReveal(badgesRef, ':scope > div')
 
@@ -103,6 +109,25 @@ onMounted(() => {
       delay: i * 0.2
     })
   })
+
+  // Two small signals orbiting the dashed ring at a fixed radius — reads
+  // as "live" data moving between the Trigon mark and the three real
+  // stats around it, instead of a static graphic.
+  const orbitEls = orbitRefs.value ?? []
+  const radius = 41
+  orbitEls.forEach((el, i) => {
+    const state = { angle: i * Math.PI }
+    gsap.to(state, {
+      angle: state.angle + Math.PI * 2,
+      duration: 10,
+      repeat: -1,
+      ease: 'linear',
+      onUpdate: () => {
+        el.style.left = `${50 + radius * Math.cos(state.angle)}%`
+        el.style.top = `${50 + radius * Math.sin(state.angle)}%`
+      }
+    })
+  })
 })
 </script>
 
@@ -137,6 +162,7 @@ onMounted(() => {
               <span
                 v-for="solution in solutions"
                 :key="solution.id"
+                :title="solution.shortDescription"
                 class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300 hover:text-brand-500"
               >
                 {{ solution.title }}
@@ -153,6 +179,19 @@ onMounted(() => {
             <div class="h-[78%] w-[78%] rounded-full bg-gradient-to-br from-brand-100 to-accent-green-100 opacity-80 blur-md" />
           </div>
           <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-brand-200" aria-hidden="true" />
+
+          <!-- Two signals orbiting the ring at a fixed radius, set in
+               motion from JS (see onMounted below) — a static initial
+               position here so they render sensibly before JS runs. -->
+          <span
+            v-for="(dot, index) in orbitDots"
+            :key="index"
+            ref="orbitRefs"
+            class="pointer-events-none absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            :class="[dot.color, dot.glow]"
+            :style="{ left: '50%', top: index === 0 ? '9%' : '91%' }"
+            aria-hidden="true"
+          />
 
           <div
             ref="medallionRef"
