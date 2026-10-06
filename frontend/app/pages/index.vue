@@ -5,11 +5,13 @@ import { siteConfig } from '~/content/site.config'
 //
 // Section order, revised to the corporate/MNC-pattern IA (large hero
 // visual → about/quick-facts → belief statement → services grid → ...):
-// Hero → Trust → About → Our Approach (belief band) → What We Do
-// (Solutions) → Business Challenges (Problem Selector) → Industries →
-// Product Experience (Product Tour, with Business Analytics kept
-// immediately adjacent) → Selected Work (Case Studies) →
-// Why Trigon Apex → How We Work → Testimonials (renders nothing until an
+// Hero → Trust → About → Our Approach (belief statement + the How We
+// Work process timeline, merged into one section — they were answering
+// "why" and "how" at the same altitude but sitting far apart on the
+// page) → What We Do (Solutions) → Business Challenges (Problem
+// Selector) → Industries → Product Experience (Product Tour, with
+// Business Analytics kept immediately adjacent) → Selected Work (Case
+// Studies) → Why Trigon Apex → Testimonials (renders nothing until an
 // approved testimonial exists) → FAQ → Final CTA.
 useSeo({
   title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
@@ -50,7 +52,6 @@ useSeo({
   <BusinessAnalytics />
   <CaseStudies />
   <WhyTrigonApex />
-  <HowWeWork />
   <Testimonials />
   <Faq />
   <FinalCta />
