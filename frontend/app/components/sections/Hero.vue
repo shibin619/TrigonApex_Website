@@ -12,6 +12,8 @@ const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
 const badgeTopRef = useTemplateRef<HTMLDivElement>('badgeTopRef')
 const badgeBottomRef = useTemplateRef<HTMLDivElement>('badgeBottomRef')
 const badgePulseRef = useTemplateRef<HTMLDivElement>('badgePulseRef')
+const stageRef = useTemplateRef<HTMLDivElement>('stageRef')
+const sectionRef = useTemplateRef<HTMLElement>('sectionRef')
 
 useFadeIn(contentRef)
 
@@ -49,12 +51,49 @@ onMounted(() => {
     gsap.to(badgePulseRef.value, { scale: 1.12, duration: 1.4, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 1.3 })
   }
 })
+
+// Scroll parallax: as the visitor scrolls past the Hero, the background
+// "stage" shape drifts at a different rate than the illustration above it
+// — the layered-depth cue that makes a hero feel directed rather than a
+// static image, without pulling in GSAP's ScrollTrigger plugin (scroll
+// position read directly, rAF-throttled, same restraint as useFadeIn's
+// plain-IntersectionObserver approach). Deliberately NOT applied to the
+// floating badges — GSAP already owns their transform continuously via
+// the bob loop above, and a second system writing to the same property
+// would fight it and jitter.
+onMounted(() => {
+  if (!sectionRef.value) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  let ticking = false
+  function update() {
+    ticking = false
+    const section = sectionRef.value
+    if (!section) return
+    const rect = section.getBoundingClientRect()
+    if (rect.bottom < 0 || rect.top > window.innerHeight) return
+    const progress = -rect.top / (rect.height || 1)
+
+    if (stageRef.value) stageRef.value.style.transform = `translateY(${progress * 40}px)`
+    if (visualRef.value) visualRef.value.style.transform = `translateY(${progress * -24}px)`
+  }
+
+  function onScroll() {
+    if (ticking) return
+    ticking = true
+    requestAnimationFrame(update)
+  }
+
+  update()
+  window.addEventListener('scroll', onScroll, { passive: true })
+  onBeforeUnmount(() => window.removeEventListener('scroll', onScroll))
+})
 </script>
 
 <template>
   <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none" class="bg-gradient-to-br from-accent-green-500/10 via-white to-brand-50">
     <PageContainer as="div">
-      <div class="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <div ref="sectionRef" class="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div class="py-16 sm:py-24 lg:py-28">
           <div ref="contentRef" class="max-w-xl">
             <span class="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-4 py-1.5 text-caption font-semibold tracking-widest text-brand-500 uppercase shadow-sm">
@@ -84,14 +123,15 @@ onMounted(() => {
         </div>
 
         <div class="relative mx-auto w-full max-w-md lg:max-w-none">
-          <!-- One large, more solid "stage" shape behind the illustration
-               (not just an atmospheric haze) plus a smaller accent blob
-               for color variety — gives the illustration something to
-               visually sit on, the way a dominant background shape does
-               in richer reference layouts, built from the same validated
-               brand/green tokens used everywhere else. -->
+          <!-- One large, genuinely colorful "stage" shape behind the
+               illustration (not just a pastel haze) plus a smaller accent
+               blob for variety — gives the illustration something bold to
+               visually sit on, the dominant-background-shape treatment
+               from the reference, built from the same validated brand/
+               green tokens used everywhere else. Drifts on scroll (see
+               the parallax handler above) for a layered-depth feel. -->
           <div class="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center" aria-hidden="true">
-            <div class="h-[85%] w-[85%] rounded-full bg-gradient-to-br from-brand-100 to-brand-50 blur-xl" />
+            <div ref="stageRef" class="h-[85%] w-[85%] rounded-full bg-gradient-to-br from-brand-200 to-brand-300 opacity-80 blur-md" />
           </div>
           <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
             <div class="absolute right-1/4 bottom-1/4 h-56 w-56 translate-x-1/2 translate-y-1/2 rounded-full bg-accent-green-500/25 blur-3xl" />
