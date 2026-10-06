@@ -5,10 +5,13 @@ import { industries } from '~/content/industries'
 import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
-// Light background with teal as the accent color (heading, button,
-// decorative ring) — not a solid teal fill — matching the reference's
-// actual composition: a mostly-white page with teal/cyan used only on
-// specific elements. Circular photo-style crop + floating stat badges,
+// Light background with the site's actual brand color (indigo, not the
+// reference's literal teal) as the accent on heading/button/ring —
+// matching the reference's composition (a mostly-white page with one
+// accent color used on specific elements) while staying consistent with
+// the brand color used everywhere else on the site (nav CTA, Hero's
+// button and headline accent). Circular photo-style crop + floating stat
+// badges,
 // same as before. The circle uses our one approved illustration
 // (hero-illustration.webp), cropped tight on the two colleagues rather
 // than the full scene Hero already shows, so the two sections don't
@@ -138,10 +141,10 @@ onMounted(() => {
     <PageContainer as="div">
       <div class="grid grid-cols-1 items-center gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
         <div ref="contentRef" class="max-w-lg">
-          <span class="text-caption font-semibold tracking-widest text-accent-ice-600 uppercase">
+          <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
             About Trigon Apex
           </span>
-          <h2 id="about-heading" class="mt-3 text-h2 font-bold tracking-tight text-accent-ice-600">
+          <h2 id="about-heading" class="mt-3 text-h2 font-bold tracking-tight text-brand-500">
             A technology partner
             <span class="block font-medium text-highlighted italic">for businesses that want to grow.</span>
           </h2>
@@ -154,7 +157,7 @@ onMounted(() => {
           <NuxtLink
             v-if="learnAboutUs"
             :to="learnAboutUs.to"
-            class="mt-7 inline-flex items-center justify-center rounded-full bg-accent-ice-600 px-7 py-3 text-button font-semibold text-white shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-px hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-ice-600"
+            class="mt-7 inline-flex items-center justify-center rounded-full bg-brand-500 px-7 py-3 text-button font-semibold text-white shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-fast) hover:-translate-y-px hover:bg-brand-600 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
           >
             {{ learnAboutUs.label }}
           </NuxtLink>
@@ -170,7 +173,7 @@ onMounted(() => {
                 v-for="solution in solutions"
                 :key="solution.id"
                 :title="solution.shortDescription"
-                class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-accent-ice-400 hover:text-accent-ice-600"
+                class="rounded-full border border-default px-3.5 py-1.5 text-body-sm font-medium text-default motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300 hover:text-brand-500"
               >
                 {{ solution.title }}
               </span>
@@ -183,12 +186,12 @@ onMounted(() => {
              from the copy. -->
         <div ref="visualWrapRef" class="relative mx-auto aspect-square w-full max-w-sm sm:max-w-md" style="perspective: 800px;">
           <div class="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
-            <div class="h-[78%] w-[78%] rounded-full bg-accent-ice-400/15 blur-md" />
+            <div class="h-[78%] w-[78%] rounded-full bg-brand-200/25 blur-md" />
           </div>
           <!-- Decorative offset arc peeking out from behind the circle,
                the same detail as the reference's curved line. -->
-          <div class="pointer-events-none absolute -right-[3%] -bottom-[1%] h-[72%] w-[72%] rounded-full border-2 border-accent-ice-400/50" aria-hidden="true" />
-          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-accent-ice-400/50" aria-hidden="true" />
+          <div class="pointer-events-none absolute -right-[3%] -bottom-[1%] h-[72%] w-[72%] rounded-full border-2 border-brand-300/50" aria-hidden="true" />
+          <div class="pointer-events-none absolute inset-[9%] rounded-full border-2 border-dashed border-brand-300/50" aria-hidden="true" />
 
           <!-- Two signals orbiting the ring at a fixed radius, set in
                motion from JS (see onMounted below) — a static initial
