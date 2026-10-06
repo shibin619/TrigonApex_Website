@@ -158,7 +158,17 @@ onMounted(() => {
             ref="medallionRef"
             class="absolute inset-[19%] flex items-center justify-center rounded-full bg-gradient-to-br from-navy-950 to-brand-700 shadow-[0_32px_48px_-16px_rgba(16,19,50,0.35)]"
           >
-            <span class="text-[3.25rem] font-bold tracking-tighter text-white sm:text-[4rem]">TA</span>
+            <!-- A literal mark, not initials: "Trigon" (three angles) with
+                 each vertex tinted in the same three accent colors as the
+                 stat badges around it — the shape ties directly to the
+                 company name and to the three real numbers it's framing,
+                 reaching its "Apex" at the top point. -->
+            <svg viewBox="0 0 100 100" class="h-[42%] w-[42%]" fill="none" aria-hidden="true">
+              <path d="M50 16 L84 80 L16 80 Z" stroke="white" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.92" />
+              <circle cx="50" cy="16" r="5.5" class="fill-brand-300" />
+              <circle cx="84" cy="80" r="5.5" class="fill-accent-ice-400" />
+              <circle cx="16" cy="80" r="5.5" class="fill-accent-green-500" />
+            </svg>
           </div>
 
           <div ref="badgesRef">
