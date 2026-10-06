@@ -4,15 +4,17 @@ import { siteConfig } from '~/content/site.config'
 // Homepage. Header and footer come from layouts/default.vue.
 //
 // Section order, revised to the corporate/MNC-pattern IA (large hero
-// visual → about/quick-facts → belief statement → services grid → ...):
-// Hero → Trust → About → Our Approach (belief statement + the How We
-// Work process timeline, merged into one section — they were answering
-// "why" and "how" at the same altitude but sitting far apart on the
-// page) → What We Do (Solutions) → Business Challenges (Problem
-// Selector) → Industries → Product Experience (Product Tour, with
-// Business Analytics kept immediately adjacent) → Selected Work (Case
-// Studies) → Why Trigon Apex → Testimonials (renders nothing until an
-// approved testimonial exists) → FAQ → Final CTA.
+// visual → about/quick-facts → services grid → ...):
+// Hero → Trust → About → What We Do (Solutions) → Business Challenges
+// (Problem Selector) → Industries → Product Experience (Product Tour,
+// with Business Analytics kept immediately adjacent) → Selected Work
+// (Case Studies) → Why Trigon Apex → Testimonials (renders nothing
+// until an approved testimonial exists) → FAQ → Final CTA.
+//
+// The "Our Approach" belief-statement + "How We Work" process section
+// that used to sit here (between About and Solutions) was removed after
+// many redesign passes never landed — dropped rather than keep iterating
+// indefinitely on a section the page works fine without.
 useSeo({
   title: 'Trigon Apex Technologies | Software Solutions for Business Growth',
   description: 'Trigon Apex builds custom software solutions and industry-specific business software that help companies streamline operations, automate workflows, and turn data into better decisions.',
@@ -44,7 +46,6 @@ useSeo({
   <Hero />
   <TrustStrip />
   <AboutTrigonApex />
-  <OurApproach />
   <Solutions />
   <BusinessProblemSelector />
   <Industries />
