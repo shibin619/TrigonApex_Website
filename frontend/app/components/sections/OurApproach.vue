@@ -16,15 +16,24 @@ interface ProcessStep {
   title: string
   description: string
   icon: 'target' | 'flow' | 'layers' | 'link' | 'chart'
-  badgeClass: string
+  lineClass: string
+  borderClass: string
+  ringClass: string
+  textClass: string
+  dotClass: string
 }
 
+// The exact "numbered ring + L-shaped connector up to a small icon dot +
+// colored bordered description box" composition from the reference
+// business-infographic layouts, not the ribbon/line-behind-circles
+// version this replaces — each step gets its own accent color carried
+// through the ring, connector, label and box border consistently.
 const steps: ProcessStep[] = [
-  { title: 'Discover', description: 'Understand the business, users and workflows.', icon: 'target', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
-  { title: 'Define', description: 'Identify the right solution and system structure.', icon: 'flow', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' },
-  { title: 'Build', description: 'Develop and integrate the required software.', icon: 'layers', badgeClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]' },
-  { title: 'Launch', description: 'Deploy, test and make the system operational.', icon: 'link', badgeClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]' },
-  { title: 'Improve', description: 'Use feedback and data to continuously improve.', icon: 'chart', badgeClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]' }
+  { title: 'Discover', description: 'Understand the business, users and workflows.', icon: 'target', lineClass: 'text-brand-400', borderClass: 'border-brand-400', ringClass: 'ring-brand-400/20', textClass: 'text-brand-300', dotClass: 'bg-gradient-to-br from-brand-500 to-brand-700' },
+  { title: 'Define', description: 'Identify the right solution and system structure.', icon: 'flow', lineClass: 'text-accent-ice-400', borderClass: 'border-accent-ice-400', ringClass: 'ring-accent-ice-400/20', textClass: 'text-accent-ice-400', dotClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600' },
+  { title: 'Build', description: 'Develop and integrate the required software.', icon: 'layers', lineClass: 'text-accent-green-500', borderClass: 'border-accent-green-500', ringClass: 'ring-accent-green-500/20', textClass: 'text-accent-green-500', dotClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700' },
+  { title: 'Launch', description: 'Deploy, test and make the system operational.', icon: 'link', lineClass: 'text-brand-400', borderClass: 'border-brand-400', ringClass: 'ring-brand-400/20', textClass: 'text-brand-300', dotClass: 'bg-gradient-to-br from-brand-500 to-brand-700' },
+  { title: 'Improve', description: 'Use feedback and data to continuously improve.', icon: 'chart', lineClass: 'text-accent-ice-400', borderClass: 'border-accent-ice-400', ringClass: 'ring-accent-ice-400/20', textClass: 'text-accent-ice-400', dotClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600' }
 ]
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
@@ -64,41 +73,44 @@ useStaggerReveal(stepsRef, 'li', { each: true })
           From Business Problem to Working Software
         </h3>
 
-        <div class="relative mt-14 md:mt-16">
-          <!-- The connecting ribbon: a single gradient line running
-               brand -> ice -> green behind the circles, same technique as
-               the reference infographics (a continuous path with numbered
-               circles sitting on top, ringed in the section's own
-               background color so the line reads as passing behind each
-               one rather than through it). -->
-          <div class="pointer-events-none absolute inset-x-[10%] top-8 hidden h-0.5 bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500 md:block" aria-hidden="true" />
-
-          <ol ref="stepsRef" class="relative grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-5 md:gap-4">
-            <li
-              v-for="(step, index) in steps"
-              :key="step.title"
-              class="group flex flex-col items-center text-center"
+        <ol ref="stepsRef" class="mt-16 grid grid-cols-1 gap-x-6 gap-y-14 sm:grid-cols-2 md:mt-20 lg:grid-cols-5">
+          <li
+            v-for="(step, index) in steps"
+            :key="step.title"
+            class="group relative pt-9"
+          >
+            <!-- L-shaped connector: up from the number circle, then right
+                 to the small icon dot — the reference's signature detail,
+                 not just a plain numbered circle. -->
+            <svg viewBox="0 0 92 44" class="pointer-events-none absolute top-0 left-0 h-11 w-[5.75rem] overflow-visible" :class="step.lineClass" fill="none" aria-hidden="true">
+              <path d="M32 44V16H80" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <span
+              class="absolute top-0 left-16 flex h-9 w-9 items-center justify-center rounded-full text-white shadow-md motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+              :class="step.dotClass"
             >
+              <span class="h-4 w-4" aria-hidden="true">
+                <PrincipleIcon :id="step.icon" />
+              </span>
+            </span>
+
+            <div class="flex items-center gap-4">
               <span
-                class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg ring-8 ring-navy-950 motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
-                :class="step.badgeClass"
+                class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 bg-navy-950 text-h4 font-bold ring-4"
+                :class="[step.borderClass, step.ringClass, step.textClass]"
               >
-                <span class="h-7 w-7" aria-hidden="true">
-                  <PrincipleIcon :id="step.icon" />
-                </span>
+                0{{ index + 1 }}
               </span>
-              <span class="mt-4 text-caption font-bold tracking-widest text-white/50">
-                STEP 0{{ index + 1 }}
-              </span>
-              <h4 class="mt-1 text-h4 font-semibold tracking-tight text-white">
+              <h4 class="text-h4 font-bold tracking-tight" :class="step.textClass">
                 {{ step.title }}
               </h4>
-              <p class="mt-2 max-w-[14rem] text-body-sm text-slate-300">
-                {{ step.description }}
-              </p>
-            </li>
-          </ol>
-        </div>
+            </div>
+
+            <div class="mt-5 rounded-xl border px-4 py-4 text-body-sm text-slate-300" :class="step.borderClass">
+              {{ step.description }}
+            </div>
+          </li>
+        </ol>
       </div>
     </PageContainer>
   </SectionContainer>
