@@ -44,9 +44,10 @@ useStaggerReveal(rowsRef, 'article', { each: true })
         <div ref="rowsRef" class="mt-12 grid grid-cols-1 gap-8 md:mt-16 lg:grid-cols-3">
           <article v-for="caseStudy in caseStudies" :key="caseStudy.id" class="group">
             <NuxtLink :to="`/case-studies/${caseStudy.slug}`" class="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              <div class="relative aspect-[4/3] overflow-hidden rounded-(--radius-lg) bg-navy-950">
+              <div class="relative aspect-[4/3] overflow-hidden rounded-(--radius-lg) bg-navy-950 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_48px_-16px_rgba(16,19,50,0.55)]">
                 <!-- Dark abstract "product" visual — a dashboard-style
                      illustration, not a real screenshot. -->
+                <span class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-400/0 blur-3xl motion-safe:transition-colors motion-safe:duration-(--duration-slow) group-hover:bg-brand-400/30" aria-hidden="true" />
                 <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 70% 20%, var(--color-brand-500), transparent 55%);" aria-hidden="true" />
                 <div class="absolute inset-6 overflow-hidden rounded-(--radius-md) border border-white/10 bg-white/5 backdrop-blur-sm" aria-hidden="true">
                   <div class="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">

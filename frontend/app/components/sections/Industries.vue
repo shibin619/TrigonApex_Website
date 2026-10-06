@@ -10,9 +10,9 @@ import { getCta } from '~/content/ctas'
 const viewAllIndustries = getCta('view-all-industries')
 
 const panelStyles = [
-  { bg: 'bg-brand-50', icon: 'text-brand-500', dot: 'bg-brand-300' },
-  { bg: 'bg-accent-ice-400/10', icon: 'text-accent-ice-600', dot: 'bg-accent-ice-400' },
-  { bg: 'bg-accent-green-500/10', icon: 'text-accent-green-700', dot: 'bg-accent-green-500' }
+  { bg: 'bg-brand-50', icon: 'text-brand-500', dot: 'bg-brand-300', glow: 'bg-brand-300/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(73,89,179,0.4)]' },
+  { bg: 'bg-accent-ice-400/10', icon: 'text-accent-ice-600', dot: 'bg-accent-ice-400', glow: 'bg-accent-ice-400/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(52,152,197,0.4)]' },
+  { bg: 'bg-accent-green-500/10', icon: 'text-accent-green-700', dot: 'bg-accent-green-500', glow: 'bg-accent-green-500/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(66,148,110,0.4)]' }
 ]
 
 const trackRef = useTemplateRef<HTMLDivElement>('trackRef')
@@ -71,15 +71,20 @@ useFadeIn(contentRef)
             style="scroll-snap-align: start;"
           >
             <div
-              class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-(--radius-lg)"
-              :class="panelStyles[index % panelStyles.length]!.bg"
+              class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-(--radius-lg) shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5"
+              :class="[panelStyles[index % panelStyles.length]!.bg, panelStyles[index % panelStyles.length]!.shadow]"
             >
+              <span
+                class="pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full opacity-0 blur-2xl motion-safe:transition-opacity motion-safe:duration-(--duration-slow) group-hover:opacity-100"
+                :class="panelStyles[index % panelStyles.length]!.glow"
+                aria-hidden="true"
+              />
               <div class="pointer-events-none absolute inset-0" aria-hidden="true">
                 <span class="absolute top-6 left-6 h-2 w-2 rounded-full opacity-40" :class="panelStyles[index % panelStyles.length]!.dot" />
                 <span class="absolute right-8 bottom-8 h-14 w-14 rounded-full border opacity-20" :class="panelStyles[index % panelStyles.length]!.dot.replace('bg-', 'border-')" />
               </div>
               <span
-                class="relative h-12 w-12 motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover:scale-110"
+                class="relative h-12 w-12 motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110 group-hover:-rotate-3"
                 :class="panelStyles[index % panelStyles.length]!.icon"
                 aria-hidden="true"
               >
