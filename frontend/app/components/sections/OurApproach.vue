@@ -39,10 +39,16 @@ useStaggerReveal(stepsRef, 'li', { each: true })
 
 <template>
   <SectionContainer as="section" aria-labelledby="our-approach-heading" class="relative overflow-hidden bg-navy-950">
-    <div class="pointer-events-none absolute top-1/2 -left-24 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-600/30 blur-3xl" aria-hidden="true" />
+    <!-- Two glows, not one — the single brand-only blob made this half
+         read as monochrome next to the colorful brand/ice/green badges
+         in the process strip below, so the same three-color atmosphere
+         now spans the whole section instead of starting partway down. -->
+    <div class="pointer-events-none absolute top-1/3 -left-24 h-72 w-72 -translate-y-1/2 rounded-full bg-brand-600/30 blur-3xl" aria-hidden="true" />
+    <div class="pointer-events-none absolute top-0 -right-16 h-64 w-64 rounded-full bg-accent-green-600/20 blur-3xl" aria-hidden="true" />
+    <div class="pointer-events-none absolute right-1/3 bottom-0 h-56 w-56 rounded-full bg-accent-ice-600/15 blur-3xl" aria-hidden="true" />
     <PageContainer as="div" class="relative">
       <div ref="contentRef" class="max-w-3xl">
-        <span class="flex h-12 w-12 items-center justify-center rounded-(--radius-lg) bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]">
+        <span class="flex h-12 w-12 items-center justify-center rounded-(--radius-lg) bg-gradient-to-br from-brand-500 via-accent-ice-400 to-accent-green-500 text-white shadow-[0_10px_24px_-6px_rgba(52,152,197,0.45)]">
           <span class="h-6 w-6" aria-hidden="true">
             <PrincipleIcon id="target" />
           </span>
