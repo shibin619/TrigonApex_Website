@@ -3,6 +3,21 @@
 @import "./tokens.css";
 
 /*
+ * Several sections use oversized blurred decorative glow blobs that
+ * intentionally bleed past their own wrapper's edge for a soft atmospheric
+ * look (Hero, Solutions, About). Clipping at the document level, not on
+ * each wrapper, is what lets that bleed render without ever producing a
+ * horizontal scrollbar. `clip`, not `overflow-x: hidden` — hidden turns
+ * body into a scroll container, which breaks the header's
+ * `position: sticky` (it stops sticking to the viewport); clip prevents
+ * the bleed without creating a scroll container at all.
+ */
+html,
+body {
+  overflow-x: clip;
+}
+
+/*
  * Work Sans, self-hosted (SIL Open Font License — see public/fonts/OFL.txt).
  * Two static weights only (400/700, not a variable font) — 600 (used
  * throughout via font-semibold) resolves to the nearest available weight
