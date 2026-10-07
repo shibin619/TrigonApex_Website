@@ -1,155 +1,103 @@
 <script setup lang="ts">
-import { gsap } from 'gsap'
 import { getCta } from '~/content/ctas'
+import { solutions } from '~/content/solutions'
 
+// Centered-text-over-a-staggered-card-strip composition, from the
+// reference (BrandLyft-style hero: small pill badge, bold centered
+// heading, centered subtext, then a horizontal row of staggered-height
+// cards below). The reference's row is real lifestyle photography — we
+// have none (no stock/AI people photos; see docs/CONTENT_ARCHITECTURE.md
+// §15 content-honesty rule, the same reason Industries.vue uses abstract
+// icon panels instead of invented industry photos). Substituted with our
+// five real Solutions, each as its own colored card, which also gives the
+// strip actual function: every card jumps to and highlights its matching
+// card in the "What We Do" section below (useScrollHighlight, same
+// mechanism BusinessProblemSelector already uses), instead of being pure
+// decoration.
+//
+// This replaces the previous split-layout hero (floating illustration +
+// pointer-tilt/parallax). That illustration is still used by
+// AboutTrigonApex.vue's cropped version, so the source file stays on disk.
 const exploreSolutions = getCta('explore-solutions')
 const seeHowItWorks = getCta('see-how-it-works')
+const { scrollToAndHighlight } = useScrollHighlight()
+
+const panelStyles = [
+  { bg: 'bg-gradient-to-br from-brand-500 to-brand-700', icon: 'text-white', text: 'text-white', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(73,89,179,0.45)]' },
+  { bg: 'bg-accent-ice-400/15', icon: 'text-accent-ice-600', text: 'text-highlighted', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(52,152,197,0.35)]' },
+  { bg: 'bg-accent-green-500/15', icon: 'text-accent-green-700', text: 'text-highlighted', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(66,148,110,0.35)]' }
+]
+
+// Alternating heights + vertical offsets are what give the row its
+// staggered, collage-like rhythm instead of a flat uniform grid.
+const cardLayout = [
+  { height: 'h-64', offset: '' },
+  { height: 'h-48', offset: 'sm:mt-10' },
+  { height: 'h-72', offset: '' },
+  { height: 'h-52', offset: 'sm:mt-8' },
+  { height: 'h-60', offset: 'sm:mt-2' }
+]
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-const visualWrapRef = useTemplateRef<HTMLDivElement>('visualWrapRef')
-const visualRef = useTemplateRef<HTMLDivElement>('visualRef')
-const stageRef = useTemplateRef<HTMLDivElement>('stageRef')
-const sectionRef = useTemplateRef<HTMLElement>('sectionRef')
-
+const stripRef = useTemplateRef<HTMLDivElement>('stripRef')
 useFadeIn(contentRef)
-
-// Real AI-generated flat illustration (user-sourced, second generation —
-// the first lacked the floating-UI-card detail this one has baked
-// straight into the composition). Post-processed before landing here:
-// flat white background chroma-keyed to transparent, and its two
-// dominant off-brand tones nudged to the site's exact brand hex values.
-//
-// No separate coded floating badges on top of it anymore (an earlier
-// version had three) — this illustration already carries that visual
-// richness itself (notification card, checkmark badge, progress
-// indicator), so stacking our own badges over it was pure redundancy.
-onMounted(() => {
-  if (!visualRef.value) return
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-  gsap.from(visualRef.value, { opacity: 0, y: 16, scale: 0.97, duration: 0.8, ease: 'power2.out', delay: 0.15 })
-})
-
-// Scroll parallax (background "stage" shape vs. the illustration drifting
-// at different rates) + a pointer-driven 3D tilt on the illustration — a
-// flat image alone doesn't read as dimensional, but a perspective tilt
-// that responds to the cursor does, the same trick behind most "premium"
-// product-shot heroes. Both are driven through gsap.quickTo so they
-// composite onto the SAME element's transform correctly (GSAP tracks
-// translate/rotate as separate internal channels) instead of two systems
-// overwriting each other's raw inline `transform` string.
-onMounted(() => {
-  if (!sectionRef.value || !visualRef.value) return
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-
-  gsap.set(visualRef.value, { transformPerspective: 1000, transformOrigin: 'center' })
-  const setY = gsap.quickTo(visualRef.value, 'y', { duration: 0.3, ease: 'power2.out' })
-  const setStageY = gsap.quickTo(stageRef.value, 'y', { duration: 0.3, ease: 'power2.out' })
-  const setRotateX = gsap.quickTo(visualRef.value, 'rotationX', { duration: 0.5, ease: 'power2.out' })
-  const setRotateY = gsap.quickTo(visualRef.value, 'rotationY', { duration: 0.5, ease: 'power2.out' })
-
-  let ticking = false
-  function updateScroll() {
-    ticking = false
-    const section = sectionRef.value
-    if (!section) return
-    const rect = section.getBoundingClientRect()
-    if (rect.bottom < 0 || rect.top > window.innerHeight) return
-    const progress = -rect.top / (rect.height || 1)
-    setStageY(progress * 40)
-    setY(progress * -24)
-  }
-  function onScroll() {
-    if (ticking) return
-    ticking = true
-    requestAnimationFrame(updateScroll)
-  }
-
-  function onPointerMove(event: PointerEvent) {
-    const wrap = visualWrapRef.value
-    if (!wrap) return
-    const rect = wrap.getBoundingClientRect()
-    const px = (event.clientX - rect.left) / rect.width - 0.5
-    const py = (event.clientY - rect.top) / rect.height - 0.5
-    setRotateY(px * 14)
-    setRotateX(py * -14)
-  }
-  function onPointerLeave() {
-    setRotateX(0)
-    setRotateY(0)
-  }
-
-  updateScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-  visualWrapRef.value?.addEventListener('pointermove', onPointerMove)
-  visualWrapRef.value?.addEventListener('pointerleave', onPointerLeave)
-  onBeforeUnmount(() => {
-    window.removeEventListener('scroll', onScroll)
-    visualWrapRef.value?.removeEventListener('pointermove', onPointerMove)
-    visualWrapRef.value?.removeEventListener('pointerleave', onPointerLeave)
-  })
-})
+useStaggerReveal(stripRef, 'a', { each: true })
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none" class="bg-gradient-to-br from-accent-green-500/10 via-white to-brand-50">
+  <SectionContainer as="section" aria-labelledby="hero-heading" spacing="none" class="overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white">
     <PageContainer as="div">
-      <div ref="sectionRef" class="grid grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-        <div class="py-16 sm:py-24 lg:py-28">
-          <div ref="contentRef" class="max-w-xl">
-            <span class="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-4 py-1.5 text-caption font-semibold tracking-widest text-brand-500 uppercase shadow-sm">
-              <span class="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
-              Software Solutions Partner
-            </span>
+      <div ref="contentRef" class="mx-auto max-w-2xl pt-16 text-center sm:pt-24">
+        <span class="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-white px-4 py-1.5 text-caption font-semibold tracking-widest text-brand-500 uppercase shadow-sm">
+          <span class="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+          Software Solutions Partner
+        </span>
 
-            <h1 id="hero-heading" class="mt-5 text-display font-bold tracking-tighter text-highlighted">
-              Stop Running Your Business on
-              <span class="text-brand-500"> Disconnected Systems</span>
-            </h1>
+        <h1 id="hero-heading" class="mt-5 text-display font-bold tracking-tighter text-highlighted">
+          Stop Running Your Business on
+          <span class="text-brand-500"> Disconnected Systems</span>
+        </h1>
 
-            <p class="mt-6 max-w-lg text-body-lg text-muted">
-              We build the connected software that replaces scattered
-              tools, spreadsheets, and guesswork — so your team can focus
-              on growth, not busywork.
-            </p>
+        <p class="mx-auto mt-6 max-w-lg text-body-lg text-muted">
+          We build the connected software that replaces scattered
+          tools, spreadsheets, and guesswork — so your team can focus
+          on growth, not busywork.
+        </p>
 
-            <div class="mt-10 flex flex-wrap items-center gap-6">
-              <AppButton v-if="exploreSolutions" variant="primary" size="lg" :to="exploreSolutions.to">
-                {{ exploreSolutions.label }}
-              </AppButton>
-              <AppButton v-if="seeHowItWorks" variant="text" size="lg" :to="seeHowItWorks.to">
-                {{ seeHowItWorks.label }} &rarr;
-              </AppButton>
-            </div>
-          </div>
+        <div class="mt-10 flex flex-wrap items-center justify-center gap-6">
+          <AppButton v-if="exploreSolutions" variant="primary" size="lg" :to="exploreSolutions.to">
+            {{ exploreSolutions.label }}
+          </AppButton>
+          <AppButton v-if="seeHowItWorks" variant="text" size="lg" :to="seeHowItWorks.to">
+            {{ seeHowItWorks.label }} &rarr;
+          </AppButton>
         </div>
+      </div>
 
-        <div ref="visualWrapRef" class="relative mx-auto w-full max-w-md lg:max-w-xl" style="perspective: 1000px;">
-          <!-- One large, genuinely colorful "stage" shape behind the
-               illustration (not just a pastel haze) plus a smaller accent
-               blob for variety — gives the illustration something bold to
-               visually sit on, the dominant-background-shape treatment
-               from the reference, built from the same validated brand/
-               green tokens used everywhere else. Drifts on scroll (see
-               the parallax handler above) for a layered-depth feel. -->
-          <div class="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center" aria-hidden="true">
-            <div ref="stageRef" class="h-[85%] w-[85%] rounded-full bg-gradient-to-br from-brand-200 to-brand-300 opacity-80 blur-md" />
-          </div>
-          <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-            <div class="absolute right-1/4 bottom-1/4 h-56 w-56 translate-x-1/2 translate-y-1/2 rounded-full bg-accent-green-500/25 blur-3xl" />
-          </div>
-
-          <div ref="visualRef">
-            <img
-              src="/images/hero-illustration.webp"
-              alt="Illustration of two colleagues reviewing a rising business growth chart on a large screen, surrounded by notification, approval, and progress UI cards"
-              width="940"
-              height="672"
-              class="h-auto w-full drop-shadow-[0_32px_48px_rgba(16,19,50,0.2)]"
-              fetchpriority="high"
+      <div ref="stripRef" class="scrollbar-hidden mt-16 flex items-start gap-5 overflow-x-auto pb-6 sm:mt-20 sm:pb-10" style="scroll-snap-type: x mandatory;">
+        <a
+          v-for="(solution, index) in solutions"
+          :key="solution.id"
+          href="#"
+          class="group block w-44 shrink-0 snap-start overflow-hidden rounded-(--radius-xl) p-5 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-1.5 sm:w-52"
+          :class="[panelStyles[index % panelStyles.length]!.bg, panelStyles[index % panelStyles.length]!.shadow, cardLayout[index % cardLayout.length]!.height, cardLayout[index % cardLayout.length]!.offset]"
+          @click.prevent="scrollToAndHighlight(`solution-${solution.id}`)"
+        >
+          <span class="flex h-full flex-col justify-between">
+            <span
+              class="flex h-11 w-11 items-center justify-center rounded-(--radius-lg) motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110 group-hover:-rotate-3"
+              :class="index % panelStyles.length === 0 ? 'bg-white/15' : 'bg-white/70'"
+              aria-hidden="true"
             >
-          </div>
-        </div>
+              <span class="h-5 w-5" :class="panelStyles[index % panelStyles.length]!.icon">
+                <SolutionIcon :id="solution.id" />
+              </span>
+            </span>
+            <span class="text-body-sm font-semibold" :class="panelStyles[index % panelStyles.length]!.text">
+              {{ solution.title }}
+            </span>
+          </span>
+        </a>
       </div>
     </PageContainer>
   </SectionContainer>
