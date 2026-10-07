@@ -2,20 +2,30 @@
 import { solutions } from '~/content/solutions'
 import { getCta } from '~/content/ctas'
 
-// Split layout (text + CTA on the left, a card grid on the right with one
+// Split layout (text + CTA on the left, a card row on the right with one
 // solution highlighted in solid brand color among plain bordered cards) —
 // the "Why Choose Us" pattern from the Techa reference video, applied to
 // our own real five solutions rather than invented service names. The
 // first solution (Business Growth) is the one highlighted; which one is
-// arbitrary, not a ranking claim. Scroll-target ids (`solution-{id}`) stay
-// on every card since BusinessProblemSelector's useScrollHighlight() still
-// jumps to them.
+// arbitrary, not a ranking claim.
+//
+// The card row scrolls horizontally with CSS scroll-snap (same pattern as
+// Industries.vue) instead of wrapping into a 2-column grid — five full
+// cards wrapped into 3 rows made this section very tall. A JS slideshow
+// carousel (one card visible, others unmounted/hidden) was ruled out: it
+// would break BusinessProblemSelector's useScrollHighlight(), which calls
+// scrollIntoView() on a card by id and needs every card to actually be in
+// the DOM. Scroll-snap keeps all five present, just arranged horizontally.
 const exploreSolutions = getCta('explore-solutions')
 
+const trackRef = useTemplateRef<HTMLDivElement>('trackRef')
+function scrollTrack(direction: 1 | -1) {
+  trackRef.value?.scrollBy({ left: direction * 360, behavior: 'smooth' })
+}
+
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
-const gridRef = useTemplateRef<HTMLDivElement>('gridRef')
 useFadeIn(contentRef)
-useStaggerReveal(gridRef, 'article')
+useStaggerReveal(trackRef, 'article')
 </script>
 
 <template>
@@ -47,14 +57,33 @@ useStaggerReveal(gridRef, 'article')
           <AppButton v-if="exploreSolutions" variant="primary" :to="exploreSolutions.to" class="mt-6">
             {{ exploreSolutions.label }}
           </AppButton>
+
+          <div class="mt-8 hidden gap-2 lg:flex">
+            <button
+              type="button"
+              aria-label="Scroll solutions left"
+              class="flex h-10 w-10 items-center justify-center rounded-full border border-default text-default motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              @click="scrollTrack(-1)"
+            >
+              <span aria-hidden="true">&larr;</span>
+            </button>
+            <button
+              type="button"
+              aria-label="Scroll solutions right"
+              class="flex h-10 w-10 items-center justify-center rounded-full border border-default text-default motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              @click="scrollTrack(1)"
+            >
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
         </div>
 
-        <div ref="gridRef" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-8">
+        <div ref="trackRef" class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 lg:col-span-8" style="scroll-snap-type: x mandatory;">
           <article
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"
             :key="solution.id"
-            class="group relative scroll-mt-24 overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2"
+            class="group relative w-[19rem] shrink-0 scroll-mt-24 snap-start overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2 sm:w-80"
             :class="index === 0
               ? 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] hover:shadow-[0_32px_56px_-14px_rgba(16,19,50,0.55)]'
               : 'border border-white/70 bg-white/70 shadow-sm backdrop-blur-md hover:border-brand-300 hover:bg-white/90 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]'"
