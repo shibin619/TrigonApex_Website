@@ -1,27 +1,66 @@
 <script setup lang="ts">
-// The five-step process, shown as oversized pale outline numerals with
-// thin vertical dividers between them (Stripe/Linear "by the numbers"
-// treatment) — the light editorial style from the last "Our Approach"
-// iteration, kept on its own now that the belief-statement quote above
-// it was removed.
+import { gsap } from 'gsap'
+
+// A scroll-filled progress bar above the steps, plus gradient icon chips
+// per step instead of bare numerals — matching the colored-icon-chip
+// language used everywhere else on the site (Solutions, WhyTrigonApex).
 //
-// Deliberately no scroll-triggered fade-in/stagger animation here (every
-// other section uses useFadeIn/useStaggerReveal) — a user report of this
-// exact section becoming invisible after scrolling pointed at the
-// animation layer, so it's rendered fully static to rule that out as a
-// class of bug entirely rather than keep guessing at the timing issue.
+// The progress bar is a SINGLE one-time width animation (0% -> 100%,
+// triggered once by IntersectionObserver, same safe pattern as
+// useFadeIn) — not a continuous scroll-position tracker. A previous
+// version of this section used a continuous scroll-linked connector and
+// a user reported the section going invisible after scrolling; this
+// stays in the same safe "play once, then static" category as every
+// other animation on the site rather than reintroducing scroll-tied
+// visibility logic.
 interface ProcessStep {
   title: string
   description: string
+  icon: 'target' | 'flow' | 'layers' | 'link' | 'chart'
+  chipClass: string
 }
 
 const steps: ProcessStep[] = [
-  { title: 'Discover', description: 'Understand the business, users and workflows.' },
-  { title: 'Define', description: 'Identify the right solution and system structure.' },
-  { title: 'Build', description: 'Develop and integrate the required software.' },
-  { title: 'Launch', description: 'Deploy, test and make the system operational.' },
-  { title: 'Improve', description: 'Use feedback and data to continuously improve.' }
+  { title: 'Discover', description: 'Understand the business, users and workflows.', icon: 'target', chipClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_8px_16px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Define', description: 'Identify the right solution and system structure.', icon: 'flow', chipClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_8px_16px_-6px_rgba(52,152,197,0.5)]' },
+  { title: 'Build', description: 'Develop and integrate the required software.', icon: 'layers', chipClass: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_8px_16px_-6px_rgba(66,148,110,0.5)]' },
+  { title: 'Launch', description: 'Deploy, test and make the system operational.', icon: 'link', chipClass: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_8px_16px_-6px_rgba(73,89,179,0.5)]' },
+  { title: 'Improve', description: 'Use feedback and data to continuously improve.', icon: 'chart', chipClass: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_8px_16px_-6px_rgba(52,152,197,0.5)]' }
 ]
+
+const progressTrackRef = useTemplateRef<HTMLDivElement>('progressTrackRef')
+const progressBarRef = useTemplateRef<HTMLDivElement>('progressBarRef')
+
+onMounted(() => {
+  const track = progressTrackRef.value
+  const bar = progressBarRef.value
+  if (!track || !bar) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    bar.style.width = '100%'
+    return
+  }
+
+  const play = () => {
+    gsap.to(bar, { width: '100%', duration: 1.1, ease: 'power2.out' })
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    play()
+    return
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        play()
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.3 }
+  )
+  observer.observe(track)
+  onBeforeUnmount(() => observer.disconnect())
+})
 </script>
 
 <template>
@@ -36,16 +75,24 @@ const steps: ProcessStep[] = [
         </h2>
       </div>
 
-      <ol class="mt-12 grid grid-cols-1 sm:grid-cols-2 md:mt-14 lg:grid-cols-5 lg:divide-x lg:divide-default">
-        <li
-          v-for="(step, index) in steps"
-          :key="step.title"
-          class="relative pb-10 lg:px-6 lg:pb-0 lg:first:pl-0 lg:last:pr-0"
-        >
-          <span class="block text-[4.5rem] leading-none font-black tracking-tighter text-brand-100 select-none" aria-hidden="true">
-            0{{ index + 1 }}
+      <div ref="progressTrackRef" class="mt-12 h-1 overflow-hidden rounded-full bg-default md:mt-14">
+        <div ref="progressBarRef" class="h-full w-0 rounded-full bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500" />
+      </div>
+
+      <ol class="mt-10 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+        <li v-for="(step, index) in steps" :key="step.title" class="group relative">
+          <span
+            class="flex h-12 w-12 items-center justify-center rounded-full text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+            :class="step.chipClass"
+          >
+            <span class="h-5 w-5" aria-hidden="true">
+              <PrincipleIcon :id="step.icon" />
+            </span>
           </span>
-          <h3 class="mt-2 text-h4 font-semibold tracking-tight text-highlighted">
+          <p class="mt-4 text-caption font-bold tracking-widest text-muted">
+            STEP 0{{ index + 1 }}
+          </p>
+          <h3 class="mt-1 text-h4 font-semibold tracking-tight text-highlighted">
             {{ step.title }}
           </h3>
           <p class="mt-2 max-w-[14rem] text-body-sm text-muted">
