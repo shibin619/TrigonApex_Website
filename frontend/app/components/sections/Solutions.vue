@@ -78,7 +78,7 @@ useStaggerReveal(trackRef, 'article')
           </div>
         </div>
 
-        <div ref="trackRef" class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 lg:col-span-8" style="scroll-snap-type: x mandatory;">
+        <div ref="trackRef" class="scrollbar-hidden flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 lg:col-span-8" style="scroll-snap-type: x mandatory;">
           <article
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"

@@ -88,3 +88,21 @@ body {
     transition: none;
   }
 }
+
+/*
+ * Horizontal scroll-snap card rows (Industries, Solutions) provide their
+ * own circular prev/next buttons and remain fully usable by trackpad swipe
+ * or drag without a visible scrollbar — so the browser's raw native
+ * scrollbar (which, unstyled, renders as a chunky grey bar with arrow-box
+ * ends on Windows/Firefox) is hidden rather than left stacked underneath
+ * the custom buttons. Keyboard/assistive scrolling is unaffected; this
+ * only hides the visual track, not the scroll behavior itself.
+ */
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}

@@ -62,7 +62,7 @@ useFadeIn(contentRef)
           </div>
         </div>
 
-        <div ref="trackRef" class="mt-10 flex gap-5 overflow-x-auto pb-2 md:mt-12" style="scroll-snap-type: x mandatory;">
+        <div ref="trackRef" class="scrollbar-hidden mt-10 flex gap-5 overflow-x-auto pb-2 md:mt-12" style="scroll-snap-type: x mandatory;">
           <NuxtLink
             v-for="(industry, index) in industries"
             :key="industry.id"
