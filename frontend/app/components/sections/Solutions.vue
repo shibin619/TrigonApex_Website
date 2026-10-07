@@ -33,6 +33,13 @@ import { getCta } from '~/content/ctas'
 // flex flex-col with its "Learn more" link pushed to mt-auto so the
 // stretch adds space below the link rather than stretching the link away
 // from its content.
+//
+// spacing="compact" (half the default section padding, same preset
+// BusinessProblemSelector already uses) rather than the default — a
+// small pill badge sitting under the default 6rem top gap read as an
+// oversized empty space above it, flagged directly. The default's tall
+// padding was sized for the old two-column layout; this one is a
+// shorter, centered, single-column header.
 const exploreSolutions = getCta('explore-solutions')
 
 const scrollStep = 360
@@ -107,7 +114,7 @@ useStaggerReveal(trackRef, 'article')
 </script>
 
 <template>
-  <SectionContainer as="section" aria-labelledby="solutions-heading" class="relative overflow-hidden">
+  <SectionContainer as="section" aria-labelledby="solutions-heading" spacing="compact" class="relative overflow-hidden">
     <!-- Soft mesh-gradient atmosphere behind the section — large, heavily
          blurred color washes using the site's existing validated tones
          (brand/green/ice), so the section reads as airy and alive rather
