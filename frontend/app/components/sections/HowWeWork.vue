@@ -67,43 +67,50 @@ onMounted(() => {
       </div>
 
       <div class="relative mt-14 md:mt-16">
-        <!-- The ribbon: one continuous gradient line connecting all five
-             steps, sitting behind the circles at their vertical center —
-             reads as a single flow from Discover to Improve instead of
-             five unrelated items. It draws itself in on scroll (see
-             ribbonRef below) and ends in a small arrowhead to make the
-             direction of the flow explicit. -->
-        <div class="pointer-events-none absolute inset-x-[10%] top-8 hidden lg:block" aria-hidden="true">
-          <div ref="ribbonRef" class="h-1 w-full origin-left rounded-full bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500" />
-          <div class="absolute top-1/2 right-10 h-0 w-0 -translate-y-1/2 border-y-[5px] border-l-[7px] border-y-transparent border-l-accent-green-500" />
-        </div>
+        <!-- A soft-shadow card frame around the whole row — neutral white,
+             no colour tint — gives the section presence and a visible edge
+             in a still screenshot (the ribbon's draw-in only reads on an
+             actual scroll) without repeating the washed-out tinted-panel
+             look that was already rejected. -->
+        <div class="relative rounded-3xl border border-default/60 bg-default px-6 py-10 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.28)] sm:px-10 sm:py-12">
+          <!-- The ribbon: one continuous gradient line connecting all five
+               steps, sitting behind the circles at their vertical center —
+               reads as a single flow from Discover to Improve instead of
+               five unrelated items. It draws itself in on scroll (see
+               ribbonRef below) and ends in a small arrowhead to make the
+               direction of the flow explicit. -->
+          <div class="pointer-events-none absolute inset-x-[calc(10%+1.5rem)] top-[4.5rem] hidden lg:block sm:top-20" aria-hidden="true">
+            <div ref="ribbonRef" class="h-1 w-full origin-left rounded-full bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500" />
+            <div class="absolute top-1/2 right-10 h-0 w-0 -translate-y-1/2 border-y-[5px] border-l-[7px] border-y-transparent border-l-accent-green-500" />
+          </div>
 
-        <ol ref="stepsRef" class="relative grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
-          <li v-for="(step, index) in steps" :key="step.title" class="group relative flex flex-col items-center text-center">
-            <span class="relative">
-              <span
-                class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full text-white ring-8 ring-default motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
-                :class="step.chipClass"
-              >
-                <span class="h-7 w-7" aria-hidden="true">
-                  <PrincipleIcon :id="step.icon" />
+          <ol ref="stepsRef" class="relative grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
+            <li v-for="(step, index) in steps" :key="step.title" class="group relative flex flex-col items-center text-center">
+              <span class="relative">
+                <span
+                  class="relative z-10 flex h-16 w-16 items-center justify-center rounded-full text-white ring-8 ring-default motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110"
+                  :class="step.chipClass"
+                >
+                  <span class="h-7 w-7" aria-hidden="true">
+                    <PrincipleIcon :id="step.icon" />
+                  </span>
+                </span>
+                <span
+                  class="absolute -right-1 -bottom-1 z-20 flex h-7 w-7 items-center justify-center rounded-full border-2 border-default bg-default text-body-sm font-bold shadow-sm"
+                  :class="step.badgeTextClass"
+                >
+                  {{ index + 1 }}
                 </span>
               </span>
-              <span
-                class="absolute -right-1 -bottom-1 z-20 flex h-7 w-7 items-center justify-center rounded-full border-2 border-default bg-default text-body-sm font-bold shadow-sm"
-                :class="step.badgeTextClass"
-              >
-                {{ index + 1 }}
-              </span>
-            </span>
-            <h3 class="mt-5 text-h4 font-semibold tracking-tight text-highlighted">
-              {{ step.title }}
-            </h3>
-            <p class="mt-2 max-w-[14rem] text-body-sm text-muted">
-              {{ step.description }}
-            </p>
-          </li>
-        </ol>
+              <h3 class="mt-5 text-h4 font-semibold tracking-tight text-highlighted">
+                {{ step.title }}
+              </h3>
+              <p class="mt-2 max-w-[14rem] text-body-sm text-muted">
+                {{ step.description }}
+              </p>
+            </li>
+          </ol>
+        </div>
       </div>
     </PageContainer>
   </SectionContainer>
