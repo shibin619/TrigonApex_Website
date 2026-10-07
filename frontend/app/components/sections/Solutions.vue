@@ -25,12 +25,81 @@ import { getCta } from '~/content/ctas'
 // (floating over its left/right edge, vertically centered) — attached
 // to the thing they control, the standard carousel-arrow placement,
 // rather than sitting disconnected next to the CTA.
+//
+// Cards used to be top-aligned to their own natural height (items-start),
+// so a card with a shorter description/flow-trail ended up visibly
+// shorter than its neighbors — flagged directly. items-stretch (the flex
+// default) makes every card match the row's tallest one; each card is
+// flex flex-col with its "Learn more" link pushed to mt-auto so the
+// stretch adds space below the link rather than stretching the link away
+// from its content.
 const exploreSolutions = getCta('explore-solutions')
 
+const scrollStep = 360
 const trackRef = useTemplateRef<HTMLDivElement>('trackRef')
-function scrollTrack(direction: 1 | -1) {
-  trackRef.value?.scrollBy({ left: direction * 360, behavior: 'smooth' })
+let autoScrollTimer: ReturnType<typeof setInterval> | null = null
+
+function stopAutoScroll() {
+  if (autoScrollTimer) {
+    clearInterval(autoScrollTimer)
+    autoScrollTimer = null
+  }
 }
+
+function startAutoScroll() {
+  stopAutoScroll()
+  autoScrollTimer = setInterval(() => {
+    const el = trackRef.value
+    if (!el) return
+    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4
+    el.scrollTo({ left: atEnd ? 0 : el.scrollLeft + scrollStep, behavior: 'smooth' })
+  }, 4000)
+}
+
+function scrollTrack(direction: 1 | -1) {
+  trackRef.value?.scrollBy({ left: direction * scrollStep, behavior: 'smooth' })
+  // A manual click shouldn't be immediately followed by an autoplay jump —
+  // restart the timer so the next auto-advance is a full interval away.
+  startAutoScroll()
+}
+
+// Autoplay: same play-while-visible, pause-on-interaction, respects-
+// reduced-motion spirit as the project's other scroll-driven animations,
+// but tied to hover/touch and viewport visibility rather than a one-time
+// scroll-in trigger, since this keeps running for as long as the row is
+// on screen.
+onMounted(() => {
+  const el = trackRef.value
+  if (!el) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  if (!('IntersectionObserver' in window)) {
+    startAutoScroll()
+  } else {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          startAutoScroll()
+        } else {
+          stopAutoScroll()
+        }
+      },
+      { threshold: 0.4 }
+    )
+    observer.observe(el)
+    onBeforeUnmount(() => observer.disconnect())
+  }
+
+  el.addEventListener('pointerenter', stopAutoScroll)
+  el.addEventListener('pointerleave', startAutoScroll)
+  el.addEventListener('pointerdown', stopAutoScroll)
+  onBeforeUnmount(() => {
+    stopAutoScroll()
+    el.removeEventListener('pointerenter', stopAutoScroll)
+    el.removeEventListener('pointerleave', startAutoScroll)
+    el.removeEventListener('pointerdown', stopAutoScroll)
+  })
+})
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -87,12 +156,12 @@ useStaggerReveal(trackRef, 'article')
           <span aria-hidden="true">&rarr;</span>
         </button>
 
-        <div ref="trackRef" class="scrollbar-hidden flex items-start gap-5 overflow-x-auto pb-6" style="scroll-snap-type: x mandatory;">
+        <div ref="trackRef" class="scrollbar-hidden flex items-stretch gap-5 overflow-x-auto pb-6" style="scroll-snap-type: x mandatory;">
           <article
             v-for="(solution, index) in solutions"
             :id="`solution-${solution.id}`"
             :key="solution.id"
-            class="group relative w-[19rem] shrink-0 scroll-mt-24 snap-start overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2 sm:w-80"
+            class="group relative flex w-[19rem] shrink-0 scroll-mt-24 snap-start flex-col overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2 sm:w-80"
             :class="index === 0
               ? 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] hover:shadow-[0_32px_56px_-14px_rgba(16,19,50,0.55)]'
               : 'border border-white/70 bg-white/70 shadow-sm backdrop-blur-md hover:border-brand-300 hover:bg-white/90 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]'"
@@ -149,12 +218,12 @@ useStaggerReveal(trackRef, 'article')
           <NuxtLink
             v-if="index === 0"
             :to="`/solutions/${solution.slug}`"
-            class="group/link relative mt-5 inline-flex items-center gap-1.5 text-body-sm font-medium text-white underline underline-offset-2 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:text-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            class="group/link relative mt-auto inline-flex items-center gap-1.5 pt-5 text-body-sm font-medium text-white underline underline-offset-2 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:text-white/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
             Learn more about {{ solution.title }}
             <span class="inline-block no-underline motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover/link:translate-x-1" aria-hidden="true">&rarr;</span>
           </NuxtLink>
-          <AppButton v-else variant="text" :to="`/solutions/${solution.slug}`" class="group/link relative mt-5 px-0">
+          <AppButton v-else variant="text" :to="`/solutions/${solution.slug}`" class="group/link relative mt-auto self-start pt-5 px-0">
             Learn more about {{ solution.title }}
             <span class="inline-block motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover/link:translate-x-1" aria-hidden="true">&rarr;</span>
           </AppButton>
