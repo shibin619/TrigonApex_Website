@@ -2,11 +2,15 @@
 import { solutions } from '~/content/solutions'
 import { getCta } from '~/content/ctas'
 
-// Reference style (centered pill badge + bold centered heading, then a
-// row of staggered-height cards below) applied here — this is the
-// section it was actually meant for, not Hero or How We Work. Replaces
-// the previous split layout (text block on the left, card row on the
-// right) with a centered header above a full-width staggered row.
+// Reference style (centered pill badge + bold centered heading) applied
+// here — this is the section it was actually meant for, not Hero or How
+// We Work. Replaces the previous split layout (text block on the left,
+// card row on the right) with a centered header above a full-width row.
+//
+// The per-card staggered vertical offset from the first pass is gone:
+// combined with the centered header above it, it pushed the section
+// past one viewport and left dead whitespace above the offset cards —
+// both flagged directly. Cards now share one baseline.
 //
 // The row still scrolls horizontally with CSS scroll-snap (same pattern
 // as Industries.vue) rather than wrapping into a grid — five full cards
@@ -17,19 +21,16 @@ import { getCta } from '~/content/ctas'
 // scrollIntoView() on a card by id and needs every card to actually be
 // in the DOM.
 //
-// Cards keep their natural content height (no fixed h-* per card) and
-// get only an alternating top margin — that gives the staggered,
-// collage-like rhythm from the reference without risking the icon
-// watermark/flow-trail/"Learn more" link content being clipped by a
-// fixed height that's shorter than what a card actually needs.
+// Prev/next buttons moved off the header and onto the track itself
+// (floating over its left/right edge, vertically centered) — attached
+// to the thing they control, the standard carousel-arrow placement,
+// rather than sitting disconnected next to the CTA.
 const exploreSolutions = getCta('explore-solutions')
 
 const trackRef = useTemplateRef<HTMLDivElement>('trackRef')
 function scrollTrack(direction: 1 | -1) {
   trackRef.value?.scrollBy({ left: direction * 360, behavior: 'smooth' })
 }
-
-const cardOffsets = ['', 'sm:mt-10', '', 'sm:mt-8', 'sm:mt-4']
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -54,51 +55,48 @@ useStaggerReveal(trackRef, 'article')
           <span class="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
           What We Do
         </span>
-        <h2 id="solutions-heading" class="mt-5 text-h2 font-semibold tracking-tight text-highlighted">
+        <h2 id="solutions-heading" class="mt-4 text-h2 font-semibold tracking-tight text-highlighted">
           End-to-end solutions for real business impact.
         </h2>
-        <p class="mx-auto mt-4 max-w-lg text-body-lg text-muted">
+        <p class="mx-auto mt-3 max-w-lg text-body-lg text-muted">
           Each problem points to a type of software solution — built
           around how your business actually works, not a
           one-size-fits-all product.
         </p>
 
-        <div class="mt-8 flex flex-wrap items-center justify-center gap-6">
-          <AppButton v-if="exploreSolutions" variant="primary" :to="exploreSolutions.to">
-            {{ exploreSolutions.label }}
-          </AppButton>
-
-          <div class="flex gap-2">
-            <button
-              type="button"
-              aria-label="Scroll solutions left"
-              class="flex h-10 w-10 items-center justify-center rounded-full border border-default text-default motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              @click="scrollTrack(-1)"
-            >
-              <span aria-hidden="true">&larr;</span>
-            </button>
-            <button
-              type="button"
-              aria-label="Scroll solutions right"
-              class="flex h-10 w-10 items-center justify-center rounded-full border border-default text-default motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              @click="scrollTrack(1)"
-            >
-              <span aria-hidden="true">&rarr;</span>
-            </button>
-          </div>
-        </div>
+        <AppButton v-if="exploreSolutions" variant="primary" :to="exploreSolutions.to" class="mt-6">
+          {{ exploreSolutions.label }}
+        </AppButton>
       </div>
 
-      <div ref="trackRef" class="scrollbar-hidden mt-14 flex items-start gap-5 overflow-x-auto pb-6 md:mt-16 sm:pb-10" style="scroll-snap-type: x mandatory;">
-        <article
-          v-for="(solution, index) in solutions"
-          :id="`solution-${solution.id}`"
-          :key="solution.id"
-          class="group relative w-[19rem] shrink-0 scroll-mt-24 snap-start overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2 sm:w-80"
-          :class="[index === 0
-            ? 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] hover:shadow-[0_32px_56px_-14px_rgba(16,19,50,0.55)]'
-            : 'border border-white/70 bg-white/70 shadow-sm backdrop-blur-md hover:border-brand-300 hover:bg-white/90 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]', cardOffsets[index % cardOffsets.length]]"
+      <div class="relative mt-10 md:mt-12">
+        <button
+          type="button"
+          aria-label="Scroll solutions left"
+          class="absolute top-1/2 left-0 z-20 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-default bg-default text-default shadow-md motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex"
+          @click="scrollTrack(-1)"
         >
+          <span aria-hidden="true">&larr;</span>
+        </button>
+        <button
+          type="button"
+          aria-label="Scroll solutions right"
+          class="absolute top-1/2 right-0 z-20 hidden h-10 w-10 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border border-default bg-default text-default shadow-md motion-safe:transition-colors hover:border-brand-300 hover:text-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex"
+          @click="scrollTrack(1)"
+        >
+          <span aria-hidden="true">&rarr;</span>
+        </button>
+
+        <div ref="trackRef" class="scrollbar-hidden flex items-start gap-5 overflow-x-auto pb-6" style="scroll-snap-type: x mandatory;">
+          <article
+            v-for="(solution, index) in solutions"
+            :id="`solution-${solution.id}`"
+            :key="solution.id"
+            class="group relative w-[19rem] shrink-0 scroll-mt-24 snap-start overflow-hidden rounded-(--radius-xl) p-8 motion-safe:transition-[transform,background-color,border-color,box-shadow] motion-safe:duration-(--duration-base) hover:-translate-y-2 sm:w-80"
+            :class="index === 0
+              ? 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_16px_32px_-14px_rgba(16,19,50,0.4)] hover:shadow-[0_32px_56px_-14px_rgba(16,19,50,0.55)]'
+              : 'border border-white/70 bg-white/70 shadow-sm backdrop-blur-md hover:border-brand-300 hover:bg-white/90 hover:shadow-[0_32px_56px_-18px_rgba(73,89,179,0.35)]'"
+          >
           <!-- Oversized, barely-visible icon watermark for depth, same
                craft as a Stripe/Linear feature card — purely decorative. -->
           <span
@@ -160,7 +158,8 @@ useStaggerReveal(trackRef, 'article')
             Learn more about {{ solution.title }}
             <span class="inline-block motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover/link:translate-x-1" aria-hidden="true">&rarr;</span>
           </AppButton>
-        </article>
+          </article>
+        </div>
       </div>
     </PageContainer>
   </SectionContainer>
