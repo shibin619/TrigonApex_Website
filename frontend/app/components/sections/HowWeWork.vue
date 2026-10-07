@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { gsap } from 'gsap'
+
 // Back to a clean white background (the pale tinted panels from the
 // last version read as washed-out rather than bold) and down to ONE
 // circle per step instead of two stacked circles (icon + separate
@@ -26,6 +28,30 @@ const steps: ProcessStep[] = [
 
 const stepsRef = useTemplateRef<HTMLDivElement>('stepsRef')
 useStaggerReveal(stepsRef, 'li', { each: true })
+
+// The ribbon draws itself in left-to-right, once, when it scrolls into
+// view — same play-once/IntersectionObserver/reduced-motion convention
+// as useFadeIn and useStaggerReveal, kept inline here since a scaleX
+// "line draw" is a different shape of animation than either composable.
+const ribbonRef = useTemplateRef<HTMLDivElement>('ribbonRef')
+onMounted(() => {
+  const el = ribbonRef.value
+  if (!el) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  if (!('IntersectionObserver' in window)) return
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        gsap.from(el, { scaleX: 0, transformOrigin: 'left center', duration: 1.1, ease: 'power2.out' })
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.3 }
+  )
+  observer.observe(el)
+  onBeforeUnmount(() => observer.disconnect())
+})
 </script>
 
 <template>
@@ -44,8 +70,13 @@ useStaggerReveal(stepsRef, 'li', { each: true })
         <!-- The ribbon: one continuous gradient line connecting all five
              steps, sitting behind the circles at their vertical center —
              reads as a single flow from Discover to Improve instead of
-             five unrelated items. -->
-        <div class="pointer-events-none absolute inset-x-[10%] top-8 hidden h-1 rounded-full bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500 lg:block" aria-hidden="true" />
+             five unrelated items. It draws itself in on scroll (see
+             ribbonRef below) and ends in a small arrowhead to make the
+             direction of the flow explicit. -->
+        <div class="pointer-events-none absolute inset-x-[10%] top-8 hidden lg:block" aria-hidden="true">
+          <div ref="ribbonRef" class="h-1 w-full origin-left rounded-full bg-gradient-to-r from-brand-500 via-accent-ice-400 to-accent-green-500" />
+          <div class="absolute top-1/2 right-10 h-0 w-0 -translate-y-1/2 border-y-[5px] border-l-[7px] border-y-transparent border-l-accent-green-500" />
+        </div>
 
         <ol ref="stepsRef" class="relative grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">
           <li v-for="(step, index) in steps" :key="step.title" class="group relative flex flex-col items-center text-center">
