@@ -1,42 +1,31 @@
 /**
- * Business Analytics content. The four "insight" cards implement the
- * existing `AnalyticsHighlight` shape from docs/CONTENT_ARCHITECTURE.md §8
- * — the shape already established for describing analytics capabilities
- * in qualitative words — rather than a new parallel schema.
- * `relatedProduct`/`relatedIndustry` stay null: no confirmed mapping to a
- * specific Natro product or industry exists, and none is guessed.
+ * Business Analytics content. Implements the existing `AnalyticsHighlight`
+ * shape from docs/CONTENT_ARCHITECTURE.md §8 — the shape already
+ * established for describing analytics capabilities in qualitative words
+ * — rather than a new parallel schema. `relatedProduct`/`relatedIndustry`
+ * stay null: no confirmed mapping to a specific Natro product or industry
+ * exists, and none is guessed.
  *
- * The four "activity" categories are a small, section-specific selector —
- * no existing content type covers this, so a minimal shape is added here.
- * Selecting one conceptually maps to the one insight it feeds (a fixed,
- * illustrative 1:1 relationship for this visual, not a claim about how
- * any real Natro product processes data today).
+ * The homepage section shows ONE of these statically (see
+ * components/sections/BusinessAnalytics.vue) rather than behind a
+ * clickable "business activity" selector — an earlier version let a
+ * visitor click between four categories and watch the insight/decision
+ * text swap, which read as a fake live demo despite the data being
+ * clearly captioned illustrative. docs/HOMEPAGE_SPEC.md §11 only ever
+ * asked for a static conceptual illustration, not an interactive one.
  */
-
-export interface AnalyticsActivity {
-  id: string
-  label: string
-  insightId: string
-}
 
 export interface AnalyticsHighlight {
   id: string
   category: 'business-data' | 'kpi' | 'report' | 'trend' | 'operational-insight' | 'decision-support'
   title: string
   description: string
-  // The kind of decision this insight supports — completes the Activity
-  // → Data → Insight → Decision chain the homepage visual states.
+  // The kind of decision this insight supports — completes the Data →
+  // Insight → Decision chain the homepage visual states.
   decision: string
   relatedProduct: string | null
   relatedIndustry: string | null
 }
-
-export const analyticsActivities: AnalyticsActivity[] = [
-  { id: 'operations', label: 'Operations', insightId: 'performance' },
-  { id: 'customers', label: 'Customers', insightId: 'activity' },
-  { id: 'transactions', label: 'Transactions', insightId: 'trends' },
-  { id: 'inventory', label: 'Inventory', insightId: 'opportunities' }
-]
 
 export const analyticsHighlights: AnalyticsHighlight[] = [
   {

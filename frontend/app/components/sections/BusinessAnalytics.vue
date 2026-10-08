@@ -1,23 +1,18 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
-import { analyticsActivities, analyticsHighlights } from '~/content/business-analytics'
+import { getAnalyticsHighlight } from '~/content/business-analytics'
 
-// "Option B" from the design-options canvas, picked by the user, with
-// their own edit kept: the spotlight panel (chart + insight/decision)
-// sits ABOVE the metric strip, not below it.
-const selectedActivityId = ref(analyticsActivities[0]!.id)
+// Static, not interactive. An earlier version let a visitor click
+// between four "business activity" categories and watch the insight/
+// decision text swap — technically honest (every panel was captioned
+// "illustrative"), but it read as a fake live demo, which is worse than
+// just stating the idea plainly. docs/HOMEPAGE_SPEC.md §11 only ever
+// asked for a short five-step labeled sequence (Data → KPIs → Trends →
+// Insights → Decisions) plus ONE static conceptual chart — this returns
+// to that, keeping the chart visual from the layout the user picked.
+const sequenceSteps = ['Data', 'KPIs', 'Trends', 'Insights', 'Decisions']
+const highlight = getAnalyticsHighlight('performance')!
 
-const activeActivity = computed(() => analyticsActivities.find((activity) => activity.id === selectedActivityId.value)!)
-const activeHighlight = computed(() => analyticsHighlights.find((highlight) => highlight.id === activeActivity.value.insightId)!)
-
-function selectActivity(id: string) {
-  selectedActivityId.value = id
-}
-
-// One fixed, illustrative trend shape (never framed as a real
-// measurement — see the mandatory caption below the spotlight panel).
-// Same shape everywhere; only the label/insight/decision change per
-// activity, same "conceptual UI fixture" convention used elsewhere.
 const trendValues = [38, 58, 46, 72, 54, 80, 62]
 const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
@@ -58,15 +53,12 @@ const mainChartHeight = 170
 const mainChartTopPad = 20
 const mainChart = buildChartSeries(trendValues, mainChartWidth, mainChartHeight, mainChartTopPad)
 
-const sparkWidth = 120
-const sparkHeight = 30
-const sparkTopPad = 6
-const sparkChart = buildChartSeries(trendValues, sparkWidth, sparkHeight, sparkTopPad)
-
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
 
-// The spotlight chart grows/draws in once the panel scrolls into view.
+// The chart still draws in once it scrolls into view — a one-time
+// entrance, not a "live updating" effect (docs/HOMEPAGE_SPEC.md §11
+// rules that out explicitly).
 const chartPanelRef = useTemplateRef<HTMLDivElement>('chartPanelRef')
 onMounted(() => {
   const el = chartPanelRef.value
@@ -123,13 +115,21 @@ onMounted(() => {
           </p>
         </div>
 
-        <!-- Spotlight panel (chart + insight/decision) above the metric
-             strip, per the chosen layout. -->
-        <div ref="chartPanelRef" class="mt-10 flex flex-col gap-8 rounded-(--radius-xl) bg-elevated p-7 sm:flex-row sm:items-stretch sm:p-10 md:mt-12">
+        <!-- The five-step sequence, stated plainly — not a selector,
+             nothing to click. -->
+        <div class="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 md:mt-10">
+          <template v-for="(step, index) in sequenceSteps" :key="step">
+            <span class="text-body-sm font-semibold text-highlighted">{{ step }}</span>
+            <svg v-if="index < sequenceSteps.length - 1" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" class="text-muted" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 3l6 5-6 5" />
+            </svg>
+          </template>
+        </div>
+
+        <!-- One static illustration of the chain, not a live demo. -->
+        <div ref="chartPanelRef" class="mt-6 flex flex-col gap-8 rounded-(--radius-xl) bg-elevated p-7 sm:flex-row sm:items-stretch sm:p-10">
           <div class="flex flex-1 flex-col gap-4">
-            <span class="text-caption font-semibold tracking-widest text-muted uppercase">
-              Weekly Volume &mdash; {{ activeActivity.label }}
-            </span>
+            <span class="text-caption font-semibold tracking-widest text-muted uppercase">Weekly Volume</span>
             <div class="relative h-56 sm:h-60" aria-hidden="true">
               <svg :viewBox="`0 0 ${mainChartWidth} ${mainChartTopPad + mainChartHeight}`" preserveAspectRatio="none" class="h-full w-full overflow-visible">
                 <defs>
@@ -156,37 +156,15 @@ onMounted(() => {
           <div class="flex flex-1 flex-col justify-center gap-6">
             <div class="flex flex-col gap-2">
               <span class="text-caption font-semibold tracking-widest text-muted uppercase">Insight</span>
-              <span class="text-h3 font-semibold tracking-tight text-highlighted">{{ activeHighlight.title }}</span>
-              <span class="text-body text-default">{{ activeHighlight.description }}</span>
+              <span class="text-h3 font-semibold tracking-tight text-highlighted">{{ highlight.title }}</span>
+              <span class="text-body text-default">{{ highlight.description }}</span>
             </div>
             <div class="flex items-center gap-2.5">
               <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="var(--color-accent-green-700)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>
-              <span class="text-body font-semibold text-accent-green-700">{{ activeHighlight.decision }}</span>
+              <span class="text-body font-semibold text-accent-green-700">{{ highlight.decision }}</span>
             </div>
             <span class="text-caption text-muted">Illustrative example &mdash; not real business data.</span>
           </div>
-        </div>
-
-        <!-- Metric strip: one compact chip per business activity, click
-             to switch what the panel above shows. -->
-        <div role="group" aria-label="Business activity categories" class="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <button
-            v-for="(activity, index) in analyticsActivities"
-            :key="activity.id"
-            type="button"
-            :aria-pressed="selectedActivityId === activity.id"
-            class="flex flex-col gap-3.5 rounded-(--radius-lg) border p-5 text-left motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
-            :class="selectedActivityId === activity.id ? 'border-brand-200 bg-brand-50' : 'border-default bg-default hover:border-brand-200'"
-            @click="selectActivity(activity.id)"
-          >
-            <span class="text-caption font-bold tracking-wider uppercase" :class="selectedActivityId === activity.id ? 'text-brand-500' : 'text-muted'">
-              0{{ index + 1 }} {{ activity.label }}
-            </span>
-            <svg :viewBox="`0 0 ${sparkWidth} ${sparkTopPad + sparkHeight}`" preserveAspectRatio="none" class="h-7 w-full" aria-hidden="true">
-              <path :d="sparkChart.linePath" fill="none" :stroke="selectedActivityId === activity.id ? 'var(--color-brand-500)' : '#cbd5e1'" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span class="h-[3px] w-full rounded-full" :class="selectedActivityId === activity.id ? 'bg-brand-500' : 'bg-default'" />
-          </button>
         </div>
       </div>
     </PageContainer>
