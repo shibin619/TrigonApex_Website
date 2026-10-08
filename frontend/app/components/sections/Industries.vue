@@ -2,24 +2,23 @@
 import { industries } from '~/content/industries'
 import { getCta } from '~/content/ctas'
 
-// Illustrated photo-card rhythm (a colored panel + large icon per
-// industry, in a horizontally scrollable row) rather than a typographic
-// directory list — no real industry photography exists, so each card
-// uses the same abstract-panel-with-icon treatment already established
-// in Case Studies, rotating through the same three accent colors.
-//
-// The icon used to render bare (just a line-stroke glyph) with an empty
-// decorative ring outline next to it and a glow invisible until hover —
-// read as sparse/unfinished next to the rest of the site. Swapped in the
-// same gradient icon-chip + oversized watermark treatment Solutions and
-// How We Work already use, so the card has real depth by default rather
-// than only on interaction.
+// Illustrated photo-card rhythm (a colored panel + a real per-industry
+// illustration, in a horizontally scrollable row) rather than a
+// typographic directory list. The docs/HOMEPAGE_SPEC.md "no stock
+// photography / no generic AI-illustration style" rule was explicitly
+// waived for this section (the user's call, not assumed) since no real
+// client photography exists. Each illustration was generated to match
+// the exact brand palette and the flat-illustration style already used
+// for Hero/About, then cropped to content and chroma-keyed to a
+// transparent background (same pipeline as those two) so it sits on the
+// panel instead of showing its own white box — images live at
+// /public/images/industry-{id}.webp.
 const viewAllIndustries = getCta('view-all-industries')
 
 const panelStyles = [
-  { bg: 'bg-brand-50', chip: 'bg-gradient-to-br from-brand-500 to-brand-700 shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]', watermark: 'text-brand-500/[0.08]', glow: 'bg-brand-300/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(73,89,179,0.4)]' },
-  { bg: 'bg-accent-ice-400/10', chip: 'bg-gradient-to-br from-accent-ice-400 to-accent-ice-600 shadow-[0_10px_20px_-6px_rgba(52,152,197,0.5)]', watermark: 'text-accent-ice-600/[0.08]', glow: 'bg-accent-ice-400/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(52,152,197,0.4)]' },
-  { bg: 'bg-accent-green-500/10', chip: 'bg-gradient-to-br from-accent-green-500 to-accent-green-700 shadow-[0_10px_20px_-6px_rgba(66,148,110,0.5)]', watermark: 'text-accent-green-700/[0.08]', glow: 'bg-accent-green-500/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(66,148,110,0.4)]' }
+  { bg: 'bg-brand-50', glow: 'bg-brand-300/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(73,89,179,0.4)]' },
+  { bg: 'bg-accent-ice-400/10', glow: 'bg-accent-ice-400/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(52,152,197,0.4)]' },
+  { bg: 'bg-accent-green-500/10', glow: 'bg-accent-green-500/35', shadow: 'hover:shadow-[0_24px_40px_-16px_rgba(66,148,110,0.4)]' }
 ]
 
 const trackRef = useTemplateRef<HTMLDivElement>('trackRef')
@@ -78,35 +77,21 @@ useFadeIn(contentRef)
             style="scroll-snap-align: start;"
           >
             <div
-              class="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-(--radius-lg) shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5"
+              class="relative flex aspect-[4/3] items-end justify-center overflow-hidden rounded-(--radius-lg) shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5"
               :class="[panelStyles[index % panelStyles.length]!.bg, panelStyles[index % panelStyles.length]!.shadow]"
             >
-              <!-- Oversized, barely-visible icon watermark for depth, same
-                   craft as the Solutions/How We Work cards — purely
-                   decorative. -->
-              <span
-                class="pointer-events-none absolute -right-5 -bottom-5 h-24 w-24 motion-safe:transition-transform motion-safe:duration-(--duration-slow) group-hover:scale-110"
-                :class="panelStyles[index % panelStyles.length]!.watermark"
-                aria-hidden="true"
-              >
-                <IndustryIcon :id="industry.id" />
-              </span>
-
               <span
                 class="pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full opacity-0 blur-2xl motion-safe:transition-opacity motion-safe:duration-(--duration-slow) group-hover:opacity-100"
                 :class="panelStyles[index % panelStyles.length]!.glow"
                 aria-hidden="true"
               />
 
-              <span
-                class="relative flex h-16 w-16 items-center justify-center rounded-(--radius-lg) text-white motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-110 group-hover:-rotate-3"
-                :class="panelStyles[index % panelStyles.length]!.chip"
-                aria-hidden="true"
+              <img
+                :src="`/images/industry-${industry.id}.webp`"
+                :alt="`Illustration representing the ${industry.name} industry`"
+                loading="lazy"
+                class="relative h-[88%] w-auto object-contain motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-105"
               >
-                <span class="h-7 w-7">
-                  <IndustryIcon :id="industry.id" />
-                </span>
-              </span>
             </div>
             <p class="mt-3 text-body font-semibold text-highlighted group-hover:text-brand-500">
               {{ industry.name }}
