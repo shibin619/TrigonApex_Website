@@ -54,21 +54,28 @@ useStaggerReveal(rowsRef, 'article', { each: true })
         <div ref="rowsRef" class="mt-12 grid grid-cols-1 gap-8 md:mt-16 lg:grid-cols-3">
           <article v-for="(caseStudy, index) in caseStudies" :key="caseStudy.id" class="group">
             <NuxtLink :to="`/case-studies/${caseStudy.slug}`" class="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              <div class="relative flex aspect-[4/3] items-end justify-center overflow-hidden rounded-(--radius-lg) bg-navy-950 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_48px_-16px_rgba(16,19,50,0.55)]">
-                <!-- The real industry illustration from the Industries
-                     section, not an invented UI mockup. -->
+              <div class="relative aspect-[4/3] overflow-hidden rounded-(--radius-lg) bg-navy-950 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_48px_-16px_rgba(16,19,50,0.55)]">
                 <span
                   class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-0 blur-3xl motion-safe:transition-opacity motion-safe:duration-(--duration-slow) group-hover:opacity-30"
                   :style="{ backgroundColor: glowColors[index % glowColors.length] }"
                   aria-hidden="true"
                 />
-                <div class="absolute inset-0 opacity-25" :style="{ backgroundImage: `radial-gradient(circle at 70% 20%, ${glowColors[index % glowColors.length]}, transparent 55%)` }" aria-hidden="true" />
-                <img
-                  :src="`/images/industry-${caseStudy.industry}.webp`"
-                  :alt="`Illustration representing the ${industryName(caseStudy.industry)} industry`"
-                  loading="lazy"
-                  class="relative h-[82%] w-auto object-contain motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-105"
-                >
+                <!-- The illustration's own cutout edges are matted for a
+                     white backdrop (visible as a faint noisy fringe once
+                     composited directly on this dark navy card) — an
+                     inset light panel behind it sidesteps that entirely,
+                     since the image's native white background now blends
+                     into a matching light backdrop instead of needing a
+                     perfect transparent cutout against dark. -->
+                <div class="absolute inset-5 flex items-center justify-center overflow-hidden rounded-(--radius-md) bg-slate-50 sm:inset-6">
+                  <div class="absolute inset-0 opacity-70" :style="{ backgroundImage: `radial-gradient(circle at 75% 15%, ${glowColors[index % glowColors.length]}, transparent 60%)`, opacity: 0.12 }" aria-hidden="true" />
+                  <img
+                    :src="`/images/industry-${caseStudy.industry}.webp`"
+                    :alt="`Illustration representing the ${industryName(caseStudy.industry)} industry`"
+                    loading="lazy"
+                    class="relative h-[85%] w-auto object-contain motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-105"
+                  >
+                </div>
                 <span class="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-caption font-semibold uppercase tracking-wide text-navy-950">
                   {{ industryName(caseStudy.industry) }}
                 </span>
