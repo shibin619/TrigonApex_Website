@@ -6,29 +6,23 @@ import { getCta } from '~/content/ctas'
 // Real project categories (Finance Management, Fabrication Business, Taxi
 // Booking & Management) — no invented client names or metrics; results
 // stay qualitative per docs/CONTENT_ARCHITECTURE.md §6. A 3-column dark-
-// card grid (category tag + title + description over a dark abstract
-// "product" visual) per the corporate reference's "Selected Work"
-// pattern — the visual is a dark-themed dashboard-style illustration,
-// never a real screenshot or stock photo.
+// card grid (category tag + title + description over a dark panel) per
+// the corporate reference's "Selected Work" pattern. The panel shows the
+// matching industry's real illustration (same asset Industries.vue
+// uses) rather than an invented dashboard/UI mockup — no fake product
+// screenshot, no skeleton-bar placeholder UI.
 function industryName(industryId: string) {
   return industries.find((industry) => industry.id === industryId)?.name ?? industryId
 }
 
-// Each card's mini visual used to be the exact same bar-chart mockup,
-// bar-for-bar identical, on all three cards regardless of what the
-// project actually was — including the fabrication-business entry,
-// which is a marketing WEBSITE, not a dashboard, so a bar-chart preview
-// actively misrepresented it. Each project type now gets its own
-// abstract mockup shape instead of one reused template.
-type CaseStudyVisual = 'dashboard' | 'website' | 'bookings'
-const caseStudyVisuals: Record<string, CaseStudyVisual> = {
-  'finance-management': 'dashboard',
-  'fabrication-business': 'website',
-  'taxi-booking-management': 'bookings'
-}
-function visualFor(caseStudyId: string): CaseStudyVisual {
-  return caseStudyVisuals[caseStudyId] ?? 'dashboard'
-}
+// The card visual used to be a fake "mini app window" — skeleton bars
+// and chart shapes standing in for a UI that doesn't exist, which read
+// as fake no matter how it was styled (same lesson as Business
+// Analytics' fake chart). Each industry already has a real, custom
+// illustration from the Industries section (public/images/industry-
+// {id}.webp) — reusing it here is an honest visual instead of an
+// invented dashboard mockup.
+const glowColors = ['var(--color-brand-500)', 'var(--color-accent-ice-400)', 'var(--color-accent-green-500)']
 
 const viewAllCaseStudies = getCta('view-all-case-studies')
 
@@ -58,58 +52,23 @@ useStaggerReveal(rowsRef, 'article', { each: true })
         </div>
 
         <div ref="rowsRef" class="mt-12 grid grid-cols-1 gap-8 md:mt-16 lg:grid-cols-3">
-          <article v-for="caseStudy in caseStudies" :key="caseStudy.id" class="group">
+          <article v-for="(caseStudy, index) in caseStudies" :key="caseStudy.id" class="group">
             <NuxtLink :to="`/case-studies/${caseStudy.slug}`" class="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              <div class="relative aspect-[4/3] overflow-hidden rounded-(--radius-lg) bg-navy-950 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_48px_-16px_rgba(16,19,50,0.55)]">
-                <!-- Dark abstract "product" visual — a dashboard-style
-                     illustration, not a real screenshot. -->
-                <span class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full bg-brand-400/0 blur-3xl motion-safe:transition-colors motion-safe:duration-(--duration-slow) group-hover:bg-brand-400/30" aria-hidden="true" />
-                <div class="absolute inset-0 opacity-40" style="background-image: radial-gradient(circle at 70% 20%, var(--color-brand-500), transparent 55%);" aria-hidden="true" />
-                <div class="absolute inset-6 overflow-hidden rounded-(--radius-md) border border-white/10 bg-white/5 backdrop-blur-sm" aria-hidden="true">
-                  <div class="flex items-center gap-1.5 border-b border-white/10 px-3 py-2">
-                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
-                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
-                    <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
-                  </div>
-
-                  <!-- Finance: a small reporting dashboard — the one
-                       project this shape is actually true of. -->
-                  <div v-if="visualFor(caseStudy.id) === 'dashboard'" class="space-y-2 p-4">
-                    <div class="h-2 w-2/3 rounded-full bg-white/20" />
-                    <div class="h-2 w-1/2 rounded-full bg-white/10" />
-                    <div class="mt-3 flex h-12 items-end gap-1">
-                      <div
-                        v-for="(h, i) in [40, 70, 55, 85, 60, 45]"
-                        :key="i"
-                        class="w-full rounded-t"
-                        :class="i % 2 === 0 ? 'bg-brand-400' : 'bg-accent-ice-400'"
-                        :style="{ height: `${h}%`, opacity: 0.8 }"
-                      />
-                    </div>
-                  </div>
-
-                  <!-- Fabrication business: a marketing website, not a
-                       dashboard — a hero block + heading + CTA pill. -->
-                  <div v-else-if="visualFor(caseStudy.id) === 'website'" class="space-y-2.5 p-4">
-                    <div class="h-10 w-full rounded-(--radius-sm)" style="background-image: linear-gradient(135deg, var(--color-brand-400), var(--color-accent-ice-400)); opacity: 0.55;" />
-                    <div class="h-2 w-3/4 rounded-full bg-white/20" />
-                    <div class="h-2 w-1/2 rounded-full bg-white/10" />
-                    <div class="mt-2 h-5 w-16 rounded-full bg-brand-400/70" />
-                  </div>
-
-                  <!-- Taxi booking: a dispatch/ride list, not a chart. -->
-                  <div v-else class="space-y-2 p-4">
-                    <div
-                      v-for="(ride, i) in [{ status: 'bg-accent-green-400' }, { status: 'bg-accent-ice-400' }, { status: 'bg-white/30' }]"
-                      :key="i"
-                      class="flex items-center gap-2"
-                    >
-                      <span class="h-1.5 w-1.5 shrink-0 rounded-full" :class="ride.status" />
-                      <span class="h-2 w-1/3 rounded-full bg-white/20" />
-                      <span class="h-2 flex-1 rounded-full bg-white/10" />
-                    </div>
-                  </div>
-                </div>
+              <div class="relative flex aspect-[4/3] items-end justify-center overflow-hidden rounded-(--radius-lg) bg-navy-950 shadow-sm motion-safe:transition-[transform,box-shadow] motion-safe:duration-(--duration-base) group-hover:-translate-y-1.5 group-hover:shadow-[0_28px_48px_-16px_rgba(16,19,50,0.55)]">
+                <!-- The real industry illustration from the Industries
+                     section, not an invented UI mockup. -->
+                <span
+                  class="pointer-events-none absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-0 blur-3xl motion-safe:transition-opacity motion-safe:duration-(--duration-slow) group-hover:opacity-30"
+                  :style="{ backgroundColor: glowColors[index % glowColors.length] }"
+                  aria-hidden="true"
+                />
+                <div class="absolute inset-0 opacity-25" :style="{ backgroundImage: `radial-gradient(circle at 70% 20%, ${glowColors[index % glowColors.length]}, transparent 55%)` }" aria-hidden="true" />
+                <img
+                  :src="`/images/industry-${caseStudy.industry}.webp`"
+                  :alt="`Illustration representing the ${industryName(caseStudy.industry)} industry`"
+                  loading="lazy"
+                  class="relative h-[82%] w-auto object-contain motion-safe:transition-transform motion-safe:duration-(--duration-base) group-hover:scale-105"
+                >
                 <span class="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-caption font-semibold uppercase tracking-wide text-navy-950">
                   {{ industryName(caseStudy.industry) }}
                 </span>
