@@ -33,9 +33,20 @@ const statusClasses: Record<string, string> = {
 const chartDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const chartBarHeights = ['35%', '60%', '48%', '80%', '55%', '70%']
 const overviewCardAccents = ['border-t-brand-500', 'border-t-accent-ice-400', 'border-t-accent-green-500']
+const overviewCardIconClasses = ['bg-brand-50 text-brand-500', 'bg-accent-ice-400/10 text-accent-ice-600', 'bg-accent-green-500/10 text-accent-green-700']
 const overviewChartColors = ['bg-brand-200', 'bg-accent-ice-400', 'bg-brand-300', 'bg-accent-green-500', 'bg-brand-200']
 const workflowColumnDots = ['bg-slate-400', 'bg-accent-ice-400', 'bg-accent-green-500']
 const workflowColumnBorders = ['border-l-slate-300', 'border-l-accent-ice-400', 'border-l-accent-green-500']
+// Cycled by index, not meaning — the same three generic PrincipleIcon
+// shapes dress up both the metric cards and the sidebar nav items, since
+// the labels themselves vary per product (Patient Queue vs. Work Orders
+// vs. Accounts) and don't map to any one specific icon.
+const genericIconCycle = ['chart', 'layers', 'target'] as const
+const statusDotClasses: Record<string, string> = {
+  Active: 'bg-accent-green-500',
+  Pending: 'bg-accent-ice-400',
+  Complete: 'bg-brand-400'
+}
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -96,31 +107,54 @@ useFadeIn(contentRef)
                 </p>
                 <p class="text-caption text-muted">Interactive Preview</p>
               </div>
-              <div role="group" aria-label="Product tour steps" class="flex flex-wrap gap-1">
-                <button
-                  v-for="step in productTourSteps"
-                  :key="step.id"
-                  type="button"
-                  :aria-pressed="selectedStepId === step.id"
-                  class="rounded-(--radius-sm) px-2.5 py-1.5 text-caption font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
-                  :class="selectedStepId === step.id
-                    ? 'bg-default text-brand-500 shadow-sm'
-                    : 'text-muted hover:text-brand-500'"
-                  @click="selectStep(step.id)"
-                >
-                  {{ step.label }}
-                </button>
+              <div class="flex items-center gap-4">
+                <div role="group" aria-label="Product tour steps" class="flex flex-wrap gap-1">
+                  <button
+                    v-for="step in productTourSteps"
+                    :key="step.id"
+                    type="button"
+                    :aria-pressed="selectedStepId === step.id"
+                    class="rounded-(--radius-sm) px-2.5 py-1.5 text-caption font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+                    :class="selectedStepId === step.id
+                      ? 'bg-default text-brand-500 shadow-sm'
+                      : 'text-muted hover:text-brand-500'"
+                    @click="selectStep(step.id)"
+                  >
+                    {{ step.label }}
+                  </button>
+                </div>
+                <!-- Purely decorative app-bar chrome (search / notifications
+                     / avatar) — no real search or notifications exist, this
+                     just gives the header the furniture a real product
+                     screenshot would have instead of reading as a bare
+                     tab bar. -->
+                <div class="hidden items-center gap-3 border-l border-default pl-4 text-muted sm:flex" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                  </svg>
+                  <span class="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-caption font-semibold text-white">
+                    {{ activeProduct.name.charAt(0) }}
+                  </span>
+                </div>
               </div>
             </div>
 
             <div class="flex flex-col sm:flex-row">
-              <div class="border-b border-default p-4 sm:w-40 sm:shrink-0 sm:border-r sm:border-b-0">
+              <div class="border-b border-default p-4 sm:w-44 sm:shrink-0 sm:border-r sm:border-b-0">
                 <ul class="flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible">
                   <li
-                    v-for="item in activePreview.navItems"
+                    v-for="(item, itemIndex) in activePreview.navItems"
                     :key="item"
-                    class="shrink-0 rounded-(--radius-sm) px-2 py-1.5 text-body-sm text-muted sm:shrink"
+                    class="flex shrink-0 items-center gap-2 rounded-(--radius-sm) px-2 py-1.5 text-body-sm text-muted sm:shrink"
                   >
+                    <span class="h-4 w-4 shrink-0 text-muted/70" aria-hidden="true">
+                      <PrincipleIcon :id="genericIconCycle[itemIndex % genericIconCycle.length]!" />
+                    </span>
                     {{ item }}
                   </li>
                 </ul>
@@ -130,28 +164,61 @@ useFadeIn(contentRef)
                 <Transition name="tour-preview">
                   <div :key="`${selectedProductId}-${selectedStepId}`">
                     <div v-if="selectedStepId === 'overview'">
-                      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div
-                          v-for="(metric, cardIndex) in activePreview.overviewMetrics"
-                          :key="metric.label"
-                          class="rounded-(--radius-md) border-t-2 border-default bg-elevated p-4"
-                          :class="overviewCardAccents[cardIndex % overviewCardAccents.length]"
-                        >
-                          <p class="text-caption text-muted">{{ metric.label }}</p>
-                          <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
+                      <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_200px]">
+                        <div>
+                          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                            <div
+                              v-for="(metric, cardIndex) in activePreview.overviewMetrics"
+                              :key="metric.label"
+                              class="rounded-(--radius-md) border-t-2 border-default bg-elevated p-4"
+                              :class="overviewCardAccents[cardIndex % overviewCardAccents.length]"
+                            >
+                              <span
+                                class="flex h-8 w-8 items-center justify-center rounded-(--radius-sm)"
+                                :class="overviewCardIconClasses[cardIndex % overviewCardIconClasses.length]"
+                                aria-hidden="true"
+                              >
+                                <span class="h-4 w-4">
+                                  <PrincipleIcon :id="genericIconCycle[cardIndex % genericIconCycle.length]!" />
+                                </span>
+                              </span>
+                              <p class="mt-3 text-caption text-muted">{{ metric.label }}</p>
+                              <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
+                            </div>
+                          </div>
+                          <div class="mt-6 flex h-28 items-end gap-2" aria-hidden="true">
+                            <div
+                              v-for="(height, i) in chartBarHeights.slice(0, 5)"
+                              :key="i"
+                              class="w-full rounded-t"
+                              :class="overviewChartColors[i % overviewChartColors.length]"
+                              :style="{ height }"
+                            />
+                          </div>
+                          <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
+                            <span v-for="label in chartDayLabels.slice(0, 5)" :key="label" class="w-full text-center">{{ label }}</span>
+                          </div>
                         </div>
-                      </div>
-                      <div class="mt-6 flex h-24 items-end gap-2" aria-hidden="true">
-                        <div
-                          v-for="(height, i) in chartBarHeights.slice(0, 5)"
-                          :key="i"
-                          class="w-full rounded-t"
-                          :class="overviewChartColors[i % overviewChartColors.length]"
-                          :style="{ height }"
-                        />
-                      </div>
-                      <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
-                        <span v-for="label in chartDayLabels.slice(0, 5)" :key="label" class="w-full text-center">{{ label }}</span>
+
+                        <!-- Reuses the same operationsRows data the Operations
+                             tab shows (already illustrative/fictional per
+                             product-tour.ts, not new invented content) as a
+                             compact activity feed — real dashboards pair a
+                             chart with a recent-activity list, and it fills
+                             the panel's height on this tab instead of
+                             leaving it visibly emptier than the others. -->
+                        <div class="border-t border-default pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
+                          <p class="text-caption font-semibold tracking-widest text-muted uppercase">Recent Activity</p>
+                          <ul class="mt-3 space-y-3">
+                            <li v-for="row in activePreview.operationsRows.slice(0, 4)" :key="row.reference" class="flex items-start gap-2">
+                              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" :class="statusDotClasses[row.status]" aria-hidden="true" />
+                              <div class="min-w-0">
+                                <p class="truncate text-body-sm font-medium text-default">{{ row.reference }}</p>
+                                <p class="truncate text-caption text-muted">{{ row.detail }}</p>
+                              </div>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
 
