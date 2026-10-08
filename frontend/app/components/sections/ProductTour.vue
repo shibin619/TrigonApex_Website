@@ -31,13 +31,73 @@ const statusClasses: Record<string, string> = {
   Complete: 'bg-brand-100 text-brand-500'
 }
 const chartDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const chartBarHeights = ['35%', '60%', '48%', '80%', '55%', '70%']
-// A real chart uses ONE consistent color for a single metric's series —
-// cycling a different color per bar (the previous version) is a strong
-// "obviously fake" tell. Every bar is the same muted brand tint except
-// the tallest one (today/the standout day), which gets the solid accent
-// — the single-highlighted-bar pattern real analytics widgets use.
-const peakBarIndex = chartBarHeights.indexOf('80%')
+
+// A CSS-div bar chart reads as a wireframe placeholder, not a real chart.
+// This builds an actual SVG line/area series (a smooth curve through the
+// per-product trendValues, one consistent brand-colored stroke, a soft
+// gradient fill, and a highlighted "peak day" point) — the shape real
+// analytics widgets use, driven by data that's genuinely different per
+// product instead of one bar-height array shared by all four.
+const chartWidth = 300
+const chartHeight = 120
+
+// Classic "smooth line through points" trick: draw a quadratic Bézier
+// from each point to the midpoint of it and the next point, using the
+// point itself as the control — no charting library needed for a curve
+// this simple.
+function buildSmoothLinePath(points: { x: number, y: number }[]) {
+  if (points.length === 0) return ''
+  if (points.length === 1) return `M ${points[0]!.x},${points[0]!.y}`
+  let path = `M ${points[0]!.x},${points[0]!.y}`
+  for (let i = 0; i < points.length - 1; i++) {
+    const current = points[i]!
+    const next = points[i + 1]!
+    const midX = (current.x + next.x) / 2
+    const midY = (current.y + next.y) / 2
+    path += ` Q ${current.x},${current.y} ${midX},${midY}`
+  }
+  const last = points[points.length - 1]!
+  path += ` L ${last.x},${last.y}`
+  return path
+}
+
+function buildChartSeries(values: number[]) {
+  const points = values.map((value, index) => ({
+    x: values.length > 1 ? (index / (values.length - 1)) * chartWidth : 0,
+    y: chartHeight - (value / 100) * chartHeight
+  }))
+  const linePath = buildSmoothLinePath(points)
+  const first = points[0]
+  const last = points[points.length - 1]
+  const areaPath = first && last ? `${linePath} L ${last.x},${chartHeight} L ${first.x},${chartHeight} Z` : ''
+  const peakIndex = values.indexOf(Math.max(...values))
+  const peakPoint = points[peakIndex]
+  return {
+    linePath,
+    areaPath,
+    peakPosition: peakPoint ? { left: `${(peakPoint.x / chartWidth) * 100}%`, top: `${(peakPoint.y / chartHeight) * 100}%` } : null
+  }
+}
+
+// Overview shows the first five days (Mon-Fri); Insights shows the full
+// week (Mon-Sat) — same split the previous static chart used.
+const overviewChart = computed(() => buildChartSeries(activePreview.value.trendValues.slice(0, 5)))
+const insightsChart = computed(() => buildChartSeries(activePreview.value.trendValues))
+
+// Each Overview widget variant is looked up as its own typed computed so
+// the template can narrow the discriminated union with a plain v-if/
+// v-else-if chain instead of re-checking `.type` on every access.
+const scheduleWidget = computed(() => (activePreview.value.overviewWidget.type === 'schedule' ? activePreview.value.overviewWidget : undefined))
+const progressWidget = computed(() => (activePreview.value.overviewWidget.type === 'progress' ? activePreview.value.overviewWidget : undefined))
+const pipelineWidget = computed(() => (activePreview.value.overviewWidget.type === 'pipeline' ? activePreview.value.overviewWidget : undefined))
+const rankedWidget = computed(() => (activePreview.value.overviewWidget.type === 'ranked' ? activePreview.value.overviewWidget : undefined))
+
+function pipelineStageWidth(count: number) {
+  const stages = pipelineWidget.value?.stages ?? []
+  const max = Math.max(...stages.map((stage) => stage.count), 1)
+  return (count / max) * 100
+}
+
 const overviewCardAccents = ['border-t-brand-500', 'border-t-accent-ice-400', 'border-t-accent-green-500']
 const overviewCardIconClasses = ['bg-brand-50 text-brand-500', 'bg-accent-ice-400/10 text-accent-ice-600', 'bg-accent-green-500/10 text-accent-green-700']
 // Decorative, not real data — same "conceptual UI fixture" status as
@@ -56,11 +116,6 @@ const workflowColumnBorders = ['border-l-slate-300', 'border-l-accent-ice-400', 
 // the labels themselves vary per product (Patient Queue vs. Work Orders
 // vs. Accounts) and don't map to any one specific icon.
 const genericIconCycle = ['chart', 'layers', 'target'] as const
-const statusDotClasses: Record<string, string> = {
-  Active: 'bg-accent-green-500',
-  Pending: 'bg-accent-ice-400',
-  Complete: 'bg-brand-400'
-}
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -258,49 +313,95 @@ useFadeIn(contentRef)
                               <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
                             </div>
                           </div>
-                          <div class="relative mt-6 h-28" aria-hidden="true">
-                            <!-- Faint horizontal gridlines behind the bars —
-                                 no axis numbers (that would need a real
-                                 unit/scale to be honest about), just the
-                                 ruled-grid texture a real chart has instead
-                                 of bars floating on bare white. -->
-                            <div class="pointer-events-none absolute inset-0 flex flex-col justify-between">
-                              <div class="border-t border-dashed border-default" />
-                              <div class="border-t border-dashed border-default" />
-                              <div class="border-t border-dashed border-default" />
-                              <div class="border-t border-default" />
-                            </div>
-                            <div class="relative flex h-full items-end gap-2">
-                              <div
-                                v-for="(height, i) in chartBarHeights.slice(0, 5)"
-                                :key="i"
-                                class="w-full rounded-t"
-                                :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
-                                :style="{ height }"
-                              />
-                            </div>
+                          <p class="mt-6 text-caption font-semibold tracking-widest text-muted uppercase">{{ activePreview.trendLabel }}</p>
+                          <div class="relative mt-2 h-28" aria-hidden="true">
+                            <svg viewBox="0 0 300 120" preserveAspectRatio="none" class="h-full w-full overflow-visible">
+                              <defs>
+                                <linearGradient :id="`tour-chart-fill-${selectedProductId}-ov`" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" class="text-brand-500" stop-color="currentColor" stop-opacity="0.3" />
+                                  <stop offset="100%" class="text-brand-500" stop-color="currentColor" stop-opacity="0" />
+                                </linearGradient>
+                              </defs>
+                              <!-- Gridlines: faint ruled texture, no fabricated
+                                   axis numbers (that would need a real,
+                                   honest unit/scale behind it). -->
+                              <g class="text-default/60" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke">
+                                <line x1="0" y1="30" x2="300" y2="30" />
+                                <line x1="0" y1="60" x2="300" y2="60" />
+                                <line x1="0" y1="90" x2="300" y2="90" />
+                              </g>
+                              <line x1="0" y1="119" x2="300" y2="119" class="text-default" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke" />
+                              <path :d="overviewChart.areaPath" :fill="`url(#tour-chart-fill-${selectedProductId}-ov)`" stroke="none" />
+                              <path :d="overviewChart.linePath" class="text-brand-500" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+                            </svg>
+                            <!-- Peak-day marker as an HTML dot (not an SVG
+                                 circle) positioned by percentage — the SVG
+                                 above intentionally scales x/y independently
+                                 (categories vs. value scale, like any real
+                                 chart), which would otherwise stretch a
+                                 circle into an ellipse. -->
+                            <span
+                              v-if="overviewChart.peakPosition"
+                              class="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-500 shadow-sm dark:border-default"
+                              :style="overviewChart.peakPosition"
+                            />
                           </div>
                           <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
                             <span v-for="label in chartDayLabels.slice(0, 5)" :key="label" class="w-full text-center">{{ label }}</span>
                           </div>
                         </div>
 
-                        <!-- Reuses the same operationsRows data the Operations
-                             tab shows (already illustrative/fictional per
-                             product-tour.ts, not new invented content) as a
-                             compact activity feed — real dashboards pair a
-                             chart with a recent-activity list, and it fills
-                             the panel's height on this tab instead of
-                             leaving it visibly emptier than the others. -->
+                        <!-- The Overview tab's secondary panel used to be the
+                             exact same "Recent Activity" status-dot list for
+                             every product — one of the reasons all four
+                             dashboards looked like the same template with
+                             different words. Each product now gets a widget
+                             shaped like how that business actually tracks
+                             its day. -->
                         <div class="border-t border-default pt-5 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-6">
-                          <p class="text-caption font-semibold tracking-widest text-muted uppercase">Recent Activity</p>
-                          <ul class="mt-3 space-y-3">
-                            <li v-for="row in activePreview.operationsRows.slice(0, 4)" :key="row.reference" class="flex items-start gap-2">
-                              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" :class="statusDotClasses[row.status]" aria-hidden="true" />
-                              <div class="min-w-0">
-                                <p class="truncate text-body-sm font-medium text-default">{{ row.reference }}</p>
-                                <p class="truncate text-caption text-muted">{{ row.detail }}</p>
+                          <p class="text-caption font-semibold tracking-widest text-muted uppercase">{{ activePreview.overviewWidget.title }}</p>
+
+                          <ul v-if="scheduleWidget" class="mt-3 space-y-3">
+                            <li v-for="item in scheduleWidget.items" :key="item.time" class="flex items-start gap-3">
+                              <span class="w-[4.25rem] shrink-0 text-caption font-medium text-muted">{{ item.time }}</span>
+                              <div class="min-w-0 border-l-2 border-brand-200 pl-3">
+                                <p class="truncate text-body-sm font-medium text-default">{{ item.title }}</p>
+                                <p class="truncate text-caption text-muted">{{ item.subtitle }}</p>
                               </div>
+                            </li>
+                          </ul>
+
+                          <ul v-else-if="progressWidget" class="mt-3 space-y-4">
+                            <li v-for="item in progressWidget.items" :key="item.label">
+                              <div class="flex items-center justify-between gap-2 text-caption">
+                                <span class="truncate font-medium text-default">{{ item.label }}</span>
+                                <span class="shrink-0 text-muted">{{ item.percent }}%</span>
+                              </div>
+                              <div class="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-elevated">
+                                <div class="h-full rounded-full bg-brand-500" :style="{ width: `${item.percent}%` }" />
+                              </div>
+                            </li>
+                          </ul>
+
+                          <ul v-else-if="pipelineWidget" class="mt-3 space-y-4">
+                            <li v-for="stage in pipelineWidget.stages" :key="stage.label">
+                              <div class="flex items-center justify-between gap-2 text-caption">
+                                <span class="truncate font-medium text-default">{{ stage.label }}</span>
+                                <span class="shrink-0 text-muted">{{ stage.count }}</span>
+                              </div>
+                              <div class="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-elevated">
+                                <div class="h-full rounded-full bg-accent-ice-400" :style="{ width: `${pipelineStageWidth(stage.count)}%` }" />
+                              </div>
+                            </li>
+                          </ul>
+
+                          <ul v-else-if="rankedWidget" class="mt-3 space-y-3">
+                            <li v-for="(item, rankIndex) in rankedWidget.items" :key="item.label" class="flex items-center gap-3">
+                              <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-50 text-[0.6875rem] font-semibold text-brand-600">
+                                {{ rankIndex + 1 }}
+                              </span>
+                              <span class="min-w-0 flex-1 truncate text-body-sm font-medium text-default">{{ item.label }}</span>
+                              <span class="shrink-0 text-caption text-muted">{{ item.value }}</span>
                             </li>
                           </ul>
                         </div>
@@ -357,22 +458,29 @@ useFadeIn(contentRef)
                     </div>
 
                     <div v-else>
-                      <div class="relative h-40" aria-hidden="true">
-                        <div class="pointer-events-none absolute inset-0 flex flex-col justify-between">
-                          <div class="border-t border-dashed border-default" />
-                          <div class="border-t border-dashed border-default" />
-                          <div class="border-t border-dashed border-default" />
-                          <div class="border-t border-default" />
-                        </div>
-                        <div class="relative flex h-full items-end gap-2">
-                          <div
-                            v-for="(height, i) in chartBarHeights"
-                            :key="i"
-                            class="w-full rounded-t"
-                            :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
-                            :style="{ height }"
-                          />
-                        </div>
+                      <p class="text-caption font-semibold tracking-widest text-muted uppercase">{{ activePreview.trendLabel }}</p>
+                      <div class="relative mt-3 h-40" aria-hidden="true">
+                        <svg viewBox="0 0 300 120" preserveAspectRatio="none" class="h-full w-full overflow-visible">
+                          <defs>
+                            <linearGradient :id="`tour-chart-fill-${selectedProductId}-in`" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" class="text-brand-500" stop-color="currentColor" stop-opacity="0.3" />
+                              <stop offset="100%" class="text-brand-500" stop-color="currentColor" stop-opacity="0" />
+                            </linearGradient>
+                          </defs>
+                          <g class="text-default/60" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke">
+                            <line x1="0" y1="30" x2="300" y2="30" />
+                            <line x1="0" y1="60" x2="300" y2="60" />
+                            <line x1="0" y1="90" x2="300" y2="90" />
+                          </g>
+                          <line x1="0" y1="119" x2="300" y2="119" class="text-default" stroke="currentColor" stroke-width="1" vector-effect="non-scaling-stroke" />
+                          <path :d="insightsChart.areaPath" :fill="`url(#tour-chart-fill-${selectedProductId}-in)`" stroke="none" />
+                          <path :d="insightsChart.linePath" class="text-brand-500" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+                        </svg>
+                        <span
+                          v-if="insightsChart.peakPosition"
+                          class="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-brand-500 shadow-sm dark:border-default"
+                          :style="insightsChart.peakPosition"
+                        />
                       </div>
                       <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
                         <span v-for="label in chartDayLabels" :key="label" class="w-full text-center">{{ label }}</span>
