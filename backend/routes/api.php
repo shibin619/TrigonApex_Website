@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Admin\AuthController;
 use App\Http\Controllers\Api\V1\Admin\TestimonialController as AdminTestimonialController;
 use App\Http\Controllers\Api\V1\HealthController;
+use App\Http\Controllers\Api\V1\InquiryController;
 use App\Http\Controllers\Api\V1\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,14 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     // Public — returns only permission-approved testimonials.
     Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials.index');
+
+    // Public write endpoint backing /contact. Throttled separately from
+    // the default api limiter since this is the one public POST route —
+    // a low per-IP ceiling is enough to blunt naive spam without needing
+    // a captcha for a single-admin-reviewed inbox.
+    Route::post('/inquiries', [InquiryController::class, 'store'])
+        ->middleware('throttle:10,1')
+        ->name('inquiries.store');
 
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->name('login');
