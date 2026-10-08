@@ -32,9 +32,23 @@ const statusClasses: Record<string, string> = {
 }
 const chartDayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const chartBarHeights = ['35%', '60%', '48%', '80%', '55%', '70%']
+// A real chart uses ONE consistent color for a single metric's series —
+// cycling a different color per bar (the previous version) is a strong
+// "obviously fake" tell. Every bar is the same muted brand tint except
+// the tallest one (today/the standout day), which gets the solid accent
+// — the single-highlighted-bar pattern real analytics widgets use.
+const peakBarIndex = chartBarHeights.indexOf('80%')
 const overviewCardAccents = ['border-t-brand-500', 'border-t-accent-ice-400', 'border-t-accent-green-500']
 const overviewCardIconClasses = ['bg-brand-50 text-brand-500', 'bg-accent-ice-400/10 text-accent-ice-600', 'bg-accent-green-500/10 text-accent-green-700']
-const overviewChartColors = ['bg-brand-200', 'bg-accent-ice-400', 'bg-brand-300', 'bg-accent-green-500', 'bg-brand-200']
+// Decorative, not real data — same "conceptual UI fixture" status as
+// chartBarHeights above (identical across every product). A trend delta
+// with no number at all reads as unfinished; this stays generic/non-
+// specific rather than inventing a precise, product-sounding statistic.
+const overviewTrendCycle = [
+  { up: true, label: 'vs last week' },
+  { up: true, label: 'vs last week' },
+  { up: false, label: 'vs last week' }
+]
 const workflowColumnDots = ['bg-slate-400', 'bg-accent-ice-400', 'bg-accent-green-500']
 const workflowColumnBorders = ['border-l-slate-300', 'border-l-accent-ice-400', 'border-l-accent-green-500']
 // Cycled by index, not meaning — the same three generic PrincipleIcon
@@ -100,6 +114,18 @@ useFadeIn(contentRef)
                with its own internal tab navigation rather than steps
                living in the outer rail. -->
           <div class="overflow-hidden rounded-(--radius-lg) border border-default bg-default shadow-lg">
+            <!-- Window-chrome strip (macOS-style traffic-light dots) — the
+                 same framing device most product screenshots on landing
+                 pages use to read as "a captured window" rather than a
+                 bare content block. Purely decorative, no fake URL/domain
+                 text inside it (that would read as a specific, unverified
+                 product claim). -->
+            <div class="flex items-center gap-1.5 border-b border-default bg-elevated/60 px-4 py-2.5" aria-hidden="true">
+              <span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+              <span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+              <span class="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+            </div>
+
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-default bg-elevated px-5 py-4">
               <div>
                 <p class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
@@ -150,9 +176,10 @@ useFadeIn(contentRef)
                   <li
                     v-for="(item, itemIndex) in activePreview.navItems"
                     :key="item"
-                    class="flex shrink-0 items-center gap-2 rounded-(--radius-sm) px-2 py-1.5 text-body-sm text-muted sm:shrink"
+                    class="flex shrink-0 items-center gap-2 rounded-(--radius-sm) px-2 py-1.5 text-body-sm sm:shrink"
+                    :class="itemIndex === 0 ? 'bg-brand-50 font-medium text-brand-600' : 'text-muted'"
                   >
-                    <span class="h-4 w-4 shrink-0 text-muted/70" aria-hidden="true">
+                    <span class="h-4 w-4 shrink-0" :class="itemIndex === 0 ? 'text-brand-500' : 'text-muted/70'" aria-hidden="true">
                       <PrincipleIcon :id="genericIconCycle[itemIndex % genericIconCycle.length]!" />
                     </span>
                     {{ item }}
@@ -173,25 +200,37 @@ useFadeIn(contentRef)
                               class="rounded-(--radius-md) border-t-2 border-default bg-elevated p-4"
                               :class="overviewCardAccents[cardIndex % overviewCardAccents.length]"
                             >
-                              <span
-                                class="flex h-8 w-8 items-center justify-center rounded-(--radius-sm)"
-                                :class="overviewCardIconClasses[cardIndex % overviewCardIconClasses.length]"
-                                aria-hidden="true"
-                              >
-                                <span class="h-4 w-4">
-                                  <PrincipleIcon :id="genericIconCycle[cardIndex % genericIconCycle.length]!" />
+                              <div class="flex items-start justify-between">
+                                <span
+                                  class="flex h-8 w-8 items-center justify-center rounded-(--radius-sm)"
+                                  :class="overviewCardIconClasses[cardIndex % overviewCardIconClasses.length]"
+                                  aria-hidden="true"
+                                >
+                                  <span class="h-4 w-4">
+                                    <PrincipleIcon :id="genericIconCycle[cardIndex % genericIconCycle.length]!" />
+                                  </span>
                                 </span>
-                              </span>
+                                <span
+                                  class="flex items-center gap-0.5 text-caption font-medium"
+                                  :class="overviewTrendCycle[cardIndex % overviewTrendCycle.length]!.up ? 'text-accent-green-700' : 'text-muted'"
+                                  aria-hidden="true"
+                                >
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3" :class="{ 'rotate-180': !overviewTrendCycle[cardIndex % overviewTrendCycle.length]!.up }">
+                                    <path d="M7 17 17 7" />
+                                    <path d="M7 7h10v10" />
+                                  </svg>
+                                </span>
+                              </div>
                               <p class="mt-3 text-caption text-muted">{{ metric.label }}</p>
                               <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
                             </div>
                           </div>
-                          <div class="mt-6 flex h-28 items-end gap-2" aria-hidden="true">
+                          <div class="mt-6 flex h-28 items-end gap-2 border-b border-default pb-0" aria-hidden="true">
                             <div
                               v-for="(height, i) in chartBarHeights.slice(0, 5)"
                               :key="i"
                               class="w-full rounded-t"
-                              :class="overviewChartColors[i % overviewChartColors.length]"
+                              :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
                               :style="{ height }"
                             />
                           </div>
@@ -273,12 +312,12 @@ useFadeIn(contentRef)
 
                     <div v-else>
                       <p class="text-caption font-semibold tracking-widest text-muted uppercase">This Week</p>
-                      <div class="mt-3 flex h-40 items-end gap-2" aria-hidden="true">
+                      <div class="mt-3 flex h-40 items-end gap-2 border-b border-default pb-0" aria-hidden="true">
                         <div
                           v-for="(height, i) in chartBarHeights"
                           :key="i"
                           class="w-full rounded-t"
-                          :class="overviewChartColors[i % overviewChartColors.length]"
+                          :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
                           :style="{ height }"
                         />
                       </div>
