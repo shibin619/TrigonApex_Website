@@ -170,14 +170,21 @@ useFadeIn(contentRef)
               </div>
             </div>
 
-            <div class="flex flex-col sm:flex-row">
-              <div class="border-b border-default p-4 sm:w-44 sm:shrink-0 sm:border-r sm:border-b-0">
-                <ul class="flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible">
+            <div class="flex flex-col sm:flex-row sm:items-stretch">
+              <!-- Distinct bg from the content canvas (same bg-elevated
+                   token the cards use) — a real app's nav rail and content
+                   area are visually separate surfaces, not the same flat
+                   white running underneath both. items-stretch above makes
+                   this column match the content column's full height
+                   instead of only being as tall as its own four links. -->
+              <div class="border-b border-default bg-elevated p-4 sm:w-48 sm:shrink-0 sm:border-r sm:border-b-0">
+                <p class="px-2 text-[0.6875rem] font-semibold tracking-widest text-muted/70 uppercase">Menu</p>
+                <ul class="mt-2 flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible">
                   <li
                     v-for="(item, itemIndex) in activePreview.navItems"
                     :key="item"
                     class="flex shrink-0 items-center gap-2 rounded-(--radius-sm) px-2 py-1.5 text-body-sm sm:shrink"
-                    :class="itemIndex === 0 ? 'bg-brand-50 font-medium text-brand-600' : 'text-muted'"
+                    :class="itemIndex === 0 ? 'bg-default font-medium text-brand-600 shadow-sm' : 'text-muted'"
                   >
                     <span class="h-4 w-4 shrink-0" :class="itemIndex === 0 ? 'text-brand-500' : 'text-muted/70'" aria-hidden="true">
                       <PrincipleIcon :id="genericIconCycle[itemIndex % genericIconCycle.length]!" />
@@ -187,7 +194,33 @@ useFadeIn(contentRef)
                 </ul>
               </div>
 
-              <div class="relative min-h-[320px] flex-1 overflow-hidden p-6 md:p-8">
+              <div class="relative min-h-[320px] flex-1 overflow-hidden bg-default p-6 md:p-8">
+                <!-- Page toolbar: title + a decorative date-range pill and
+                     export action. Stays fixed while the tab content below
+                     crossfades — chrome that persists, content that
+                     changes, the same pattern a real app uses. Neither
+                     control does anything; both are aria-hidden. -->
+                <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-default pb-4">
+                  <h3 class="text-h4 font-semibold tracking-tight text-highlighted">
+                    {{ productTourSteps.find((step) => step.id === selectedStepId)?.label }}
+                  </h3>
+                  <div class="flex items-center gap-2" aria-hidden="true">
+                    <span class="inline-flex items-center gap-1.5 rounded-(--radius-sm) border border-default px-3 py-1.5 text-caption font-medium text-muted">
+                      This Week
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </span>
+                    <span class="flex h-7 w-7 items-center justify-center rounded-(--radius-sm) border border-default text-muted">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5">
+                        <path d="M12 3v12" />
+                        <path d="m7 10 5 5 5-5" />
+                        <path d="M5 19h14" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
                 <Transition name="tour-preview">
                   <div :key="`${selectedProductId}-${selectedStepId}`">
                     <div v-if="selectedStepId === 'overview'">
@@ -225,14 +258,27 @@ useFadeIn(contentRef)
                               <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
                             </div>
                           </div>
-                          <div class="mt-6 flex h-28 items-end gap-2 border-b border-default pb-0" aria-hidden="true">
-                            <div
-                              v-for="(height, i) in chartBarHeights.slice(0, 5)"
-                              :key="i"
-                              class="w-full rounded-t"
-                              :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
-                              :style="{ height }"
-                            />
+                          <div class="relative mt-6 h-28" aria-hidden="true">
+                            <!-- Faint horizontal gridlines behind the bars —
+                                 no axis numbers (that would need a real
+                                 unit/scale to be honest about), just the
+                                 ruled-grid texture a real chart has instead
+                                 of bars floating on bare white. -->
+                            <div class="pointer-events-none absolute inset-0 flex flex-col justify-between">
+                              <div class="border-t border-dashed border-default" />
+                              <div class="border-t border-dashed border-default" />
+                              <div class="border-t border-dashed border-default" />
+                              <div class="border-t border-default" />
+                            </div>
+                            <div class="relative flex h-full items-end gap-2">
+                              <div
+                                v-for="(height, i) in chartBarHeights.slice(0, 5)"
+                                :key="i"
+                                class="w-full rounded-t"
+                                :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
+                                :style="{ height }"
+                              />
+                            </div>
                           </div>
                           <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
                             <span v-for="label in chartDayLabels.slice(0, 5)" :key="label" class="w-full text-center">{{ label }}</span>
@@ -311,15 +357,22 @@ useFadeIn(contentRef)
                     </div>
 
                     <div v-else>
-                      <p class="text-caption font-semibold tracking-widest text-muted uppercase">This Week</p>
-                      <div class="mt-3 flex h-40 items-end gap-2 border-b border-default pb-0" aria-hidden="true">
-                        <div
-                          v-for="(height, i) in chartBarHeights"
-                          :key="i"
-                          class="w-full rounded-t"
-                          :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
-                          :style="{ height }"
-                        />
+                      <div class="relative h-40" aria-hidden="true">
+                        <div class="pointer-events-none absolute inset-0 flex flex-col justify-between">
+                          <div class="border-t border-dashed border-default" />
+                          <div class="border-t border-dashed border-default" />
+                          <div class="border-t border-dashed border-default" />
+                          <div class="border-t border-default" />
+                        </div>
+                        <div class="relative flex h-full items-end gap-2">
+                          <div
+                            v-for="(height, i) in chartBarHeights"
+                            :key="i"
+                            class="w-full rounded-t"
+                            :class="i === peakBarIndex ? 'bg-brand-500' : 'bg-brand-100'"
+                            :style="{ height }"
+                          />
+                        </div>
                       </div>
                       <div class="mt-1.5 flex gap-2 text-caption text-muted" aria-hidden="true">
                         <span v-for="label in chartDayLabels" :key="label" class="w-full text-center">{{ label }}</span>
