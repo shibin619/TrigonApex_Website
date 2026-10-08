@@ -14,6 +14,22 @@ function industryName(industryId: string) {
   return industries.find((industry) => industry.id === industryId)?.name ?? industryId
 }
 
+// Each card's mini visual used to be the exact same bar-chart mockup,
+// bar-for-bar identical, on all three cards regardless of what the
+// project actually was — including the fabrication-business entry,
+// which is a marketing WEBSITE, not a dashboard, so a bar-chart preview
+// actively misrepresented it. Each project type now gets its own
+// abstract mockup shape instead of one reused template.
+type CaseStudyVisual = 'dashboard' | 'website' | 'bookings'
+const caseStudyVisuals: Record<string, CaseStudyVisual> = {
+  'finance-management': 'dashboard',
+  'fabrication-business': 'website',
+  'taxi-booking-management': 'bookings'
+}
+function visualFor(caseStudyId: string): CaseStudyVisual {
+  return caseStudyVisuals[caseStudyId] ?? 'dashboard'
+}
+
 const viewAllCaseStudies = getCta('view-all-case-studies')
 
 const headerRef = useTemplateRef<HTMLDivElement>('headerRef')
@@ -55,7 +71,10 @@ useStaggerReveal(rowsRef, 'article', { each: true })
                     <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
                     <span class="h-1.5 w-1.5 rounded-full bg-white/30" />
                   </div>
-                  <div class="space-y-2 p-4">
+
+                  <!-- Finance: a small reporting dashboard — the one
+                       project this shape is actually true of. -->
+                  <div v-if="visualFor(caseStudy.id) === 'dashboard'" class="space-y-2 p-4">
                     <div class="h-2 w-2/3 rounded-full bg-white/20" />
                     <div class="h-2 w-1/2 rounded-full bg-white/10" />
                     <div class="mt-3 flex h-12 items-end gap-1">
@@ -66,6 +85,28 @@ useStaggerReveal(rowsRef, 'article', { each: true })
                         :class="i % 2 === 0 ? 'bg-brand-400' : 'bg-accent-ice-400'"
                         :style="{ height: `${h}%`, opacity: 0.8 }"
                       />
+                    </div>
+                  </div>
+
+                  <!-- Fabrication business: a marketing website, not a
+                       dashboard — a hero block + heading + CTA pill. -->
+                  <div v-else-if="visualFor(caseStudy.id) === 'website'" class="space-y-2.5 p-4">
+                    <div class="h-10 w-full rounded-(--radius-sm)" style="background-image: linear-gradient(135deg, var(--color-brand-400), var(--color-accent-ice-400)); opacity: 0.55;" />
+                    <div class="h-2 w-3/4 rounded-full bg-white/20" />
+                    <div class="h-2 w-1/2 rounded-full bg-white/10" />
+                    <div class="mt-2 h-5 w-16 rounded-full bg-brand-400/70" />
+                  </div>
+
+                  <!-- Taxi booking: a dispatch/ride list, not a chart. -->
+                  <div v-else class="space-y-2 p-4">
+                    <div
+                      v-for="(ride, i) in [{ status: 'bg-accent-green-400' }, { status: 'bg-accent-ice-400' }, { status: 'bg-white/30' }]"
+                      :key="i"
+                      class="flex items-center gap-2"
+                    >
+                      <span class="h-1.5 w-1.5 shrink-0 rounded-full" :class="ride.status" />
+                      <span class="h-2 w-1/3 rounded-full bg-white/20" />
+                      <span class="h-2 flex-1 rounded-full bg-white/10" />
                     </div>
                   </div>
                 </div>
