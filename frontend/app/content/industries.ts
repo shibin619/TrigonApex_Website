@@ -10,7 +10,20 @@
  * these stay empty until a real mapping is confirmed, rather than guessed
  * from industry names. Same rule for `businessChallenges`/
  * `analyticsOpportunities` — no industry-specific claims are made up for
- * a detail page that doesn't exist yet.
+ * them.
+ *
+ * `shortDescription` is now the one real, written-out field per industry
+ * (previously an identical "Software solutions built for {X} businesses."
+ * stub repeated eight times — it's the only body copy on each
+ * /industries/:slug page and doubles as that page's meta description, so
+ * eight identical ones meant eight pages with the same text and the same
+ * duplicate meta description). Each is a plain, generic statement of what
+ * that kind of business commonly runs day to day — not a specific
+ * capability claim, metric, or feature promise (§15.2) — grounded in a
+ * real case study's own language where one exists (finance,
+ * manufacturing, transportation — see case-studies.ts) and otherwise kept
+ * to the same "built around how it actually runs" framing already used
+ * site-wide (Industries.vue's own heading).
  */
 
 export interface Industry {
@@ -30,7 +43,7 @@ export const industries: Industry[] = [
     id: 'dental-healthcare',
     slug: 'dental-healthcare',
     name: 'Dental & Healthcare',
-    shortDescription: 'Software solutions built for Dental & Healthcare businesses.',
+    shortDescription: 'Software built around how dental and healthcare practices actually run — appointments, patient records, and clinical workflow in one connected system.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -41,7 +54,7 @@ export const industries: Industry[] = [
     id: 'manufacturing',
     slug: 'manufacturing',
     name: 'Manufacturing',
-    shortDescription: 'Software solutions built for Manufacturing businesses.',
+    shortDescription: 'Software built around how manufacturing and fabrication operations actually run — production, capabilities, and client-facing presentation in one place.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -52,7 +65,7 @@ export const industries: Industry[] = [
     id: 'finance',
     slug: 'finance',
     name: 'Finance',
-    shortDescription: 'Software solutions built for Finance businesses.',
+    shortDescription: 'Software built around how finance businesses actually run — accounts, transactions, and reporting in one connected view.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -63,7 +76,7 @@ export const industries: Industry[] = [
     id: 'retail',
     slug: 'retail',
     name: 'Retail',
-    shortDescription: 'Software solutions built for Retail businesses.',
+    shortDescription: 'Software built around how retail businesses actually run — sales, inventory, and day-to-day storefront operations in one connected system.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -74,7 +87,7 @@ export const industries: Industry[] = [
     id: 'transportation',
     slug: 'transportation',
     name: 'Transportation',
-    shortDescription: 'Software solutions built for Transportation businesses.',
+    shortDescription: 'Software built around how transportation businesses actually run — bookings, dispatch, and day-to-day fleet operations in one place.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -85,7 +98,7 @@ export const industries: Industry[] = [
     id: 'food-restaurant',
     slug: 'food-restaurant',
     name: 'Food & Restaurant',
-    shortDescription: 'Software solutions built for Food & Restaurant businesses.',
+    shortDescription: 'Software built around how food and restaurant businesses actually run — orders, inventory, and service operations in one connected system.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -96,7 +109,7 @@ export const industries: Industry[] = [
     id: 'education',
     slug: 'education',
     name: 'Education',
-    shortDescription: 'Software solutions built for Education businesses.',
+    shortDescription: 'Software built around how education businesses actually run — enrollment, scheduling, and day-to-day administration in one place.',
     businessChallenges: [],
     solutions: [],
     products: [],
@@ -107,7 +120,7 @@ export const industries: Industry[] = [
     id: 'jewellery',
     slug: 'jewellery',
     name: 'Jewellery',
-    shortDescription: 'Software solutions built for Jewellery businesses.',
+    shortDescription: 'Software built around how jewellery businesses actually run — inventory, sales, and custom orders in one connected system.',
     businessChallenges: [],
     solutions: [],
     products: [],
