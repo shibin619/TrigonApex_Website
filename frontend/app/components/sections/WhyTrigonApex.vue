@@ -9,13 +9,21 @@ interface Principle {
   icon: 'target' | 'flow' | 'layers' | 'bulb' | 'chart' | 'link'
 }
 
+// The six strengths are named explicitly in docs/HOMEPAGE_SPEC.md §14:
+// business-first thinking · industry-focused software · product +
+// custom solutions · data-driven approach · scalable architecture ·
+// long-term partnership. Two of these ("industry-focused software" and
+// "product + custom solutions") had drifted into different substituted
+// concepts ("software around real workflows" / "clear product
+// thinking") in an earlier pass — restored here to match the spec's
+// actual six, each written as its own title + one-line explanation.
 const principles: Principle[] = [
   { title: 'Business-first thinking', description: 'We start with how the business works, not with a technology stack.', icon: 'target' },
-  { title: 'Software around real workflows', description: 'Systems built around actual operations, not forced into a generic template.', icon: 'flow' },
+  { title: 'Industry-focused software', description: 'Built around how a specific industry actually runs, not a one-size-fits-all platform.', icon: 'bulb' },
+  { title: 'Product and custom solutions', description: "A ready-made product where it fits, custom-built software where it doesn't.", icon: 'flow' },
   { title: 'Scalable architecture', description: 'Built to extend as the business grows, not rebuilt from scratch.', icon: 'layers' },
-  { title: 'Clear product thinking', description: 'Every system is designed with a clear purpose, not just built to spec.', icon: 'bulb' },
-  { title: 'Data-driven operations', description: "Decisions grounded in what the business's own data shows.", icon: 'chart' },
-  { title: 'Long-term technology partnership', description: 'Working with a business well beyond the initial build.', icon: 'link' }
+  { title: 'Data-driven approach', description: "Decisions grounded in what the business's own data shows.", icon: 'chart' },
+  { title: 'Long-term partnership', description: 'Working with a business well beyond the initial build.', icon: 'link' }
 ]
 
 // This used to reuse Solutions.vue's exact card language (gradient
