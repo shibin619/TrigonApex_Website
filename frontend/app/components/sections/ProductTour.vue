@@ -139,7 +139,7 @@ useFadeIn(contentRef)
 
         <!-- Asymmetric, not a 50/50 split — the preview is the point, so
              it gets most of the width; the product list is a narrow rail. -->
-        <div class="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[220px_1fr] lg:gap-10 md:mt-12">
+        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-[220px_1fr] lg:gap-8 md:mt-10">
           <div>
             <h3 class="text-caption font-semibold tracking-widest text-slate-400 uppercase">
               Choose a Product
@@ -154,7 +154,7 @@ useFadeIn(contentRef)
                 :key="product.id"
                 type="button"
                 :aria-pressed="selectedProductId === product.id"
-                class="shrink-0 rounded-(--radius-md) px-3 py-2.5 text-left text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white lg:shrink"
+                class="shrink-0 rounded-(--radius-md) px-3 py-2 text-left text-body-sm font-medium motion-safe:transition-colors motion-safe:duration-(--duration-fast) focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-white lg:shrink"
                 :class="selectedProductId === product.id
                   ? 'bg-brand-500 text-white'
                   : 'text-slate-300 hover:bg-white/5 hover:text-white'"
@@ -162,6 +162,18 @@ useFadeIn(contentRef)
               >
                 {{ product.name }}
               </button>
+            </div>
+
+            <!-- Fills the rail instead of leaving it a short list next to a
+                 much taller panel — real content (Product.shortDescription,
+                 not invented copy) rather than decorative padding. -->
+            <div class="mt-6 hidden flex-col gap-3 rounded-(--radius-lg) border border-white/10 bg-white/5 p-5 lg:flex">
+              <span class="flex h-9 w-9 items-center justify-center rounded-(--radius-sm) bg-brand-500/20 text-brand-200" aria-hidden="true">
+                <span class="h-4.5 w-4.5">
+                  <PrincipleIcon id="layers" />
+                </span>
+              </span>
+              <p class="text-body-sm text-slate-300">{{ activeProduct.shortDescription }}</p>
             </div>
           </div>
 
@@ -181,7 +193,7 @@ useFadeIn(contentRef)
               <span class="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-default bg-elevated px-5 py-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-default bg-elevated px-5 py-3.5">
               <div>
                 <p class="text-caption font-semibold tracking-widest text-brand-500 uppercase">
                   {{ activeProduct.name }}
@@ -232,7 +244,7 @@ useFadeIn(contentRef)
                    white running underneath both. items-stretch above makes
                    this column match the content column's full height
                    instead of only being as tall as its own four links. -->
-              <div class="border-b border-default bg-elevated p-4 sm:w-48 sm:shrink-0 sm:border-r sm:border-b-0">
+              <div class="border-b border-default bg-elevated p-3.5 sm:w-48 sm:shrink-0 sm:border-r sm:border-b-0">
                 <p class="px-2 text-[0.6875rem] font-semibold tracking-widest text-muted/70 uppercase">Menu</p>
                 <ul class="mt-2 flex gap-2 overflow-x-auto sm:flex-col sm:gap-1 sm:overflow-visible">
                   <li
@@ -249,13 +261,13 @@ useFadeIn(contentRef)
                 </ul>
               </div>
 
-              <div class="relative min-h-[320px] flex-1 overflow-hidden bg-default p-6 md:p-8">
+              <div class="relative min-h-[280px] flex-1 overflow-hidden bg-default p-5 md:p-6">
                 <!-- Page toolbar: title + a decorative date-range pill and
                      export action. Stays fixed while the tab content below
                      crossfades — chrome that persists, content that
                      changes, the same pattern a real app uses. Neither
                      control does anything; both are aria-hidden. -->
-                <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-default pb-4">
+                <div class="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-default pb-3">
                   <h3 class="text-h4 font-semibold tracking-tight text-highlighted">
                     {{ productTourSteps.find((step) => step.id === selectedStepId)?.label }}
                   </h3>
@@ -279,9 +291,9 @@ useFadeIn(contentRef)
                 <Transition name="tour-preview">
                   <div :key="`${selectedProductId}-${selectedStepId}`">
                     <div v-if="selectedStepId === 'overview'">
-                      <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_200px]">
+                      <div class="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_200px]">
                         <div>
-                          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                             <div
                               v-for="(metric, cardIndex) in activePreview.overviewMetrics"
                               :key="metric.label"
@@ -313,7 +325,7 @@ useFadeIn(contentRef)
                               <p class="mt-1.5 text-h4 font-semibold tracking-tight text-highlighted">{{ metric.value }}</p>
                             </div>
                           </div>
-                          <p class="mt-6 text-caption font-semibold tracking-widest text-muted uppercase">{{ activePreview.trendLabel }}</p>
+                          <p class="mt-5 text-caption font-semibold tracking-widest text-muted uppercase">{{ activePreview.trendLabel }}</p>
                           <div class="relative mt-2 h-28" aria-hidden="true">
                             <svg viewBox="0 0 300 120" preserveAspectRatio="none" class="h-full w-full overflow-visible">
                               <defs>
