@@ -8,17 +8,20 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Inquiry;
 use Illuminate\Http\JsonResponse;
 
-// Public write endpoint backing the /contact page. No data is read back
-// out to the client — this only ever creates a new, unreviewed inquiry
-// (status defaults to "new") for admin triage, same source/ip/user-agent
-// capture the inquiries migration was built for.
+// Public write endpoint shared by the /contact page and the site-entry
+// lead gate. No data is read back out to the client — this only ever
+// creates a new, unreviewed inquiry (status defaults to "new") for admin
+// triage, with the source/ip/user-agent capture the inquiries migration
+// was built for. `source` identifies which form it came from (falls back
+// to "contact_page" since that was this endpoint's first caller); the
+// caller is trusted for this one free-form label, same as `type`.
 class InquiryController extends Controller
 {
     public function store(StoreInquiryRequest $request): JsonResponse
     {
         $data = $request->validated();
         $data['status'] = 'new';
-        $data['source'] = 'contact_page';
+        $data['source'] = $data['source'] ?? 'contact_page';
         $data['ip_address'] = $request->ip();
         $data['user_agent'] = $request->userAgent();
 

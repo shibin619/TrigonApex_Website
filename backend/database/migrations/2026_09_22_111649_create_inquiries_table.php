@@ -16,7 +16,9 @@ return new class extends Migration
 
             // Plain string, not a MySQL ENUM — new inquiry types can be
             // added at the application layer without a schema migration.
-            // Expected values: contact, consultation, demo_request.
+            // Expected values: contact, consultation, demo_request,
+            // site_entry (the site-wide lead gate — see
+            // StoreInquiryRequest).
             $table->string('type')->index();
 
             $table->string('name');

@@ -21,5 +21,9 @@
     </main>
 
     <AppFooter />
+
+    <!-- Only in this layout, not layouts/admin.vue — the gate is a
+         visitor-facing lead capture, never shown inside the admin area. -->
+    <SiteEntryGate />
   </div>
 </template>
