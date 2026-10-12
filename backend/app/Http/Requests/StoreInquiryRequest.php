@@ -27,7 +27,11 @@ class StoreInquiryRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:50'],
             'company' => ['nullable', 'string', 'max:255'],
             'message' => ['nullable', 'string', 'max:2000'],
-            'source' => ['nullable', 'string', 'max:50'],
+            // Constrained the same way as `type` — an open free-text field
+            // here would let a client stamp any label on its own
+            // submission, polluting admin triage instead of just
+            // identifying which of the two forms it came from.
+            'source' => ['nullable', 'string', 'in:contact_page,site_gate'],
         ];
     }
 }
