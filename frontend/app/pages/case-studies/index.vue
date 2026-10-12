@@ -25,6 +25,15 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'CollectionPage'
+}, {
+  name: 'Case Studies',
+  description: 'A look at the kind of work Trigon Apex takes on — real projects, described honestly.',
+  hasPart: caseStudies.map((caseStudy) => ({
+    '@type': 'Article',
+    headline: caseStudy.title,
+    description: caseStudy.businessChallenge,
+    url: `https://trigonapex.in/case-studies/${caseStudy.slug}`
+  }))
 })
 
 function industryName(industryId: string) {

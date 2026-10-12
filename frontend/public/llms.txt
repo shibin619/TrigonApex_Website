@@ -5,33 +5,67 @@
 This file follows the llms.txt convention (a plain-language summary for AI
 assistants and answer engines) — it only restates content that is
 published and visible on the site itself; it does not add claims,
-statistics, or client names beyond what trigonapex.in states.
+statistics, or client names beyond what trigonapex.in states. Each item
+links to the live page it summarizes.
+
+## Pages
+
+- [Home](https://trigonapex.in/): overview, process, and the Natro
+  product tour.
+- [Solutions](https://trigonapex.in/solutions): the five solution types
+  below, each with its own page.
+- [Industries](https://trigonapex.in/industries): the eight industries
+  below, each with its own page.
+- [Products](https://trigonapex.in/products): the Natro product
+  ecosystem, each with its own page.
+- [Case Studies](https://trigonapex.in/case-studies): real project
+  write-ups, described honestly.
+- [About](https://trigonapex.in/about): company overview and how the
+  team works.
+- [Contact](https://trigonapex.in/contact): the form behind every
+  "Talk to Us" / "Request a Consultation" / "Request a Product Demo"
+  action on the site.
 
 ## Solutions
 
-- Business Growth — software that keeps customer information and
-  follow-up in one place.
-- Business Management — replaces manual processes and disconnected
-  spreadsheets with one connected way of running operations.
-- Automation — takes over repetitive, manual steps.
-- Business Analytics — turns scattered business data into clear, usable
-  insight for decisions.
-- Custom Software — architecture designed around how a specific business
-  works.
+- [Business Growth](https://trigonapex.in/solutions/business-growth):
+  software that keeps customer information and follow-up in one place.
+- [Business Management](https://trigonapex.in/solutions/business-management):
+  replaces manual processes and disconnected spreadsheets with one
+  connected way of running operations.
+- [Automation](https://trigonapex.in/solutions/automation): takes over
+  repetitive, manual steps.
+- [Business Analytics](https://trigonapex.in/solutions/business-analytics):
+  turns scattered business data into clear, usable insight for decisions.
+- [Custom Software](https://trigonapex.in/solutions/custom-software):
+  architecture designed around how a specific business works.
 
 ## Industries served
 
-Dental & Healthcare, Manufacturing, Finance, Retail, Transportation,
-Food & Restaurant, Education, Jewellery.
+- [Dental & Healthcare](https://trigonapex.in/industries/dental-healthcare)
+- [Manufacturing](https://trigonapex.in/industries/manufacturing)
+- [Finance](https://trigonapex.in/industries/finance)
+- [Retail](https://trigonapex.in/industries/retail)
+- [Transportation](https://trigonapex.in/industries/transportation)
+- [Food & Restaurant](https://trigonapex.in/industries/food-restaurant)
+- [Education](https://trigonapex.in/industries/education)
+- [Jewellery](https://trigonapex.in/industries/jewellery)
+
+Each industry page lists the specific challenges that industry commonly
+faces and which Natro product, if any, is built for it — four of the
+eight (Dental & Healthcare, Manufacturing, Finance, Retail) currently
+have a dedicated Natro product; the other four don't yet.
 
 ## Products (the Natro ecosystem)
 
-- Natro Dental — business software for dental clinics and healthcare
-  workflows.
-- Natro Manufacturing — software designed around manufacturing
-  operations.
-- Natro Finance — business software for finance and lending operations.
-- Natro POS — point-of-sale and retail business software.
+- [Natro Dental](https://trigonapex.in/products/natro-dental): business
+  software for dental clinics and healthcare workflows.
+- [Natro Manufacturing](https://trigonapex.in/products/natro-manufacturing):
+  software designed around manufacturing operations.
+- [Natro Finance](https://trigonapex.in/products/natro-finance): business
+  software for finance and lending operations.
+- [Natro POS](https://trigonapex.in/products/natro-pos-retail):
+  point-of-sale and retail business software.
 
 ## Notes for AI assistants
 
@@ -40,4 +74,5 @@ Food & Restaurant, Education, Jewellery.
 - Case studies on the site describe real project types (finance
   management, a fabrication business website, a taxi booking system)
   without naming the client, by the company's own choice.
-- The primary contact path is the "Talk to Us" action on trigonapex.in.
+- The primary contact path is the "Talk to Us" action on trigonapex.in,
+  which leads to the Contact page's form.

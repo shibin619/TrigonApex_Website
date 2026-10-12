@@ -30,6 +30,15 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'ContactPage'
+}, {
+  // No contactPoint (phone/email) — site.config.ts's contact fields are
+  // all still null, so there's no confirmed value to publish here either.
+  name: `Contact ${siteConfig.companyName}`,
+  about: {
+    '@type': 'Organization',
+    name: siteConfig.companyName,
+    url: 'https://trigonapex.in/'
+  }
 })
 
 const typeOptions = [

@@ -24,6 +24,20 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'CollectionPage'
+}, {
+  // Every field here is already published on this exact page — no
+  // invented pricing, ratings, or availability. schemaType declared a
+  // JSON-LD type without this second argument ever being passed, so
+  // this page (and every other non-homepage page) emitted no structured
+  // data at all despite claiming one.
+  name: 'Solutions',
+  description: 'Each problem points to a type of software solution — built around how your business actually works, not a one-size-fits-all product.',
+  hasPart: solutions.map((solution) => ({
+    '@type': 'Service',
+    name: solution.title,
+    description: solution.shortDescription,
+    url: `https://trigonapex.in/solutions/${solution.slug}`
+  }))
 })
 
 const talkToUs = getCta('talk-to-us')

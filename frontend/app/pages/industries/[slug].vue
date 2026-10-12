@@ -3,6 +3,7 @@ import { industries } from '~/content/industries'
 import { solutions } from '~/content/solutions'
 import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
+import { siteConfig } from '~/content/site.config'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -28,6 +29,15 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'Service'
+}, {
+  name: industry.name,
+  description: industry.shortDescription,
+  url: `https://trigonapex.in/industries/${industry.slug}`,
+  provider: {
+    '@type': 'Organization',
+    name: siteConfig.companyName,
+    url: 'https://trigonapex.in/'
+  }
 })
 
 const talkToUs = getCta('talk-to-us')

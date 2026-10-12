@@ -2,6 +2,7 @@
 import { caseStudies } from '~/content/case-studies'
 import { industries } from '~/content/industries'
 import { getCta } from '~/content/ctas'
+import { siteConfig } from '~/content/site.config'
 
 const route = useRoute()
 const slug = route.params.slug as string
@@ -31,6 +32,19 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'Article'
+}, {
+  // No datePublished — no real publish date exists for these case
+  // studies (none is tracked in case-studies.ts), and Article's
+  // datePublished is optional, so it's left out rather than guessed.
+  headline: caseStudy.title,
+  description: caseStudy.businessChallenge,
+  about: industryName(caseStudy.industry),
+  url: `https://trigonapex.in/case-studies/${caseStudy.slug}`,
+  author: {
+    '@type': 'Organization',
+    name: siteConfig.companyName,
+    url: 'https://trigonapex.in/'
+  }
 })
 
 const talkToUs = getCta(caseStudy.cta) ?? getCta('talk-to-us')

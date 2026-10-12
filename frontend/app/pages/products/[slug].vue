@@ -27,6 +27,14 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'Product'
+}, {
+  // No `offers` block — no pricing is published anywhere on the site,
+  // and Google explicitly flags a Product schema with invented pricing
+  // as a structured-data violation. Omitted rather than guessed.
+  name: product.name,
+  description: product.shortDescription,
+  brand: { '@type': 'Brand', name: product.ecosystem },
+  url: `https://trigonapex.in/products/${product.slug}`
 })
 
 const talkToUs = getCta('talk-to-us')

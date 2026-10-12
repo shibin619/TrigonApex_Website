@@ -24,6 +24,15 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'CollectionPage'
+}, {
+  name: 'Industries',
+  description: 'Every business runs differently. Our software is built around how your industry actually works.',
+  hasPart: industries.map((industry) => ({
+    '@type': 'Service',
+    name: industry.name,
+    description: industry.shortDescription,
+    url: `https://trigonapex.in/industries/${industry.slug}`
+  }))
 })
 
 const talkToUs = getCta('talk-to-us')

@@ -37,6 +37,14 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'AboutPage'
+}, {
+  name: `About ${siteConfig.companyName}`,
+  description: siteConfig.positioningStatement,
+  mainEntity: {
+    '@type': 'Organization',
+    name: siteConfig.companyName,
+    url: 'https://trigonapex.in/'
+  }
 })
 
 const talkToUs = getCta('talk-to-us')

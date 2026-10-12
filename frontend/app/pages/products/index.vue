@@ -24,6 +24,16 @@ useSeo({
   },
   robots: 'index, follow',
   schemaType: 'CollectionPage'
+}, {
+  name: 'Products',
+  description: 'The Natro product ecosystem — business software built around how specific industries actually run.',
+  hasPart: products.map((product) => ({
+    '@type': 'Product',
+    name: product.name,
+    description: product.shortDescription,
+    brand: { '@type': 'Brand', name: product.ecosystem },
+    url: `https://trigonapex.in/products/${product.slug}`
+  }))
 })
 
 const talkToUs = getCta('talk-to-us')
