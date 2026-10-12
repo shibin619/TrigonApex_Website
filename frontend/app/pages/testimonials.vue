@@ -92,11 +92,22 @@ useFadeIn(contentRef)
         <!-- Honest empty state rather than a blank page — this is a page
              people navigate to specifically for reviews, not a homepage
              teaser that can just disappear. No invented reviews, no fake
-             "coming soon" countdown, just a plain statement of fact. -->
-        <div v-else class="mx-auto mt-14 max-w-md rounded-(--radius-lg) border border-default bg-elevated/60 p-8 text-center md:mt-16">
-          <p class="text-body text-default">
-            No client reviews are published yet. We only publish a review
-            once a client has given permission &mdash; check back soon.
+             "coming soon" countdown, just a plain statement of fact —
+             but given the same icon-chip treatment (gradient circle,
+             heading, body copy) every other card/section on the site
+             uses, rather than a bare line of text in a box. -->
+        <div v-else class="mx-auto mt-14 flex max-w-md flex-col items-center rounded-(--radius-lg) border border-default bg-default p-10 text-center shadow-sm md:mt-16">
+          <span class="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-[0_10px_20px_-6px_rgba(73,89,179,0.5)]" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M7.5 6.5A4.5 4.5 0 0 0 3 11v7h7v-7H6.1a2.5 2.5 0 0 1 2.4-2.5V6.5h-1Zm10 0A4.5 4.5 0 0 0 13 11v7h7v-7h-3.9a2.5 2.5 0 0 1 2.4-2.5V6.5h-1Z" />
+            </svg>
+          </span>
+          <h2 class="mt-5 text-h4 font-semibold tracking-tight text-highlighted">
+            No Reviews Yet
+          </h2>
+          <p class="mt-2 text-body text-muted">
+            We only publish a review once a client has given permission
+            &mdash; check back soon.
           </p>
         </div>
       </div>
