@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { solutions, getSolution } from '~/content/solutions'
+import { industries } from '~/content/industries'
+import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
 const route = useRoute()
@@ -30,12 +32,15 @@ useSeo({
 
 const talkToUs = getCta('talk-to-us')
 
-// relatedIndustries/relatedProducts ship empty for all five solutions
-// (no confirmed mapping exists yet — see solutions.ts's own docstring),
-// so those sections of the page are conditionally skipped rather than
-// rendered empty.
-const relatedIndustries = computed(() => getSolution(solution!.id)?.relatedIndustries ?? [])
-const relatedProducts = computed(() => getSolution(solution!.id)?.relatedProducts ?? [])
+// relatedIndustries/relatedProducts are id references (see solutions.ts's
+// own docstring) — resolved to their full Industry/Product records here
+// so the page can show real names and link through, rather than id
+// strings. custom-software has no industry mapped to it, so that
+// section stays conditionally skipped rather than rendered empty.
+const relatedIndustryIds = computed(() => getSolution(solution!.id)?.relatedIndustries ?? [])
+const relatedProductIds = computed(() => getSolution(solution!.id)?.relatedProducts ?? [])
+const relatedIndustries = computed(() => industries.filter((industry) => relatedIndustryIds.value.includes(industry.id)))
+const relatedProducts = computed(() => products.filter((product) => relatedProductIds.value.includes(product.id)))
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -98,9 +103,9 @@ useFadeIn(contentRef)
           <div v-if="relatedIndustries.length">
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">Related Industries</span>
             <ul class="mt-2 flex flex-wrap gap-2">
-              <li v-for="industry in relatedIndustries" :key="industry">
-                <NuxtLink :to="`/industries/${industry}`" class="rounded-full border border-default px-3 py-1 text-body-sm text-default hover:border-brand-300 hover:text-brand-500">
-                  {{ industry }}
+              <li v-for="industry in relatedIndustries" :key="industry.id">
+                <NuxtLink :to="`/industries/${industry.slug}`" class="rounded-full border border-default px-3 py-1 text-body-sm text-default hover:border-brand-300 hover:text-brand-500">
+                  {{ industry.name }}
                 </NuxtLink>
               </li>
             </ul>
@@ -108,9 +113,9 @@ useFadeIn(contentRef)
           <div v-if="relatedProducts.length">
             <span class="text-caption font-semibold tracking-widest text-muted uppercase">Related Products</span>
             <ul class="mt-2 flex flex-wrap gap-2">
-              <li v-for="product in relatedProducts" :key="product">
-                <NuxtLink :to="`/products/${product}`" class="rounded-full border border-default px-3 py-1 text-body-sm text-default hover:border-brand-300 hover:text-brand-500">
-                  {{ product }}
+              <li v-for="product in relatedProducts" :key="product.id">
+                <NuxtLink :to="`/products/${product.slug}`" class="rounded-full border border-default px-3 py-1 text-body-sm text-default hover:border-brand-300 hover:text-brand-500">
+                  {{ product.name }}
                 </NuxtLink>
               </li>
             </ul>

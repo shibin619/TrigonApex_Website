@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { industries } from '~/content/industries'
 import { solutions } from '~/content/solutions'
+import { products } from '~/content/products'
 import { getCta } from '~/content/ctas'
 
 const route = useRoute()
@@ -31,18 +32,24 @@ useSeo({
 
 const talkToUs = getCta('talk-to-us')
 
-// businessChallenges/analyticsOpportunities/solutions/products ship empty
-// for every industry (see content/industries.ts's own docstring — no
-// confirmed copy or mapping exists yet), so those sections are skipped
-// rather than rendered empty. relatedSolutions resolves Solution.id
-// references to their titles, same reference-not-embed pattern as
-// solutions.ts's own relatedIndustries.
+// solutions/products are id references, resolved here — reference-not-
+// embed, same pattern as everywhere else. relatedProduct is singular
+// (only natro-dental/manufacturing/finance/pos-retail exist, each tied to
+// exactly one industry) rather than relatedProducts, since at most one
+// Natro product is ever built for a given industry.
 const relatedSolutions = computed(() =>
   solutions.filter((solution) => industry!.solutions.includes(solution.id))
 )
+const relatedProduct = computed(() =>
+  products.find((product) => industry!.products.includes(product.id))
+)
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
+const challengesRef = useTemplateRef<HTMLDivElement>('challengesRef')
+const opportunitiesRef = useTemplateRef<HTMLDivElement>('opportunitiesRef')
 useFadeIn(contentRef)
+useStaggerReveal(challengesRef, ':scope > div', { each: true })
+useStaggerReveal(opportunitiesRef, ':scope > div', { each: true })
 </script>
 
 <template>
@@ -62,35 +69,111 @@ useFadeIn(contentRef)
           <p class="mt-6 text-body-lg text-muted">
             {{ industry.shortDescription }}
           </p>
-
-          <ul v-if="industry.businessChallenges.length" class="mt-10 space-y-4">
-            <li v-for="challenge in industry.businessChallenges" :key="challenge" class="flex items-start gap-3">
-              <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="var(--color-accent-green-700)" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0" aria-hidden="true">
-                <path d="M4 10.5l4 4 8-9" />
-              </svg>
-              <span class="text-body text-default">{{ challenge }}</span>
-            </li>
-          </ul>
-
-          <div v-if="relatedSolutions.length" class="mt-10">
-            <span class="text-caption font-semibold tracking-widest text-muted uppercase">Related Solutions</span>
-            <ul class="mt-2 flex flex-wrap gap-2">
-              <li v-for="solution in relatedSolutions" :key="solution.id">
-                <NuxtLink :to="`/solutions/${solution.slug}`" class="rounded-full border border-default px-3 py-1 text-body-sm text-default hover:border-brand-300 hover:text-brand-500">
-                  {{ solution.title }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <div class="relative mx-auto flex aspect-[4/3] w-full max-w-sm items-end justify-center overflow-hidden rounded-(--radius-lg) bg-brand-50 shadow-sm">
+        <div class="relative mx-auto flex aspect-[4/3] w-full items-end justify-center overflow-hidden rounded-(--radius-lg) bg-brand-50 shadow-sm">
           <span class="pointer-events-none absolute -top-8 -right-8 h-28 w-28 rounded-full bg-brand-300/35 opacity-60 blur-2xl" aria-hidden="true" />
           <img
             :src="`/images/industry-${industry.id}.webp`"
             :alt="`Illustration representing the ${industry.name} industry`"
             class="relative h-[88%] w-auto object-contain"
           >
+        </div>
+      </div>
+    </PageContainer>
+  </SectionContainer>
+
+  <SectionContainer v-if="industry.businessChallenges.length" as="section" spacing="compact" aria-labelledby="challenges-heading">
+    <PageContainer as="div">
+      <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">The Reality</span>
+      <h2 id="challenges-heading" class="mt-2 text-h3 font-semibold tracking-tight text-highlighted">
+        Where it gets hard
+      </h2>
+
+      <div ref="challengesRef" class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div
+          v-for="challenge in industry.businessChallenges"
+          :key="challenge"
+          class="flex items-start gap-3.5 rounded-(--radius-lg) border border-default bg-default p-5"
+        >
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-ice-400/10 text-accent-ice-600" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 6.5v4" />
+              <circle cx="10" cy="13.5" r="0.75" fill="currentColor" stroke="none" />
+              <circle cx="10" cy="10" r="7.25" />
+            </svg>
+          </span>
+          <span class="text-body text-default">{{ challenge }}</span>
+        </div>
+      </div>
+    </PageContainer>
+  </SectionContainer>
+
+  <SectionContainer v-if="industry.analyticsOpportunities.length" as="section" spacing="compact" aria-labelledby="opportunities-heading">
+    <PageContainer as="div">
+      <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">Where Software Helps</span>
+      <h2 id="opportunities-heading" class="mt-2 text-h3 font-semibold tracking-tight text-highlighted">
+        What a connected system changes
+      </h2>
+
+      <div ref="opportunitiesRef" class="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div
+          v-for="opportunity in industry.analyticsOpportunities"
+          :key="opportunity"
+          class="flex items-start gap-3.5 rounded-(--radius-lg) border border-default bg-default p-5"
+        >
+          <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-green-500/10 text-accent-green-700" aria-hidden="true">
+            <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 10.5l4 4 8-9" />
+            </svg>
+          </span>
+          <span class="text-body text-default">{{ opportunity }}</span>
+        </div>
+      </div>
+    </PageContainer>
+  </SectionContainer>
+
+  <SectionContainer v-if="relatedSolutions.length || relatedProduct" as="section" spacing="compact" aria-labelledby="related-heading">
+    <PageContainer as="div">
+      <h2 id="related-heading" class="sr-only">
+        Related solutions and products
+      </h2>
+
+      <div class="grid grid-cols-1 gap-6" :class="relatedProduct ? 'lg:grid-cols-[1fr_minmax(0,300px)]' : ''">
+        <div v-if="relatedSolutions.length">
+          <span class="text-caption font-semibold tracking-widest text-muted uppercase">Related Solutions</span>
+          <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <NuxtLink
+              v-for="solution in relatedSolutions"
+              :key="solution.id"
+              :to="`/solutions/${solution.slug}`"
+              class="group flex items-center gap-3 rounded-(--radius-lg) border border-default bg-default p-4 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300"
+            >
+              <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-(--radius-md) bg-brand-50 text-brand-500" aria-hidden="true">
+                <span class="h-4.5 w-4.5">
+                  <SolutionIcon :id="solution.id" />
+                </span>
+              </span>
+              <span class="flex-1 text-body-sm font-medium text-highlighted group-hover:text-brand-500">{{ solution.title }}</span>
+              <span aria-hidden="true" class="text-muted motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover:translate-x-0.5">&rarr;</span>
+            </NuxtLink>
+          </div>
+        </div>
+
+        <div v-if="relatedProduct">
+          <span class="text-caption font-semibold tracking-widest text-muted uppercase">Built for This Industry</span>
+          <NuxtLink
+            :to="`/products/${relatedProduct.slug}`"
+            class="group mt-4 flex flex-col rounded-(--radius-lg) border border-default bg-elevated/60 p-5 motion-safe:transition-colors motion-safe:duration-(--duration-fast) hover:border-brand-300"
+          >
+            <span class="text-caption font-semibold tracking-widest text-brand-500 uppercase">{{ relatedProduct.ecosystem }}</span>
+            <span class="mt-1 text-h4 font-semibold tracking-tight text-highlighted group-hover:text-brand-500">{{ relatedProduct.name }}</span>
+            <span class="mt-2 text-body-sm text-default">{{ relatedProduct.shortDescription }}</span>
+            <span class="mt-4 inline-flex items-center gap-1.5 text-body-sm font-medium text-brand-500">
+              Learn more
+              <span aria-hidden="true" class="motion-safe:transition-transform motion-safe:duration-(--duration-fast) group-hover:translate-x-0.5">&rarr;</span>
+            </span>
+          </NuxtLink>
         </div>
       </div>
     </PageContainer>

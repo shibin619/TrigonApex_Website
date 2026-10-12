@@ -9,12 +9,16 @@
  * that exact DOM id when a visitor selects the matching problem. Do not
  * rename an id here without updating business-problems.ts to match.
  *
- * `relatedIndustries`/`relatedProducts` ship empty until a real, confirmed
- * mapping exists — the same "empty is valid, guessed is not" rule already
- * applied to Natro's `keyCapabilities` (docs/CONTENT_ARCHITECTURE.md §15.7).
- * No detail page exists yet, so `longDescription`/`benefits` are written
- * now as real, qualitative capability descriptions (never a statistic or
- * result claim, per §15.2) for when that page is built.
+ * `relatedIndustries`/`relatedProducts` mirror the mapping industries.ts
+ * now defines on each Industry's own `solutions`/`products` arrays (id
+ * references, resolved at render time) — kept in sync by hand in both
+ * directions so the Related Solutions / Related Industries / Related
+ * Products links between those three content types are consistent
+ * whichever page a visitor starts from. `custom-software` has no industry
+ * mapped to it specifically (it's the general "build something bespoke"
+ * solution, not tied to one of the eight fixed industries), so it stays
+ * empty — same honest-empty rule as everywhere else, just no longer
+ * blanket-applied to fields that do have a real answer now.
  */
 
 export interface Solution {
@@ -46,8 +50,8 @@ export const solutions: Solution[] = [
       'Consistent, timely follow-up',
       'Clear visibility into where each opportunity stands'
     ],
-    relatedIndustries: [],
-    relatedProducts: [],
+    relatedIndustries: ['retail', 'education', 'jewellery'],
+    relatedProducts: ['natro-pos-retail'],
     cta: 'talk-to-us',
     flow: ['Customer', 'Follow-up', 'Opportunity']
   },
@@ -63,8 +67,8 @@ export const solutions: Solution[] = [
       'Consistent processes across the team',
       'A single source of truth for day-to-day operations'
     ],
-    relatedIndustries: [],
-    relatedProducts: [],
+    relatedIndustries: ['dental-healthcare', 'manufacturing', 'finance', 'transportation', 'food-restaurant', 'education'],
+    relatedProducts: ['natro-dental', 'natro-manufacturing', 'natro-finance'],
     cta: 'talk-to-us',
     flow: ['Process', 'Workflow', 'Operations']
   },
@@ -80,8 +84,8 @@ export const solutions: Solution[] = [
       'Fewer manual errors in routine work',
       'More team time available for higher-value work'
     ],
-    relatedIndustries: [],
-    relatedProducts: [],
+    relatedIndustries: ['manufacturing', 'retail', 'transportation', 'food-restaurant'],
+    relatedProducts: ['natro-manufacturing', 'natro-pos-retail'],
     cta: 'talk-to-us',
     flow: ['Manual', 'Automation', 'Completion']
   },
@@ -97,8 +101,8 @@ export const solutions: Solution[] = [
       'Trends and patterns that are easier to see',
       'Decisions grounded in what the data actually shows'
     ],
-    relatedIndustries: [],
-    relatedProducts: [],
+    relatedIndustries: ['dental-healthcare', 'finance', 'jewellery'],
+    relatedProducts: ['natro-dental', 'natro-finance'],
     cta: 'talk-to-us',
     flow: ['Data', 'Insight', 'Decision']
   },
