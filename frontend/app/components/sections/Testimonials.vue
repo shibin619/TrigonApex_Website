@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Testimonial } from '~/content/testimonials'
+import { getCta } from '~/content/ctas'
 
 // Per docs/HOMEPAGE_SPEC.md §13 / CONTENT_ARCHITECTURE.md §7: a
 // testimonial never renders unless permission-approved (enforced by the
@@ -19,6 +20,15 @@ const { data } = await useFetch<{ data: Testimonial[] }>('/api/v1/testimonials',
 })
 
 const approvedTestimonials = computed(() => data.value?.data ?? [])
+// HOMEPAGE_SPEC.md §13: a plain grid for three or fewer, a carousel only
+// once there are enough (four+) to justify building carousel interaction
+// for — not worth that complexity while nothing has reached that count.
+// In the meantime, capping the teaser at 3 and linking to the full
+// /testimonials page is what keeps a 4th+ review from simply having
+// nowhere to be seen in the interim.
+const displayedTestimonials = computed(() => approvedTestimonials.value.slice(0, 3))
+const hasMoreTestimonials = computed(() => approvedTestimonials.value.length > 3)
+const viewAllTestimonials = getCta('view-all-testimonials')
 
 const contentRef = useTemplateRef<HTMLDivElement>('contentRef')
 useFadeIn(contentRef)
@@ -38,7 +48,7 @@ useFadeIn(contentRef)
         </div>
 
         <ResponsiveGrid :cols="3" gap="md" class="mt-10 md:mt-12">
-          <BaseCard v-for="testimonial in approvedTestimonials" :key="testimonial.id" variant="bordered">
+          <BaseCard v-for="testimonial in displayedTestimonials" :key="testimonial.id" variant="bordered">
             <div v-if="testimonial.photo" class="mb-4 flex items-center gap-3">
               <img :src="testimonial.photo.src" :alt="testimonial.photo.alt" width="40" height="40" loading="lazy" class="h-10 w-10 rounded-full object-cover">
             </div>
@@ -49,6 +59,12 @@ useFadeIn(contentRef)
             </p>
           </BaseCard>
         </ResponsiveGrid>
+
+        <div v-if="hasMoreTestimonials" class="mt-10 flex justify-center md:mt-12">
+          <AppButton v-if="viewAllTestimonials" variant="outline" :to="viewAllTestimonials.to">
+            {{ viewAllTestimonials.label }}
+          </AppButton>
+        </div>
       </div>
     </PageContainer>
   </SectionContainer>

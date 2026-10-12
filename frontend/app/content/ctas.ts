@@ -32,7 +32,8 @@ export const ctas: Cta[] = [
   { id: 'request-consultation', label: 'Request Consultation', to: '/contact', style: 'primary' },
   { id: 'request-product-demo', label: 'Request Product Demo', to: '/contact', style: 'primary' },
   { id: 'learn-about-us', label: 'Learn About Us', to: '/about', style: 'secondary' },
-  { id: 'view-all-case-studies', label: 'View All Case Studies', to: '/case-studies', style: 'secondary' }
+  { id: 'view-all-case-studies', label: 'View All Case Studies', to: '/case-studies', style: 'secondary' },
+  { id: 'view-all-testimonials', label: 'View All Reviews', to: '/testimonials', style: 'secondary' }
 ]
 
 export function getCta(id: string): Cta | undefined {

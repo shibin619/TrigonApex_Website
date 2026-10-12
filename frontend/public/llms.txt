@@ -20,6 +20,9 @@ links to the live page it summarizes.
   ecosystem, each with its own page.
 - [Case Studies](https://trigonapex.in/case-studies): real project
   write-ups, described honestly.
+- [Testimonials](https://trigonapex.in/testimonials): client reviews —
+  only ever published with the client's permission; this page honestly
+  states when none are published yet rather than showing none at all.
 - [About](https://trigonapex.in/about): company overview and how the
   team works.
 - [Contact](https://trigonapex.in/contact): the form behind every

@@ -65,6 +65,7 @@ export const siteConfig: SiteConfig = {
           { label: 'Industries', to: '/industries' },
           { label: 'Products', to: '/products' },
           { label: 'Case Studies', to: '/case-studies' },
+          { label: 'Testimonials', to: '/testimonials' },
           { label: 'About', to: '/about' }
         ]
       },

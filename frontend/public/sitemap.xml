@@ -135,6 +135,11 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://trigonapex.in/testimonials</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://trigonapex.in/about</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
